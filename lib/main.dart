@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'plant.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -11,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'PlantSelect',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -31,7 +33,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'PlantSelect'),
     );
   }
 }
@@ -55,18 +57,30 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
 
-  void _incrementCounter() {
+  void _addPlant() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      _counter++;
+      //_counter++;
     });
   }
+
+  Future<List<Plant>> fetchPlants() async {
+  // final response = await http.get(Uri.parse('https://your-api-url/plants'));
+
+  //if (response.statusCode == 200) {
+    //List<dynamic> data = jsonDecode(response.body);
+    List<dynamic> data = [{"id":1, "name":"rose", "imageUrl":''}, {"id":2, "name":"daisy", "imageUrl":''}];
+    List<Plant> plants = data.map((json) => Plant.fromJson(json)).toList();
+    return plants;
+  //} else {
+  //  throw Exception('Failed to load plants');
+  //}
+}
 
   @override
   Widget build(BuildContext context) {
@@ -86,38 +100,31 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Image.asset('assets/images/logo.png'),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'Enter the name of the company you purchased from',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+        body: FutureBuilder<List<Plant>>(
+          future: fetchPlants(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  Plant plant = snapshot.data![index];
+                  return ListTile(
+                    title: Text(plant.name),
+                    //leading: Image.network(plant.imageUrl),
+                    subtitle: Text('ID: ${plant.id}'),
+                  );
+                },
+              );
+            } else if (snapshot.hasError) {
+              return Center(child: Text('${snapshot.error}'));
+            }
+            // By default, show a loading spinner
+            return Center(child: CircularProgressIndicator());
+          },
         ),
-      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
+        onPressed: _addPlant,
+        tooltip: 'Add Plant',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
