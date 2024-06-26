@@ -1,15 +1,11 @@
 class Plant {
-  final int id;
-  final String name;
-  final String imageUrl;
+  final List<dynamic> values;
 
-  Plant({required this.id, required this.name, required this.imageUrl});
+  Plant({required this.values});
 
-  factory Plant.fromJson(Map<String, dynamic> json) {
+  factory Plant.fromJson(List<dynamic> json) {
     return Plant(
-      id: json['id'],
-      name: json['name'],
-      imageUrl: json['imageUrl'],
+      values: json
     );
   }
 }
