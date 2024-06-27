@@ -14,6 +14,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    
     return MaterialApp(
       title: 'PlantSelect',
       theme: ThemeData(
@@ -60,26 +61,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  void _addPlant() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      //_counter++;
-    });
-  }
-
+  
   Future<List<Plant>> fetchPlants() async {
     final String url = 'https://script.googleusercontent.com/macros/echo?user_content_key=_B-W-AHmjR26KU5dTCw1S-B2DHZEuws01wTIWfteAhh1hJmlRPaKDGo9Y28yztqfS4hpvU0auyjWeXE6R04QW4DiUHEKgbgXm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnO2U0Bl7BUAklHHeNRDrUcIoEcGPmrrlK_ulnafppH3w7o8FAM3ee_EkorPOGtTMgbRERG-Fn53JVefYCVkuXGQB2G7xa3afN9z9Jw9Md8uu&lib=MxnqXoKCpdNq7DADJrJEvDBtmPjijWW5o';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(response.body);
-      //List<dynamic> attr = data[0];
       List<dynamic> values = data.sublist(1);
-      //List<dynamic> data = [{"id":1, "name":"rose", "imageUrl":''}, {"id":2, "name":"daisy", "imageUrl":''}];
       List<Plant> plants = values.map((json) => Plant.fromJson(json)).toList();
     return plants;
     } else {
@@ -95,7 +84,21 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+
+    // Widget page;
+    // switch (selectedIndex) {
+    //   case 0:
+    //     page = GeneratorPage();
+    //     break;
+    //   case 1:
+    //     page = FavoritesPage();
+    //     break;
+    //   default:
+    //     throw UnimplementedError('no widget for $selectedIndex');
+    // }
+    
     return Scaffold(
+      
       appBar: AppBar(
         // TRY THIS: Try changing the color here to a specific color (to
         // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
@@ -117,7 +120,17 @@ class _MyHomePageState extends State<MyHomePage> {
                     title: Text(plant.values[0]),
                     //leading: Image.network(plant.imageUrl),
                     subtitle: Text('Botanic Name: ${plant.values[1]}'),
+
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => selectedPlants(),
+                          ),
+                      );
+                    },
                   );
+                    
                 },
               );
             } else if (snapshot.hasError) {
@@ -126,12 +139,24 @@ class _MyHomePageState extends State<MyHomePage> {
             // By default, show a loading spinner
             return Center(child: CircularProgressIndicator());
           },
+        
+          
         ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _addPlant,
-        tooltip: 'Add Plant',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+
+        
+          
+      );
+      // ...
+
+
+
+  }}
+
+  // ...
+
+class selectedPlants extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Text('new page');
   }
 }
