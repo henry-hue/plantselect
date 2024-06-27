@@ -1,3 +1,5 @@
+
+
 name: plantselect
 description: PlantSelect flutter project.
 # The following line prevents the package from being accidentally published to
@@ -18,6 +20,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # of the product and file versions while build-number is used as the build suffix.
 version: 1.0.0+1
 
+
 environment:
   sdk: '>=3.0.6 <4.0.0'
 
@@ -28,13 +31,40 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  
+  
   flutter:
     sdk: flutter
+
+  
 
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+
+  # import 'package:flutter/material.dart';
+  # import 'package:url_launcher/url_launcher.dart';
+  # final Uri _url = Uri.parse('https://flutter.dev');
+
+  # void main() => runApp(
+  #   const MaterialApp(
+  #     home: Material(
+  #       child: Center(
+  #         child: ElevatedButton(
+  #           onPressed: _launchUrl,
+  #           child: Text('Show Flutter homepage'),
+  #         ),
+  #       ),
+  #     ),
+  #   ),
+  # );
+
+  # Future<void> _launchUrl() async {
+  #   if (!await launchUrl(_url)) {
+  #     throw Exception('Could not launch $_url');
+  #   }
+  # }
   http: ^1.2.1
 
 dev_dependencies:
@@ -89,3 +119,4 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
