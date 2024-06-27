@@ -125,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => selectedPlants(),
+                          builder: (context) => selectedPlants(plant: plant),
                           ),
                       );
                     },
@@ -155,8 +155,10 @@ class _MyHomePageState extends State<MyHomePage> {
   // ...
 
 class selectedPlants extends StatelessWidget {
+  final Plant plant;
+  selectedPlants({required this.plant});
   @override
   Widget build(BuildContext context) {
-    return Text('new page');
+    return Text(plant.values[1]);
   }
 }
