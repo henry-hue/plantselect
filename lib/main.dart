@@ -63,7 +63,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   
-  var favorites = <Plant>[];
+  List<Plant> favorites = [];
 
   Future<List<Plant>> fetchPlants() async {
     final String url = 'https://script.googleusercontent.com/macros/echo?user_content_key=_B-W-AHmjR26KU5dTCw1S-B2DHZEuws01wTIWfteAhh1hJmlRPaKDGo9Y28yztqfS4hpvU0auyjWeXE6R04QW4DiUHEKgbgXm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnO2U0Bl7BUAklHHeNRDrUcIoEcGPmrrlK_ulnafppH3w7o8FAM3ee_EkorPOGtTMgbRERG-Fn53JVefYCVkuXGQB2G7xa3afN9z9Jw9Md8uu&lib=MxnqXoKCpdNq7DADJrJEvDBtmPjijWW5o';
@@ -146,19 +146,21 @@ class _MyHomePageState extends State<MyHomePage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => SecondScreen(plant: favorites)),
+              MaterialPageRoute(builder: (context) => SecondScreen()),
             );
           },
         ),
             floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-          
+        // bottomNavigationBar: BottomNavigationBar(items: [
+
+        // ],)
       );
   }}
 
   class SecondScreen extends StatelessWidget {
-    final Plant favorites;
+    //final Plant favorites;
 
-    SecondScreen({required this.favorites});
+    //SecondScreen({required this.favorites});
     @override
     Widget build(BuildContext context) {
       return Scaffold(
@@ -171,9 +173,9 @@ class _MyHomePageState extends State<MyHomePage> {
       // fontStyle: FontStyle.italic, // italic ),
       //   ),),),
         ),
-          body: Center(
-            child: Plant favorites,
-          )
+          // body: Center(
+          //   child: Plant favorites,
+          // ),
       );
     }
   }
