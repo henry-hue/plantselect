@@ -12,7 +12,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  
 
   // This widget is the root of your application.
   @override
@@ -63,8 +62,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   
+  var favorites = <Plant>[];
+
   Future<List<Plant>> fetchPlants() async {
     final String url = 'https://script.googleusercontent.com/macros/echo?user_content_key=_B-W-AHmjR26KU5dTCw1S-B2DHZEuws01wTIWfteAhh1hJmlRPaKDGo9Y28yztqfS4hpvU0auyjWeXE6R04QW4DiUHEKgbgXm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnO2U0Bl7BUAklHHeNRDrUcIoEcGPmrrlK_ulnafppH3w7o8FAM3ee_EkorPOGtTMgbRERG-Fn53JVefYCVkuXGQB2G7xa3afN9z9Jw9Md8uu&lib=MxnqXoKCpdNq7DADJrJEvDBtmPjijWW5o';
     final response = await http.get(Uri.parse(url));
@@ -87,18 +87,6 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-
-    // Widget page;
-    // switch (selectedIndex) {
-    //   case 0:
-    //     page = GeneratorPage();
-    //     break;
-    //   case 1:
-    //     page = FavoritesPage();
-    //     break;
-    //   default:
-    //     throw UnimplementedError('no widget for $selectedIndex');
-    // }
     
     return Scaffold(
       
@@ -127,7 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       
                       children: <Widget>[
                     
-                        ElevatedButton(child: Text('Add Plant'), onPressed: () {})
+                        ElevatedButton(child: Text('Add Plant'), onPressed: () {favorites.add(plant);})
                       ],
                     ),
 
@@ -153,21 +141,47 @@ class _MyHomePageState extends State<MyHomePage> {
         
           
         ),
-
-        
+        floatingActionButton: FloatingActionButton(
+          child: Image.asset('assets/images/plantImage.png'),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SecondScreen(plant: favorites)),
+            );
+          },
+        ),
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
           
       );
-      // ...
-
-
-
   }}
+
+  class SecondScreen extends StatelessWidget {
+    final Plant favorites;
+
+    SecondScreen({required this.favorites});
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+
+          title: Image.asset('assets/images/logo.png'),
+      //     title: Text('Your Plants', style: TextStyle(
+      // fontWeight: FontWeight.w300, // light
+      // fontStyle: FontStyle.italic, // italic ),
+      //   ),),),
+        ),
+          body: Center(
+            child: Plant favorites,
+          )
+      );
+    }
+  }
 
   // ...
 
 class selectedPlants extends StatelessWidget {
   final Plant plant;
-
 
 
   selectedPlants({required this.plant});
@@ -179,3 +193,4 @@ class selectedPlants extends StatelessWidget {
     throw Exception('Failed to load plant info');
   }
 }
+
