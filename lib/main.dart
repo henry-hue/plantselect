@@ -57,8 +57,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
- 
-
+  int currentPageIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +78,33 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Image.asset('assets/images/logo.png'),
       ),
-      body: AllPlants(),
+      bottomNavigationBar: NavigationBar(
+          onDestinationSelected: (int index) {
+            setState(() {
+              currentPageIndex = index;
+            });
+          },
+          indicatorColor: Colors.amber,
+          selectedIndex: currentPageIndex,
+          destinations: const <Widget>[
+            NavigationDestination(
+              selectedIcon: Icon(Icons.home),
+              icon: Icon(Icons.home_outlined),
+              label: 'All Plants',
+            ),
+            NavigationDestination(
+              selectedIcon: Icon(Icons.money),
+              icon: Icon(Icons.home_outlined),
+              label: 'My Plants',
+            ),
+          ]),
+      body: <Widget>[
+        /// Home page
+        Card(
+          child: AllPlants(),
+        ),
+        Card(child: Text("To be implemented."))
+      ][currentPageIndex],
       floatingActionButton: FloatingActionButton(
         child: Image.asset('assets/images/plantImage.png'),
         onPressed: () {
@@ -96,6 +121,3 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
-
-

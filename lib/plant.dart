@@ -4,8 +4,6 @@ class Plant {
   Plant({required this.values});
 
   factory Plant.fromJson(List<dynamic> json) {
-    return Plant(
-      values: json
-    );
+    return Plant(values: json);
   }
 }
