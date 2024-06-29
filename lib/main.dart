@@ -189,8 +189,47 @@ class selectedPlants extends StatelessWidget {
   selectedPlants({required this.plant});
   @override
   Widget build(BuildContext context) {
-    for (var plant in plant.values)
-    {return Text(plant.values[plant]);}
+    ListView.builder(
+            shrinkWrap: true,
+            padding: const EdgeInsets.all(8),
+            itemCount: plant.values.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                height: 50,
+                margin: EdgeInsets.all(2),
+                // color: msgCount[index]>=10? Colors.blue[400] msgCount[index]>3? Colors.blue[100]: Colors.grey,
+                child: Container(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(3, 0, 0, 0),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              print("Do something!");
+                            },
+                            style: ButtonStyle(
+                                tapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                                shape: WidgetStateProperty.all(
+                                  RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(40.0)),
+                                ),
+                                backgroundColor: WidgetStateProperty.all(
+                                    Colors.white)),
+                            child: Text(
+                              '${plant.values[index]} ',
+                              style: TextStyle(fontSize: 18),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                        ]),
+                  ),
+                ),
+              );
+            });
     
     throw Exception('Failed to load plant info');
   }
