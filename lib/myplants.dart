@@ -5,18 +5,16 @@ import 'plant.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:collection/collection.dart';
 
-class AllPlants extends StatefulWidget {
+class MyPlants extends StatefulWidget {
   @override
-  State<AllPlants> createState() => _AllPlantsState();
+  State<MyPlants> createState() => _MyPlantsState();
 }
 
-class _AllPlantsState extends State<AllPlants> {
+class _MyPlantsState extends State<MyPlants> {
 
-  List<Plant> addedPlants = [];
-
-  Future<List<Plant>> fetchPlants() async {
+ Future<List<Plant>> fetchPlants() async {
     final String url =
-        'https://script.googleusercontent.com/macros/echo?user_content_key=_B-W-AHmjR26KU5dTCw1S-B2DHZEuws01wTIWfteAhh1hJmlRPaKDGo9Y28yztqfS4hpvU0auyjWeXE6R04QW4DiUHEKgbgXm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnO2U0Bl7BUAklHHeNRDrUcIoEcGPmrrlK_ulnafppH3w7o8FAM3ee_EkorPOGtTMgbRERG-Fn53JVefYCVkuXGQB2G7xa3afN9z9Jw9Md8uu&lib=MxnqXoKCpdNq7DADJrJEvDBtmPjijWW5o';
+        'https://script.googleusercontent.com/macros/echo?user_content_key=oowhxHnTBvTx7NHq7s1-L1bFZ0Q5OX-lWqpDVv2h5N2IGGRrgfRHsAb0BVEtOziJrwRAxBVdlrl3J7fKsXV_FYyKhgiEheghm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnJigKuI4g_xMEZuR9PYl2cL-3n2F4eLbuz74z0T9PLbN9cs2I0JMs9mDQ6rNaHt20Sn8bVbBb5Jc0m5V72Znp5U9UcY3T9_dZx1DRVMwfnbWA-elmIfAQ60&lib=MOSwzJUSqFdCcsvaTtaA8SOrAvy20VzFd';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -43,15 +41,7 @@ class _AllPlantsState extends State<AllPlants> {
                 title: Text(plant.values[0]),
                 //leading: Image.network(plant.imageUrl),
                 subtitle: Text('Botanic Name: ${plant.values[1]}'),
-                trailing: Column(
-                  children: <Widget>[
-                    ElevatedButton(
-                        child: Text('Add Plant'),
-                        onPressed: () {
-                          addedPlants.add(plant);
-                        })
-                  ],
-                ),
+                
 
                 onTap: () {
                   Navigator.push(

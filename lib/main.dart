@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'allplants.dart';
+import 'myplants.dart';
 
 void main() {
   runApp(const MyApp());
@@ -103,21 +104,11 @@ class _MyHomePageState extends State<MyHomePage> {
         Card(
           child: AllPlants(),
         ),
-        Card(child: Text("To be implemented."))
+        Card(
+          child: MyPlants(),
+        ),
       ][currentPageIndex],
-      floatingActionButton: FloatingActionButton(
-        child: Image.asset('assets/images/plantImage.png'),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => SecondScreen()),
-          );
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      // bottomNavigationBar: BottomNavigationBar(items: [
-
-      // ],)
+      
     );
   }
 }
