@@ -72,27 +72,9 @@ class selectedPlants extends StatelessWidget {
   final List<String> plantStr = [];
 
   final List<String> attr = [
-    'Common Name',	
+    'Date',	
     'Botanic Name',
-    'Plant Type',
-    'Height',
-    'Width',
-    'Flowering Season',
-    'Flower Color',
-    'Sun',
-    'Water Needs',
-    'USDA Hardiness Zone',
-    'Soil Type',
-    'Deer Resistant',
-    'Good for Pollination',
-    'Winter Interest',
-    'North American Native',
-    'Year Introduced',
-    'Annual Commercial Maintenance',
-    '5-10 Year Commercial Maintenance',
-    'Elevation Guide',
-    'Description',	
-  
+    'Notes'
   ];
   final List<String> plantInfo = [];
 
@@ -109,13 +91,7 @@ class selectedPlants extends StatelessWidget {
     }
   return Scaffold(
       appBar: AppBar(
-        title: new InkWell(
-              child: new Text('PDF with Additional Info',
-              style: TextStyle(
-    decoration: TextDecoration.underline,
-  ),),
-              onTap: () => launch(plantStr[20])
-      )
+        title:  new Text(plant.values[1]),
       ),
       body: ListView.builder(
     itemCount: plantInfo.length,

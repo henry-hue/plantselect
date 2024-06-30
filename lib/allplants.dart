@@ -11,7 +11,6 @@ class AllPlants extends StatefulWidget {
 }
 
 class _AllPlantsState extends State<AllPlants> {
-
   List<Plant> addedPlants = [];
 
   Future<List<Plant>> fetchPlants() async {
@@ -69,20 +68,17 @@ class _AllPlantsState extends State<AllPlants> {
         }
         // By default, show a loading spinner
         return Center(child: CircularProgressIndicator());
-        
       },
     );
-    
   }
 }
-
 
 class selectedPlants extends StatelessWidget {
   final Plant plant;
   final List<String> plantStr = [];
 
   final List<String> attr = [
-    'Common Name',	
+    'Common Name',
     'Botanic Name',
     'Plant Type',
     'Height',
@@ -101,8 +97,7 @@ class selectedPlants extends StatelessWidget {
     'Annual Commercial Maintenance',
     '5-10 Year Commercial Maintenance',
     'Elevation Guide',
-    'Description',	
-  
+    'Description',
   ];
   final List<String> plantInfo = [];
 
@@ -112,28 +107,29 @@ class selectedPlants extends StatelessWidget {
     for (final value in plant.values) {
       plantStr.add(value.toString());
     }
-    
 
     for (final pairs in IterableZip([attr, plantStr])) {
       plantInfo.add('${pairs[0]} : ${pairs[1]}');
     }
-  return Scaffold(
+    String url = plantStr[20];
+    String fixedUrl = url.replaceAll("plantselect.org", "plantselect.org/plant");
+    final Uri uri = Uri.parse(fixedUrl);
+
+    return Scaffold(
       appBar: AppBar(
-        title: new InkWell(
-              child: new Text('PDF with Additional Info',
-              style: TextStyle(
-    decoration: TextDecoration.underline,
-  ),),
-              onTap: () => launch(plantStr[20])
-      )
-      ),
+          title: new InkWell(
+              child: new Text(
+                'Additional Info',
+                style: TextStyle(
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+              onTap: () => launchUrl(uri, webOnlyWindowName: "_blank"))),
       body: ListView.builder(
-    itemCount: plantInfo.length,
-    itemBuilder: (BuildContext context,int index){
-  return Text(plantInfo[index]);
-}),
-      );
-
-}
-
+          itemCount: plantInfo.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Text(plantInfo[index]);
+          }),
+    );
+  }
 }
