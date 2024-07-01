@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'plant.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:collection/collection.dart';
 
 class MyPlants extends StatefulWidget {

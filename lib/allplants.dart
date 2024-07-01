@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'plant.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:collection/collection.dart';
 
 class AllPlants extends StatefulWidget {
+  const AllPlants({super.key, required this.plants});
+  final List<Plant> plants;
+
   @override
   State<AllPlants> createState() => _AllPlantsState();
 }
@@ -13,31 +14,12 @@ class AllPlants extends StatefulWidget {
 class _AllPlantsState extends State<AllPlants> {
   List<Plant> addedPlants = [];
 
-  Future<List<Plant>> fetchPlants() async {
-    final String url =
-        'https://script.googleusercontent.com/macros/echo?user_content_key=_B-W-AHmjR26KU5dTCw1S-B2DHZEuws01wTIWfteAhh1hJmlRPaKDGo9Y28yztqfS4hpvU0auyjWeXE6R04QW4DiUHEKgbgXm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnO2U0Bl7BUAklHHeNRDrUcIoEcGPmrrlK_ulnafppH3w7o8FAM3ee_EkorPOGtTMgbRERG-Fn53JVefYCVkuXGQB2G7xa3afN9z9Jw9Md8uu&lib=MxnqXoKCpdNq7DADJrJEvDBtmPjijWW5o';
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      List<dynamic> data = jsonDecode(response.body);
-      List<dynamic> values = data.sublist(1);
-      List<Plant> plants = values.map((json) => Plant.fromJson(json)).toList();
-      return plants;
-    } else {
-      throw Exception('Failed to load plants');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Plant>>(
-      future: fetchPlants(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
+    return ListView.builder(
+            itemCount: widget.plants.length,
             itemBuilder: (context, index) {
-              Plant plant = snapshot.data![index];
+              Plant plant = widget.plants[index];
               return ListTile(
                 title: Text(plant.values[0]),
                 //leading: Image.network(plant.imageUrl),
@@ -63,13 +45,6 @@ class _AllPlantsState extends State<AllPlants> {
               );
             },
           );
-        } else if (snapshot.hasError) {
-          return Center(child: Text('${snapshot.error}'));
-        }
-        // By default, show a loading spinner
-        return Center(child: CircularProgressIndicator());
-      },
-    );
   }
 }
 
