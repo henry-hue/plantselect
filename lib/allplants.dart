@@ -12,7 +12,6 @@ class AddPlant extends StatefulWidget {
 }
 
 class _AddPlantState extends State<AddPlant> {
-late List<Plant> plants;
 
   bool isDark = false;
 
@@ -60,7 +59,7 @@ late List<Plant> plants;
           }, suggestionsBuilder:
           (BuildContext context, SearchController controller) {
             return List<ListTile>.generate(5, (int index) {
-              final String item = plants[index].values[0];
+              final String item = widget.plants[index].values[0];
               return ListTile(
                 title: Text(item),
                 onTap: () {
