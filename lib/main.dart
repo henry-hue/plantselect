@@ -123,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
             NavigationDestination(
               selectedIcon: Icon(Icons.home),
               icon: Icon(Icons.home_outlined),
-              label: 'All Plants',
+              label: 'Add Plant',
             ),
             NavigationDestination(
               selectedIcon: Icon(Icons.money),
@@ -133,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ]),
       body: <Widget>[
         Card(
-          child: AllPlants(plants: plants),
+          child: AddPlant(plants: plants),
         ),
         Card(
           child: MyPlants(),
