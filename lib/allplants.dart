@@ -58,8 +58,12 @@ class _AddPlantState extends State<AddPlant> {
             );
           }, suggestionsBuilder:
           (BuildContext context, SearchController controller) {
-            return List<ListTile>.generate(5, (int index) {
-              final String item = widget.plants[index].values[0];
+            String searchText = controller.text;
+            List<Plant> filteredPlants = widget.plants.where((plant) =>
+              plant.values[0].toLowerCase().contains(searchText.toLowerCase()))
+          .toList();
+            return List<ListTile>.generate(filteredPlants.length, (int index) {
+              final String item = filteredPlants[index].values[0];
               return ListTile(
                 title: Text(item),
                 onTap: () {
