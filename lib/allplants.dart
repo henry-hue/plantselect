@@ -40,21 +40,6 @@ class _AddPlantState extends State<AddPlant> {
                 controller.openView();
               },
               leading: const Icon(Icons.search),
-              trailing: <Widget>[
-                Tooltip(
-                  message: 'Change brightness mode',
-                  child: IconButton(
-                    isSelected: isDark,
-                    onPressed: () {
-                      setState(() {
-                        isDark = !isDark;
-                      });
-                    },
-                    icon: const Icon(Icons.wb_sunny_outlined),
-                    selectedIcon: const Icon(Icons.brightness_2_outlined),
-                  ),
-                )
-              ],
             );
           }, suggestionsBuilder:
           (BuildContext context, SearchController controller) {
@@ -64,119 +49,234 @@ class _AddPlantState extends State<AddPlant> {
           .toList();
             return List<ListTile>.generate(filteredPlants.length, (int index) {
               final String item = filteredPlants[index].values[0];
+              //final Plant selectP = Plant filteredPlants[index];
               return ListTile(
                 title: Text(item),
                 onTap: () {
-                  setState(() {
-                    controller.closeView(item);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => selectedPlants(plant: filteredPlants[index]),
+                    ),
+                  );
                   });
                 },
               );
-            });
-          }),
-        ),
-      ),
-    );
+            }))));
+          }
+        
   }              
+
+
+class selectedPlants extends StatelessWidget {
+  final Plant plant;
+  final List<String> plantStr = [];
+
+  final List<String> attr = [
+    'Common Name',
+    'Botanic Name',
+    'Plant Type',
+    'Height',
+    'Width',
+    'Flowering Season',
+    'Flower Color',
+    'Sun',
+    'Water Needs',
+    'USDA Hardiness Zone',
+    'Soil Type',
+    'Deer Resistant',
+    'Good for Pollination',
+    'Winter Interest',
+    'North American Native',
+    'Year Introduced',
+    'Annual Commercial Maintenance',
+    '5-10 Year Commercial Maintenance',
+    'Elevation Guide',
+    'Description',
+  ];
+  final List<String> plantInfo = [];
+
+  selectedPlants({required this.plant});
+  @override
+  Widget build(BuildContext context) {
+    for (final value in plant.values) {
+      plantStr.add(value.toString());
+    }
+
+    for (final pairs in IterableZip([attr, plantStr])) {
+      plantInfo.add('${pairs[0]} : ${pairs[1]}');
+    }
+    String url = plantStr[20];
+    String fixedUrl = url.replaceAll("plantselect.org", "plantselect.org/plant");
+    final Uri uri = Uri.parse(fixedUrl);
+
+    return Scaffold(
+      appBar: AppBar(
+          title: new InkWell(
+              child: new Text(
+                'Additional Info',
+                style: TextStyle(
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+              onTap: () => launchUrl(uri, webOnlyWindowName: "_blank"))),
+              floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => addingPlant(plant: plant),
+                  //   ),
+                  // );
+                  
+        },
+      
+        child: const Text('Add Plant', textAlign: TextAlign.center),
+        
+      ),
+
+      body: ListView.builder(
+          itemCount: plantInfo.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Text(plantInfo[index]);
+          }),
+    );
+  }
 }
 
-
-
-//class _AddPlantState extends State<AddPlant> {
-  
-//   List<Plant> addedPlants = [];
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ListView.builder(
-//             itemCount: widget.plants.length,
-//             itemBuilder: (context, index) {
-//               Plant plant = widget.plants[index];
-//               return ListTile(
-//                 title: Text(plant.values[0]),
-//                 //leading: Image.network(plant.imageUrl),
-//                 subtitle: Text('Botanic Name: ${plant.values[1]}'),
-//                 trailing: Column(
-//                   children: <Widget>[
-//                     ElevatedButton(
-//                         child: Text('Add Plant'),
-//                         onPressed: () {
-//                           addedPlants.add(plant);
-//                         })
-//                   ],
-//                 ),
-
-//                 onTap: () {
-//                   Navigator.push(
-//                     context,
-//                     MaterialPageRoute(
-//                       builder: (context) => selectedPlants(plant: plant),
-//                     ),
-//                   );
-//                 },
-//               );
-//             },
-//           );
-//   }
-// }
-
-// class selectedPlants extends StatelessWidget {
+// class addingPlant extends StatelessWidget {
 //   final Plant plant;
-//   final List<String> plantStr = [];
 
-//   final List<String> attr = [
-//     'Common Name',
-//     'Botanic Name',
-//     'Plant Type',
-//     'Height',
-//     'Width',
-//     'Flowering Season',
-//     'Flower Color',
-//     'Sun',
-//     'Water Needs',
-//     'USDA Hardiness Zone',
-//     'Soil Type',
-//     'Deer Resistant',
-//     'Good for Pollination',
-//     'Winter Interest',
-//     'North American Native',
-//     'Year Introduced',
-//     'Annual Commercial Maintenance',
-//     '5-10 Year Commercial Maintenance',
-//     'Elevation Guide',
-//     'Description',
-//   ];
-//   final List<String> plantInfo = [];
+// // Create a global key that uniquely identifies the Form widget
+//   // and allows validation of the form.
+//   //
+//   // Note: This is a `GlobalKey<FormState>`,
+//   // not a GlobalKey<MyCustomFormState>.
+//   final _formKey = GlobalKey<FormState>();
+//   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-//   selectedPlants({required this.plant});
+//   // TextField Controllers
+//   TextEditingController DateController = TextEditingController();
+//   TextEditingController PlantController = TextEditingController();
+//   TextEditingController NotesController = TextEditingController();
+
+//   // Method to Submit Feedback and save it in Google Sheets
+//   void _submitForm() {
+//     // Validate returns true if the form is valid, or false
+//     // otherwise.
+//     if (_formKey.currentState.validate()) {
+//       // If the form is valid, proceed.
+//       FeedbackForm feedbackForm = FeedbackForm(
+//           DateController.text,
+//           PlantController.text,
+//           NotesController.text);
+
+//       FormController formController = FormController();
+
+//       _showSnackbar("Submitting Feedback");
+
+//       // Submit 'feedbackForm' and save it in Google Sheets.
+//       formController.submitForm(feedbackForm, (String response) {
+//         print("Response: $response");
+//         if (response == FormController.STATUS_SUCCESS) {
+//           // Feedback is saved succesfully in Google Sheets.
+//           _showSnackbar("Feedback Submitted");
+//         } else {
+//           // Error Occurred while saving data in Google Sheets.
+//           _showSnackbar("Error Occurred!");
+//         }
+//       });
+//     }
+//   }
+  
+//   // Method to show snackbar with 'message'.
+//   _showSnackbar(String message) {
+//       final snackBar = SnackBar(content: Text(message));
+//       _scaffoldKey.currentState.showSnackBar(snackBar); 
+//   }
+
 //   @override
 //   Widget build(BuildContext context) {
-//     for (final value in plant.values) {
-//       plantStr.add(value.toString());
-//     }
-
-//     for (final pairs in IterableZip([attr, plantStr])) {
-//       plantInfo.add('${pairs[0]} : ${pairs[1]}');
-//     }
-//     String url = plantStr[20];
-//     String fixedUrl = url.replaceAll("plantselect.org", "plantselect.org/plant");
-//     final Uri uri = Uri.parse(fixedUrl);
-
 //     return Scaffold(
+//       key: _scaffoldKey,  
+
 //       appBar: AppBar(
-//           title: new InkWell(
-//               child: new Text(
-//                 'Additional Info',
-//                 style: TextStyle(
-//                   decoration: TextDecoration.underline,
-//                 ),
+//         title: Text('Add Plant'),
+//       ),
+//       body: Center(
+//           child: Column(
+//             mainAxisAlignment: MainAxisAlignment.start,
+//             children: <Widget>[
+//               Form(
+//                 key: _formKey,
+//                 child:
+//                   Padding(padding: EdgeInsets.all(16),
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: <Widget>[
+//                       TextFormField(
+//                         controller: DateController,
+//                         validator: (value) {
+                          
+//                           return null;
+//                         },
+//                         decoration: InputDecoration(
+//                           labelText: 'Date'
+//                         ),
+//                       ),
+//                       TextFormField(
+//                         controller: Controller,
+//                         validator: (value) {
+//                           if (!value.contains("@")) {
+//                             return 'Enter Valid Email';
+//                           }
+//                           return null;
+//                         },
+//                         keyboardType: TextInputType.emailAddress,
+//                         decoration: InputDecoration(
+//                           labelText: 'Email'
+//                         ),
+//                       ),
+//                       TextFormField(
+//                         controller: mobileNoController,
+//                         validator: (value) {
+//                           if (value.trim().length != 10) {
+//                             return 'Enter 10 Digit Mobile Number';
+//                           }
+//                           return null;
+//                         },
+//                         keyboardType: TextInputType.number,
+//                         decoration: InputDecoration(
+//                           labelText: 'Mobile Number',
+//                         ),
+//                       ),
+//                       TextFormField(
+//                         controller: feedbackController,
+//                         validator: (value) {
+//                           if (value.isEmpty) {
+//                             return 'Enter Valid Feedback';
+//                           }
+//                           return null;
+//                         },
+//                         keyboardType: TextInputType.multiline,
+//                         decoration: InputDecoration(
+//                           labelText: 'Feedback'
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ) 
 //               ),
-//               onTap: () => launchUrl(uri, webOnlyWindowName: "_blank"))),
-//       body: ListView.builder(
-//           itemCount: plantInfo.length,
-//           itemBuilder: (BuildContext context, int index) {
-//             return Text(plantInfo[index]);
-//           }),
+//               RaisedButton(
+//                 color: Colors.blue,
+//                 textColor: Colors.white,
+//                 onPressed:_submitForm,
+//                 child: Text('Submit Feedback'),
+//               ),
+//             ],
+//           ),
+//         ),
 //     );
 //   }
 // }
