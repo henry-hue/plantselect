@@ -14,8 +14,9 @@ class FeedbackForm {
 
   // Method to make GET parameters.
   Map toJson() => {
-        'Date': Date,
-        'Plant': Plant,
-        'Notes': Notes
+        'date': Date,
+        'plant': Plant,
+        'notes': Notes,
+        'userName': 'rraymondr'
       };
 }
