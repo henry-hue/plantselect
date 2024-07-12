@@ -19,7 +19,9 @@ class FormController {
       FeedbackForm feedbackForm, void Function(String) callback) async {
     try {
       var uri = Uri.parse(URL); 
-      await http.post(uri, body: feedbackForm.toJson()).then((response) async {
+      await http.post(uri, body: feedbackForm.toJson(), headers: {
+          "content-type": "application/json"
+        }).then((response) async {
         if (response.statusCode == 302) {
           var url = response.headers['location'];
           await http.get(url as Uri).then((response) {

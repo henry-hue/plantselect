@@ -1,3 +1,4 @@
+import 'dart:convert';
 
 /// FeedbackForm is a data class which stores data fields of Feedback.
 class FeedbackForm {
@@ -13,10 +14,10 @@ class FeedbackForm {
   }
 
   // Method to make GET parameters.
-  Map toJson() => {
+  dynamic toJson() => jsonEncode({
         'date': Date,
         'plant': Plant,
         'notes': Notes,
-        'userName': 'rraymondr'
-      };
+        'userName': 'rraymond'
+      });
 }
