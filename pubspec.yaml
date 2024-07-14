@@ -67,6 +67,7 @@ dependencies:
   #   }
   # }
   http: ^1.2.1
+  gsheets: ^0.5.0
 
 dev_dependencies:
   flutter_test:
