@@ -4,20 +4,25 @@ import 'dart:convert';
 class FeedbackForm {
   String Date;
   String Plant;
-  String Notes;
+  String Living;
+  String Quantity;
+  String Nursery;
 
-  FeedbackForm(this.Date, this.Plant, this.Notes);
+  FeedbackForm(this.Date, this.Plant, this.Living, this.Quantity, this.Nursery);
 
   factory FeedbackForm.fromJson(dynamic json) {
     return FeedbackForm("${json['Date']}", "${json['Plant']}",
-        "${json['Notes']}");
+        "${json['Living']}", "${json['Quantity']}",
+        "${json['Nursery']}");
   }
 
   // Method to make GET parameters.
   dynamic toJson() => jsonEncode({
         'date': Date,
         'plant': Plant,
-        'notes': Notes,
+        'Living': Living,
+        'Quantity': Quantity,
+        'Nursery': Nursery,
         'userName': 'rraymond'
       });
 }

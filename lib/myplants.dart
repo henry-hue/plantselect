@@ -42,11 +42,12 @@ class _MyPlantsState extends State<MyPlants> {
             itemBuilder: (context, index) {
               Plant plant = snapshot.data![index];
               return ListTile(
-                                title: new Center(child: new Text('${plant.values[1]} (${plant.values[0]})',
+                                title: new Center(child: new Text('${plant.values[3]} ${plant.values[1]}',
               style: new TextStyle(
                   fontWeight: FontWeight.w800, fontSize: 15),)),
             subtitle: new Center(child: 
-            Text('''${plant.values[2]}''')),
+            Text('''${plant.values[2]} ${plant.values[0]}
+                    ''')),
                 
                 
                 onTap: () {

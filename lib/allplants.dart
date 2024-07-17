@@ -5,8 +5,6 @@ import 'plant.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:collection/collection.dart';
 
-import 'form_controller.dart';
-import 'form.dart';
 
 import 'package:gsheets/gsheets.dart';
 
@@ -43,9 +41,11 @@ class _AddPlantState extends State<AddPlant> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   
   // TextField Controllers
-  TextEditingController DateController = TextEditingController();
+  //TextEditingController DateController = TextEditingController();
   TextEditingController PlantController = TextEditingController();
   TextEditingController LivingController = TextEditingController();
+  TextEditingController QuantityController = TextEditingController();
+  TextEditingController NurseryController = TextEditingController();
 
    // Method to show snackbar with 'message'.
   _showSnackbar(String message) {
@@ -68,44 +68,50 @@ class _AddPlantState extends State<AddPlant> {
   sheet ??= await ss.addWorksheet(tab);
 
   // update cell at 'B2' by inserting string 'new'
-  
+  DateTime now = new DateTime.now();
+    DateTime date = new DateTime(now.year, now.month, now.day); 
+    String justDate = date.toString().substring(0,10);
   //await sheet.values.insertValue(DateController.text, column: 1, row: 2);
   final newRow = {
-    'Date': DateController.text,
+    'Date': justDate,
     'Plant': PlantController.text,
-    'Alive or Dead': LivingController.text
+    'Living': LivingController.text,
+    'Quantity': QuantityController.text,
+    'Nursery': NurseryController.text
   };
   await sheet.values.map.appendRow(newRow);
 
   }
   // Method to Submit Feedback and save it in Google Sheets
   void _submitForm() {
-
+    
     // Validate returns true if the form is valid, or false
     // otherwise.
-    if (_formKey.currentState!.validate()) {
-      // If the form is valid, proceed.
-      FeedbackForm feedbackForm = FeedbackForm(
-          DateController.text,
-          PlantController.text,
-          LivingController.text);
+    // if (_formKey.currentState!.validate()) {
+    //   // If the form is valid, proceed.
+    //   FeedbackForm feedbackForm = FeedbackForm(
+    //       justDate,
+    //       PlantController.text,
+    //       LivingController.text,
+    //       QuantityController.text,
+    //       NurseryController.text);
 
-      FormController formController = FormController();
+    //   FormController formController = FormController();
 
-      _showSnackbar("Submitting Feedback");
+    //   _showSnackbar("Submitting Feedback");
 
-      // Submit 'feedbackForm' and save it in Google Sheets.
-      formController.submitForm(feedbackForm, (String response) {
-        print("Response: $response");
-        if (response == FormController.STATUS_SUCCESS) {
-          // Feedback is saved succesfully in Google Sheets.
-          _showSnackbar("Feedback Submitted");
-        } else {
-          // Error Occurred while saving data in Google Sheets.
-          _showSnackbar("Error Occurred!");
-        }
-      });
-    }
+    //   // Submit 'feedbackForm' and save it in Google Sheets.
+    //   formController.submitForm(feedbackForm, (String response) {
+    //     print("Response: $response");
+    //     if (response == FormController.STATUS_SUCCESS) {
+    //       // Feedback is saved succesfully in Google Sheets.
+    //       _showSnackbar("Feedback Submitted");
+    //     } else {
+    //       // Error Occurred while saving data in Google Sheets.
+    //       _showSnackbar("Error Occurred!");
+    //     }
+    //   });
+    // }
     
     addRow();
 
@@ -116,8 +122,12 @@ class _AddPlantState extends State<AddPlant> {
   Widget build(BuildContext context) {
     final ThemeData themeData = ThemeData(
         );
+    DateTime now = new DateTime.now();
+    DateTime date = new DateTime(now.year, now.month, now.day); 
+    String justDate = date.toString().substring(0,10);
 
     return MaterialApp(
+      
       key: _scaffoldKey,
       theme: themeData,
       home: Scaffold(
@@ -166,12 +176,7 @@ class _AddPlantState extends State<AddPlant> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      TextFormField(
-                        controller: DateController,
-                        decoration: InputDecoration(
-                          labelText: 'Date: mm/dd/yyyy'
-                        ),
-                      ),
+                      
                       TextFormField(
                         controller: PlantController,
                         decoration: InputDecoration(
@@ -182,6 +187,18 @@ class _AddPlantState extends State<AddPlant> {
                         controller: LivingController,
                         decoration: InputDecoration(
                           labelText: 'Alive or Dead',
+                        ),
+                      ),
+                      TextFormField(
+                        controller: QuantityController,
+                        decoration: InputDecoration(
+                          labelText: 'Quantity',
+                        ),
+                      ),
+                      TextFormField(
+                        controller: NurseryController,
+                        decoration: InputDecoration(
+                          labelText: 'Nursery',
                         ),
                       ),
                     ],
