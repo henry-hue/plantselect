@@ -8,6 +8,8 @@ import 'package:collection/collection.dart';
 
 
 class MyPlants extends StatefulWidget {
+  const MyPlants({super.key, required this.plants});
+  final List<Plant> plants;
   @override
   State<MyPlants> createState() => _MyPlantsState();
 }
@@ -40,9 +42,12 @@ class _MyPlantsState extends State<MyPlants> {
             itemBuilder: (context, index) {
               Plant plant = snapshot.data![index];
               return ListTile(
-                title: Text(plant.values[0]),
-                //leading: Image.network(plant.imageUrl),
-                subtitle: Text('Botanic Name: ${plant.values[1]}'),
+                                title: new Center(child: new Text('${plant.values[1]} (${plant.values[0]})',
+              style: new TextStyle(
+                  fontWeight: FontWeight.w800, fontSize: 15),)),
+            subtitle: new Center(child: 
+            Text('''${plant.values[2]}''')),
+                
                 
                 onTap: () {
                   Navigator.push(

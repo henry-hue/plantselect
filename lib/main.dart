@@ -142,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: AddPlant(plants: plants),
         ),
         Card(
-          child: MyPlants(),
+          child: MyPlants(plants: plants),
         ),
       ][currentPageIndex],
     );
