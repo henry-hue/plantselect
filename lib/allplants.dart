@@ -1,12 +1,11 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'plant.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:collection/collection.dart';
-
-
 import 'package:gsheets/gsheets.dart';
+import 'dart:io';
+
 
 
 const _credentials = r'''
@@ -37,15 +36,16 @@ class AddPlant extends StatefulWidget {
 }
 
 class _AddPlantState extends State<AddPlant> {
+
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   
   // TextField Controllers
   //TextEditingController DateController = TextEditingController();
-  TextEditingController PlantController = TextEditingController();
-  TextEditingController LivingController = TextEditingController();
-  TextEditingController QuantityController = TextEditingController();
-  TextEditingController NurseryController = TextEditingController();
+  TextEditingController plantController = TextEditingController();
+  TextEditingController livingController = TextEditingController();
+  TextEditingController quantityController = TextEditingController();
+  TextEditingController nurseryController = TextEditingController();
 
    // Method to show snackbar with 'message'.
   _showSnackbar(String message) {
@@ -61,23 +61,22 @@ class _AddPlantState extends State<AddPlant> {
   // fetch spreadsheet by its id
   final ss = await gsheets.spreadsheet(_spreadsheetId);
 
-  print("hello");
-   // get worksheet by its title
+ // get worksheet by its title
   var sheet = ss.worksheetByTitle(tab);
   // create worksheet if it does not exist yet
   sheet ??= await ss.addWorksheet(tab);
 
   // update cell at 'B2' by inserting string 'new'
-  DateTime now = new DateTime.now();
-    DateTime date = new DateTime(now.year, now.month, now.day); 
+    DateTime now = DateTime.now();
+    DateTime date = DateTime(now.year, now.month, now.day); 
     String justDate = date.toString().substring(0,10);
   //await sheet.values.insertValue(DateController.text, column: 1, row: 2);
   final newRow = {
     'Date': justDate,
-    'Plant': PlantController.text,
-    'Living': LivingController.text,
-    'Quantity': QuantityController.text,
-    'Nursery': NurseryController.text
+    'Plant': plantController.text,
+    'Living': livingController.text,
+    'Quantity': quantityController.text,
+    'Nursery': nurseryController.text
   };
   await sheet.values.map.appendRow(newRow);
 
@@ -85,51 +84,21 @@ class _AddPlantState extends State<AddPlant> {
   // Method to Submit Feedback and save it in Google Sheets
   void _submitForm() {
     
-    // Validate returns true if the form is valid, or false
-    // otherwise.
-    // if (_formKey.currentState!.validate()) {
-    //   // If the form is valid, proceed.
-    //   FeedbackForm feedbackForm = FeedbackForm(
-    //       justDate,
-    //       PlantController.text,
-    //       LivingController.text,
-    //       QuantityController.text,
-    //       NurseryController.text);
-
-    //   FormController formController = FormController();
-
-    //   _showSnackbar("Submitting Feedback");
-
-    //   // Submit 'feedbackForm' and save it in Google Sheets.
-    //   formController.submitForm(feedbackForm, (String response) {
-    //     print("Response: $response");
-    //     if (response == FormController.STATUS_SUCCESS) {
-    //       // Feedback is saved succesfully in Google Sheets.
-    //       _showSnackbar("Feedback Submitted");
-    //     } else {
-    //       // Error Occurred while saving data in Google Sheets.
-    //       _showSnackbar("Error Occurred!");
-    //     }
-    //   });
-    // }
-    
     addRow();
 
+  }
+
+  void _navigateToNextScreen() {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => addPhoto()));
   }
   
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData themeData = ThemeData(
-        );
-    DateTime now = new DateTime.now();
-    DateTime date = new DateTime(now.year, now.month, now.day); 
-    String justDate = date.toString().substring(0,10);
-
     return MaterialApp(
-      
+
       key: _scaffoldKey,
-      theme: themeData,
+
       home: Scaffold(
         
         appBar: AppBar(title: const Text('search for plant or type in plant name')),
@@ -162,7 +131,7 @@ class _AddPlantState extends State<AddPlant> {
               return ListTile(
                 title: Text(item),
                 onTap: () {
-                  PlantController.text = item;
+                  plantController.text = item;
                   }
                   );
                 },
@@ -178,25 +147,25 @@ class _AddPlantState extends State<AddPlant> {
                     children: <Widget>[
                       
                       TextFormField(
-                        controller: PlantController,
+                        controller: plantController,
                         decoration: InputDecoration(
                           labelText: 'Plant Name'
                         ),
                       ),
                       TextFormField(
-                        controller: LivingController,
+                        controller: livingController,
                         decoration: InputDecoration(
                           labelText: 'Alive or Dead',
                         ),
                       ),
                       TextFormField(
-                        controller: QuantityController,
+                        controller: quantityController,
                         decoration: InputDecoration(
                           labelText: 'Quantity',
                         ),
                       ),
                       TextFormField(
-                        controller: NurseryController,
+                        controller: nurseryController,
                         decoration: InputDecoration(
                           labelText: 'Nursery',
                         ),
@@ -206,8 +175,9 @@ class _AddPlantState extends State<AddPlant> {
                 ) 
               ),
               ElevatedButton(
-                onPressed:_submitForm,
-                child: Text('Submit to My Plants'),
+                onPressed: _navigateToNextScreen,
+
+                child: Text('Next'),
               ),
           ]
           )
@@ -218,7 +188,73 @@ class _AddPlantState extends State<AddPlant> {
         
   }              
 
+class addPhoto extends StatelessWidget {
+  final ThemeData themeData = ThemeData(
+        );
 
+  @override
+  Widget build(BuildContext context) {
+    
+    return MaterialApp(
+      //theme: themeData,
+
+    home: Scaffold(
+      
+      appBar: AppBar(
+        backgroundColor: Colors.lightGreen,
+        title: Image.asset('assets/images/logo.png'),
+
+      ),
+      body: Center(
+        child: Padding(padding: EdgeInsets.all(40),
+        child: Column(
+          children: [
+
+            MaterialButton(
+                color: Colors.lightGreen,
+                child: const Text(
+                    "Pick Image from Gallery",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800, fontSize: 15
+                  )
+                ),
+                onPressed: () {
+                  File? image;
+                Future pickImage() async {
+                    
+                      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+                if(image == null) return;
+                final imageTemp = File(image.path);
+                    } 
+                  
+                }
+            ),
+
+            Padding(padding: EdgeInsets.all(16)),
+
+            MaterialButton(
+                color: Colors.lightGreen,
+                child: const Text(
+                    "Pick Image from Camera",
+                    style: TextStyle(
+                        fontWeight: FontWeight.w800, fontSize: 15
+                    )
+                ),
+                onPressed: () {
+                }
+                
+            ),
+          ],
+        ),
+        
+      )
+      
+    )
+    )
+    );
+    
+  }
+}
 // class selectedPlants extends StatelessWidget {
 //   final Plant plant;
 //   final List<String> plantStr = [];

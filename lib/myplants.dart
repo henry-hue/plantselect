@@ -12,9 +12,13 @@ class MyPlants extends StatefulWidget {
   final List<Plant> plants;
   @override
   State<MyPlants> createState() => _MyPlantsState();
+  
 }
 
+
 class _MyPlantsState extends State<MyPlants> {
+
+
 
  Future<List<Plant>> fetchPlants() async {
     final String url =
@@ -33,19 +37,22 @@ class _MyPlantsState extends State<MyPlants> {
 
   @override
   Widget build(BuildContext context) {
+    
     return FutureBuilder<List<Plant>>(
       future: fetchPlants(),
       builder: (context, snapshot) {
+
         if (snapshot.hasData) {
           return ListView.builder(
+            
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
               Plant plant = snapshot.data![index];
               return ListTile(
-                                title: new Center(child: new Text('${plant.values[3]} ${plant.values[1]}',
-              style: new TextStyle(
+              title: Center(child: Text('${plant.values[3]} ${plant.values[1]}',
+              style: TextStyle(
                   fontWeight: FontWeight.w800, fontSize: 15),)),
-            subtitle: new Center(child: 
+            subtitle: Center(child: 
             Text('''${plant.values[2]} ${plant.values[0]}
                     ''')),
                 
@@ -64,6 +71,7 @@ class _MyPlantsState extends State<MyPlants> {
         } else if (snapshot.hasError) {
           return Center(child: Text('${snapshot.error}'));
         }
+        
         // By default, show a loading spinner
         return Center(child: CircularProgressIndicator());
         
@@ -71,6 +79,7 @@ class _MyPlantsState extends State<MyPlants> {
     );
     
   }
+  
 }
 
 
@@ -98,7 +107,7 @@ class selectedPlants extends StatelessWidget {
     }
   return Scaffold(
       appBar: AppBar(
-        title:  new Text(plant.values[1]),
+        title:  Text(plant.values[1]),
       ),
       body: ListView.builder(
     itemCount: plantInfo.length,
