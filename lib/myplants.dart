@@ -21,7 +21,7 @@ class _MyPlantsState extends State<MyPlants> {
 
 
  Future<List<Plant>> fetchPlants() async {
-    final String url =
+    const String url =
         'https://script.googleusercontent.com/macros/echo?user_content_key=oowhxHnTBvTx7NHq7s1-L1bFZ0Q5OX-lWqpDVv2h5N2IGGRrgfRHsAb0BVEtOziJrwRAxBVdlrl3J7fKsXV_FYyKhgiEheghm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnJigKuI4g_xMEZuR9PYl2cL-3n2F4eLbuz74z0T9PLbN9cs2I0JMs9mDQ6rNaHt20Sn8bVbBb5Jc0m5V72Znp5U9UcY3T9_dZx1DRVMwfnbWA-elmIfAQ60&lib=MOSwzJUSqFdCcsvaTtaA8SOrAvy20VzFd';
     final response = await http.get(Uri.parse(url));
 
@@ -50,7 +50,7 @@ class _MyPlantsState extends State<MyPlants> {
               Plant plant = snapshot.data![index];
               return ListTile(
               title: Center(child: Text('${plant.values[3]} ${plant.values[1]}',
-              style: TextStyle(
+              style: const TextStyle(
                   fontWeight: FontWeight.w800, fontSize: 15),)),
             subtitle: Center(child: 
             Text('''${plant.values[2]} ${plant.values[0]}
@@ -61,7 +61,7 @@ class _MyPlantsState extends State<MyPlants> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => selectedPlants(plant: plant),
+                      builder: (context) => SelectedPlants(plant: plant),
                     ),
                   );
                 },
@@ -73,7 +73,7 @@ class _MyPlantsState extends State<MyPlants> {
         }
         
         // By default, show a loading spinner
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
         
       },
     );
@@ -83,7 +83,7 @@ class _MyPlantsState extends State<MyPlants> {
 }
 
 
-class selectedPlants extends StatelessWidget {
+class SelectedPlants extends StatelessWidget {
   final Plant plant;
   final List<String> plantStr = [];
 
@@ -94,7 +94,7 @@ class selectedPlants extends StatelessWidget {
   ];
   final List<String> plantInfo = [];
 
-  selectedPlants({required this.plant});
+  SelectedPlants({super.key, required this.plant});
   @override
   Widget build(BuildContext context) {
     for (final value in plant.values) {

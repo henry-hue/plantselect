@@ -8,17 +8,14 @@ import 'form.dart';
 class FormController {
   
   // Google App Script Web URL.
-  static const String URL = ('https://script.google.com/macros/s/AKfycbwksZcn6sdzFTxKFzb2I0ttOgachwp8A_bgljMNR01eoypsdD8tQohzqOIT0SUKG6HW/exec');
-  
-  // Success Status Message
-  static const STATUS_SUCCESS = "SUCCESS";
+  static const String url = ('https://script.google.com/macros/s/AKfycbwksZcn6sdzFTxKFzb2I0ttOgachwp8A_bgljMNR01eoypsdD8tQohzqOIT0SUKG6HW/exec');
 
   /// Async function which saves feedback, parses [feedbackForm] parameters
   /// and sends HTTP GET request on [URL]. On successful response, [callback] is called.
    void submitForm(
       FeedbackForm feedbackForm, void Function(String) callback) async {
     try {
-      var uri = Uri.parse(URL); 
+      var uri = Uri.parse(url); 
       await http.post(uri, body: feedbackForm.toJson(), headers: {
           "content-type": "application/json"
         }).then((response) async {

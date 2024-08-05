@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'plant.dart';
 import 'package:gsheets/gsheets.dart';
-import 'dart:io';
-
-
 
 const _credentials = r'''
 {
@@ -89,7 +86,7 @@ class _AddPlantState extends State<AddPlant> {
   }
 
   void _navigateToNextScreen() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => addPhoto()));
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddPhoto()));
   }
   
 
@@ -141,32 +138,32 @@ class _AddPlantState extends State<AddPlant> {
             Form(
                 key: _formKey,
                 child:
-                  Padding(padding: EdgeInsets.all(16),
+                  Padding(padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       
                       TextFormField(
                         controller: plantController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'Plant Name'
                         ),
                       ),
                       TextFormField(
                         controller: livingController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'Alive or Dead',
                         ),
                       ),
                       TextFormField(
                         controller: quantityController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'Quantity',
                         ),
                       ),
                       TextFormField(
                         controller: nurseryController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'Nursery',
                         ),
                       ),
@@ -177,7 +174,7 @@ class _AddPlantState extends State<AddPlant> {
               ElevatedButton(
                 onPressed: _navigateToNextScreen,
 
-                child: Text('Next'),
+                child: const Text('Next'),
               ),
           ]
           )
@@ -188,9 +185,11 @@ class _AddPlantState extends State<AddPlant> {
         
   }              
 
-class addPhoto extends StatelessWidget {
+class AddPhoto extends StatelessWidget {
   final ThemeData themeData = ThemeData(
         );
+
+  AddPhoto({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +205,7 @@ class addPhoto extends StatelessWidget {
 
       ),
       body: Center(
-        child: Padding(padding: EdgeInsets.all(40),
+        child: Padding(padding: const EdgeInsets.all(40),
         child: Column(
           children: [
 
@@ -218,19 +217,15 @@ class addPhoto extends StatelessWidget {
                     fontWeight: FontWeight.w800, fontSize: 15
                   )
                 ),
-                onPressed: () {
-                  File? image;
-                Future pickImage() async {
-                    
-                      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-                if(image == null) return;
-                final imageTemp = File(image.path);
-                    } 
+                onPressed: () async {
+                  XFile? image;
+                  image = await ImagePicker().pickImage(source: ImageSource.gallery);
+                  if (image == null) return;
                   
                 }
             ),
 
-            Padding(padding: EdgeInsets.all(16)),
+            const Padding(padding: EdgeInsets.all(16)),
 
             MaterialButton(
                 color: Colors.lightGreen,
@@ -240,7 +235,12 @@ class addPhoto extends StatelessWidget {
                         fontWeight: FontWeight.w800, fontSize: 15
                     )
                 ),
-                onPressed: () {
+                onPressed: () async {
+                  XFile? image;
+                  image = await ImagePicker().pickImage(source: ImageSource.camera);
+                  if (image == null) {
+                    return;
+                  }
                 }
                 
             ),

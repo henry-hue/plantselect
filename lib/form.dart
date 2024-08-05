@@ -2,13 +2,13 @@ import 'dart:convert';
 
 /// FeedbackForm is a data class which stores data fields of Feedback.
 class FeedbackForm {
-  String Date;
-  String Plant;
-  String Living;
-  String Quantity;
-  String Nursery;
+  String date;
+  String plant;
+  String living;
+  String quantity;
+  String nursery;
 
-  FeedbackForm(this.Date, this.Plant, this.Living, this.Quantity, this.Nursery);
+  FeedbackForm(this.date, this.plant, this.living, this.quantity, this.nursery);
 
   factory FeedbackForm.fromJson(dynamic json) {
     return FeedbackForm("${json['Date']}", "${json['Plant']}",
@@ -18,11 +18,11 @@ class FeedbackForm {
 
   // Method to make GET parameters.
   dynamic toJson() => jsonEncode({
-        'date': Date,
-        'plant': Plant,
-        'Living': Living,
-        'Quantity': Quantity,
-        'Nursery': Nursery,
+        'date': date,
+        'plant': plant,
+        'Living': living,
+        'Quantity': quantity,
+        'Nursery': nursery,
         'userName': 'rraymond'
       });
 }

@@ -78,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> fetchPlants() async {
-    final String url =
+    const String url =
         'https://script.googleusercontent.com/macros/echo?user_content_key=_B-W-AHmjR26KU5dTCw1S-B2DHZEuws01wTIWfteAhh1hJmlRPaKDGo9Y28yztqfS4hpvU0auyjWeXE6R04QW4DiUHEKgbgXm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnO2U0Bl7BUAklHHeNRDrUcIoEcGPmrrlK_ulnafppH3w7o8FAM3ee_EkorPOGtTMgbRERG-Fn53JVefYCVkuXGQB2G7xa3afN9z9Jw9Md8uu&lib=MxnqXoKCpdNq7DADJrJEvDBtmPjijWW5o';
     final response = await http.get(Uri.parse(url));
 
@@ -103,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
 
-    if (plants.length == 0) {
+    if (plants.isEmpty) {
       // Wait until fetch completes
       return Center(child: CircularProgressIndicator());
     }
