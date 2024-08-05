@@ -33,10 +33,9 @@ class AddPlant extends StatefulWidget {
 }
 
 class _AddPlantState extends State<AddPlant> {
-
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  
+
   // TextField Controllers
   //TextEditingController DateController = TextEditingController();
   TextEditingController plantController = TextEditingController();
@@ -44,277 +43,184 @@ class _AddPlantState extends State<AddPlant> {
   TextEditingController quantityController = TextEditingController();
   TextEditingController nurseryController = TextEditingController();
 
-   // Method to show snackbar with 'message'.
+  // Method to show snackbar with 'message'.
   _showSnackbar(String message) {
-      final snackBar = SnackBar(content: Text(message));
-      //ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    final snackBar = SnackBar(content: Text(message));
+    //ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-     // _scaffoldKey.currentState!.showSnackBar(snackBar); 
+    // _scaffoldKey.currentState!.showSnackBar(snackBar);
   }
-  
+
   void addRow() async {
     // init GSheets
-  final gsheets = GSheets(_credentials);
-  // fetch spreadsheet by its id
-  final ss = await gsheets.spreadsheet(_spreadsheetId);
+    final gsheets = GSheets(_credentials);
+    // fetch spreadsheet by its id
+    final ss = await gsheets.spreadsheet(_spreadsheetId);
 
- // get worksheet by its title
-  var sheet = ss.worksheetByTitle(tab);
-  // create worksheet if it does not exist yet
-  sheet ??= await ss.addWorksheet(tab);
+    // get worksheet by its title
+    var sheet = ss.worksheetByTitle(tab);
+    // create worksheet if it does not exist yet
+    sheet ??= await ss.addWorksheet(tab);
 
-  // update cell at 'B2' by inserting string 'new'
+    // update cell at 'B2' by inserting string 'new'
     DateTime now = DateTime.now();
-    DateTime date = DateTime(now.year, now.month, now.day); 
-    String justDate = date.toString().substring(0,10);
-  //await sheet.values.insertValue(DateController.text, column: 1, row: 2);
-  final newRow = {
-    'Date': justDate,
-    'Plant': plantController.text,
-    'Living': livingController.text,
-    'Quantity': quantityController.text,
-    'Nursery': nurseryController.text
-  };
-  await sheet.values.map.appendRow(newRow);
-
+    DateTime date = DateTime(now.year, now.month, now.day);
+    String justDate = date.toString().substring(0, 10);
+    //await sheet.values.insertValue(DateController.text, column: 1, row: 2);
+    final newRow = {
+      'Date': justDate,
+      'Plant': plantController.text,
+      'Living': livingController.text,
+      'Quantity': quantityController.text,
+      'Nursery': nurseryController.text
+    };
+    await sheet.values.map.appendRow(newRow);
   }
+
   // Method to Submit Feedback and save it in Google Sheets
   void _submitForm() {
-    
     addRow();
-
   }
 
   void _navigateToNextScreen() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddPhoto()));
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => AddPhoto()));
   }
-  
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-
-      key: _scaffoldKey,
-
-      home: Scaffold(
-        
-        appBar: AppBar(title: const Text('search for plant or type in plant name')),
-        body: Center(
-          child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget> [
-          SearchAnchor(
-              builder: (BuildContext context, SearchController controller) {
-            return SearchBar(
-              controller: controller,
-              padding: const WidgetStatePropertyAll<EdgeInsets>(
-                  EdgeInsets.symmetric(horizontal: 16.0)),
-              onTap: () {
-                controller.openView();
-              },
-              onChanged: (_) {
-                controller.openView();
-              },
-              leading: const Icon(Icons.search),
-            );
-          }, suggestionsBuilder:
-          (BuildContext context, SearchController controller) {
-            String searchText = controller.text;
-            List<Plant> filteredPlants = widget.plants.where((plant) =>
-              plant.values[0].toLowerCase().contains(searchText.toLowerCase()))
-          .toList();
-            return List<ListTile>.generate(filteredPlants.length, (int index) {
-              final String item = filteredPlants[index].values[0];
-              return ListTile(
-                title: Text(item),
-                onTap: () {
-                  plantController.text = item;
-                  }
-                  );
-                },
-              );
-            }
-            ),
-            Form(
-                key: _formKey,
-                child:
-                  Padding(padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+        key: _scaffoldKey,
+        home: Scaffold(
+            appBar: AppBar(
+                title: const Text('search for plant or type in plant name')),
+            body: Center(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      
-                      TextFormField(
-                        controller: plantController,
-                        decoration: const InputDecoration(
-                          labelText: 'Plant Name'
+                  SearchAnchor(builder:
+                      (BuildContext context, SearchController controller) {
+                    return SearchBar(
+                      controller: controller,
+                      padding: const WidgetStatePropertyAll<EdgeInsets>(
+                          EdgeInsets.symmetric(horizontal: 16.0)),
+                      onTap: () {
+                        controller.openView();
+                      },
+                      onChanged: (_) {
+                        controller.openView();
+                      },
+                      leading: const Icon(Icons.search),
+                    );
+                  }, suggestionsBuilder:
+                      (BuildContext context, SearchController controller) {
+                    String searchText = controller.text;
+                    List<Plant> filteredPlants = widget.plants
+                        .where((plant) => plant.values[0]
+                            .toLowerCase()
+                            .contains(searchText.toLowerCase()))
+                        .toList();
+                    return List<ListTile>.generate(
+                      filteredPlants.length,
+                      (int index) {
+                        final String item = filteredPlants[index].values[0];
+                        return ListTile(
+                            title: Text(item),
+                            onTap: () {
+                              plantController.text = item;
+                              controller.closeView(plantController.text);
+                            });
+                      },
+                    );
+                  }),
+                  Form(
+                      key: _formKey,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            TextFormField(
+                              controller: plantController,
+                              decoration: const InputDecoration(
+                                  labelText: 'Plant Name'),
+                            ),
+                            TextFormField(
+                              controller: livingController,
+                              decoration: const InputDecoration(
+                                labelText: 'Alive or Dead',
+                              ),
+                            ),
+                            TextFormField(
+                              controller: quantityController,
+                              decoration: const InputDecoration(
+                                labelText: 'Quantity',
+                              ),
+                            ),
+                            TextFormField(
+                              controller: nurseryController,
+                              decoration: const InputDecoration(
+                                labelText: 'Nursery',
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      TextFormField(
-                        controller: livingController,
-                        decoration: const InputDecoration(
-                          labelText: 'Alive or Dead',
-                        ),
-                      ),
-                      TextFormField(
-                        controller: quantityController,
-                        decoration: const InputDecoration(
-                          labelText: 'Quantity',
-                        ),
-                      ),
-                      TextFormField(
-                        controller: nurseryController,
-                        decoration: const InputDecoration(
-                          labelText: 'Nursery',
-                        ),
-                      ),
-                    ],
+                      )),
+                  ElevatedButton(
+                    onPressed: _navigateToNextScreen,
+                    child: const Text('Next'),
                   ),
-                ) 
-              ),
-              ElevatedButton(
-                onPressed: _navigateToNextScreen,
-
-                child: const Text('Next'),
-              ),
-          ]
-          )
-            )
-            )
-            );
-          }
-        
-  }              
+                ]))));
+  }
+}
 
 class AddPhoto extends StatelessWidget {
-  final ThemeData themeData = ThemeData(
-        );
+  final ThemeData themeData = ThemeData();
 
   AddPhoto({super.key});
 
   @override
   Widget build(BuildContext context) {
-    
     return MaterialApp(
-      //theme: themeData,
+        //theme: themeData,
 
-    home: Scaffold(
-      
-      appBar: AppBar(
-        backgroundColor: Colors.lightGreen,
-        title: Image.asset('assets/images/logo.png'),
-
-      ),
-      body: Center(
-        child: Padding(padding: const EdgeInsets.all(40),
-        child: Column(
-          children: [
-
-            MaterialButton(
-                color: Colors.lightGreen,
-                child: const Text(
-                    "Pick Image from Gallery",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w800, fontSize: 15
-                  )
-                ),
-                onPressed: () async {
-                  XFile? image;
-                  image = await ImagePicker().pickImage(source: ImageSource.gallery);
-                  if (image == null) return;
-                  
-                }
+        home: Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.lightGreen,
+              title: Image.asset('assets/images/logo.png'),
             ),
-
-            const Padding(padding: EdgeInsets.all(16)),
-
-            MaterialButton(
-                color: Colors.lightGreen,
-                child: const Text(
-                    "Pick Image from Camera",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w800, fontSize: 15
-                    )
-                ),
-                onPressed: () async {
-                  XFile? image;
-                  image = await ImagePicker().pickImage(source: ImageSource.camera);
-                  if (image == null) {
-                    return;
-                  }
-                }
-                
-            ),
-          ],
-        ),
-        
-      )
-      
-    )
-    )
-    );
-    
+            body: Center(
+                child: Padding(
+              padding: const EdgeInsets.all(40),
+              child: Column(
+                children: [
+                  MaterialButton(
+                      color: Colors.lightGreen,
+                      child: const Text("Pick Image from Gallery",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w800, fontSize: 15)),
+                      onPressed: () async {
+                        XFile? image;
+                        image = await ImagePicker()
+                            .pickImage(source: ImageSource.gallery);
+                        if (image == null) return;
+                      }),
+                  const Padding(padding: EdgeInsets.all(16)),
+                  MaterialButton(
+                      color: Colors.lightGreen,
+                      child: const Text("Pick Image from Camera",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w800, fontSize: 15)),
+                      onPressed: () async {
+                        XFile? image;
+                        image = await ImagePicker()
+                            .pickImage(source: ImageSource.camera);
+                        if (image == null) {
+                          return;
+                        }
+                      }),
+                ],
+              ),
+            ))));
   }
 }
-// class selectedPlants extends StatelessWidget {
-//   final Plant plant;
-//   final List<String> plantStr = [];
-
-//   final List<String> attr = [
-//     'Common Name',
-//     'Botanic Name',
-//     'Plant Type',
-//     'Height',
-//     'Width',
-//     'Flowering Season',
-//     'Flower Color',
-//     'Sun',
-//     'Water Needs',
-//     'USDA Hardiness Zone',
-//     'Soil Type',
-//     'Deer Resistant',
-//     'Good for Pollination',
-//     'Winter Interest',
-//     'North American Native',
-//     'Year Introduced',
-//     'Annual Commercial Maintenance',
-//     '5-10 Year Commercial Maintenance',
-//     'Elevation Guide',
-//     'Description',
-//   ];
-//   final List<String> plantInfo = [];
-
-//   selectedPlants({required this.plant});
-//   @override
-//   Widget build(BuildContext context) {
-//     for (final value in plant.values) {
-//       plantStr.add(value.toString());
-//     }
-
-//     for (final pairs in IterableZip([attr, plantStr])) {
-//       plantInfo.add('${pairs[0]} : ${pairs[1]}');
-//     }
-//     String url = plantStr[20];
-//     String fixedUrl = url.replaceAll("plantselect.org", "plantselect.org/plant");
-//     final Uri uri = Uri.parse(fixedUrl);
-
-//     return Scaffold(
-//       appBar: AppBar(
-//           title: new InkWell(
-//               child: new Text(
-//                 'Additional Info',
-//                 style: TextStyle(
-//                   decoration: TextDecoration.underline,
-//                 ),
-//               ),
-//               onTap: () => launchUrl(uri, webOnlyWindowName: "_blank"))),
-              
-
-//       body: ListView.builder(
-//           itemCount: plantInfo.length,
-//           itemBuilder: (BuildContext context, int index) {
-//             return Text(plantInfo[index]);
-//           }),
-//     );
-//   }
-// }
-
