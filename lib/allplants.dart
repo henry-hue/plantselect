@@ -43,6 +43,8 @@ class _AddPlantState extends State<AddPlant> {
   TextEditingController quantityController = TextEditingController();
   TextEditingController nurseryController = TextEditingController();
 
+  bool isAlive = true;
+
   // Method to show snackbar with 'message'.
   _showSnackbar(String message) {
     final snackBar = SnackBar(content: Text(message));
@@ -145,12 +147,34 @@ class _AddPlantState extends State<AddPlant> {
                               decoration: const InputDecoration(
                                   labelText: 'Plant Name'),
                             ),
-                            TextFormField(
-                              controller: livingController,
-                              decoration: const InputDecoration(
-                                labelText: 'Alive or Dead',
-                              ),
-                            ),
+
+
+                            FormField<bool>(builder: (state) {
+                              return Row(children: <Widget>[
+                                                                     Text('Alive?'),
+
+                                Checkbox(
+                                    value: isAlive,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        //save checkbox value to variable that store terms and notify form that state changed
+                                        isAlive = !isAlive;
+                                        state.didChange(value);
+                                      });
+                                    })
+
+                              ]);
+                            }),
+
+
+
+                             //controller: livingController,
+                              //decoration: const InputDecoration(
+                                //labelText: 'Alive or Dead',
+                             
+
+
+
                             TextFormField(
                               controller: quantityController,
                               decoration: const InputDecoration(

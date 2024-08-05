@@ -105,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (plants.isEmpty) {
       // Wait until fetch completes
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     }
     return Scaffold(
       appBar: AppBar(
