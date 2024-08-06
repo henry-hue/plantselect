@@ -147,7 +147,6 @@ class _AddPlantState extends State<AddPlant> {
                               decoration: const InputDecoration(
                                   labelText: 'Plant Name'),
                             ),
-                            
                             TextFormField(
                               controller: quantityController,
                               decoration: const InputDecoration(
@@ -161,17 +160,16 @@ class _AddPlantState extends State<AddPlant> {
                               ),
                             ),
                             FormField<bool>(builder: (state) {
-                              return
-                                CheckboxListTile(
-                                    value: isAlive,
-                                       title: const Text('Living Plant'),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        //save checkbox value to variable that store terms and notify form that state changed
-                                        isAlive = !isAlive;
-                                        state.didChange(value);
-                                      });
+                              return CheckboxListTile(
+                                  value: isAlive,
+                                  title: const Text('Living Plant'),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      //save checkbox value to variable that store terms and notify form that state changed
+                                      isAlive = !isAlive;
+                                      state.didChange(value);
                                     });
+                                  });
                             }),
                           ],
                         ),
