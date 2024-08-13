@@ -43,7 +43,8 @@ class _AddPlantState extends State<AddPlant> {
   TextEditingController quantityController = TextEditingController();
   TextEditingController nurseryController = TextEditingController();
 
-  bool isAlive = true;
+  bool isAlive = false;
+  bool isSeed = false;
 
   // Method to show snackbar with 'message'.
   _showSnackbar(String message) {
@@ -64,7 +65,6 @@ class _AddPlantState extends State<AddPlant> {
     // create worksheet if it does not exist yet
     sheet ??= await ss.addWorksheet(tab);
 
-    // update cell at 'B2' by inserting string 'new'
     DateTime now = DateTime.now();
     DateTime date = DateTime(now.year, now.month, now.day);
     String justDate = date.toString().substring(0, 10);
@@ -84,9 +84,15 @@ class _AddPlantState extends State<AddPlant> {
     addRow();
   }
 
-  void _navigateToNextScreen() {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => AddPhoto()));
+  void _navigateToNextScreen() async {
+    XFile? image;
+    image = await ImagePicker()
+        .pickImage(source: ImageSource.camera);
+    if (image == null) {
+      return;
+    // Navigator.of(context)
+    //     .push(MaterialPageRoute(builder: (context) => AddPhoto()));
+  }
   }
 
   @override
@@ -171,64 +177,25 @@ class _AddPlantState extends State<AddPlant> {
                                     });
                                   });
                             }),
+                            FormField<bool>(builder: (state) {
+                              return CheckboxListTile(
+                                  value: isSeed,
+                                  title: const Text('Seed'),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      //save checkbox value to variable that store terms and notify form that state changed
+                                      isSeed = !isSeed;
+                                      state.didChange(value);
+                                    });
+                                  });
+                            }),
                           ],
                         ),
                       )),
                   ElevatedButton(
                     onPressed: _navigateToNextScreen,
-                    child: const Text('Next'),
+                    child: const Text('Next: take picture'),
                   ),
                 ]))));
-  }
-}
-
-class AddPhoto extends StatelessWidget {
-  final ThemeData themeData = ThemeData();
-
-  AddPhoto({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        //theme: themeData,
-
-        home: Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.lightGreen,
-              title: Image.asset('assets/images/logo.png'),
-            ),
-            body: Center(
-                child: Padding(
-              padding: const EdgeInsets.all(40),
-              child: Column(
-                children: [
-                  MaterialButton(
-                      color: Colors.lightGreen,
-                      child: const Text("Pick Image from Gallery",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w800, fontSize: 15)),
-                      onPressed: () async {
-                        XFile? image;
-                        image = await ImagePicker()
-                            .pickImage(source: ImageSource.gallery);
-                        if (image == null) return;
-                      }),
-                  const Padding(padding: EdgeInsets.all(16)),
-                  MaterialButton(
-                      color: Colors.lightGreen,
-                      child: const Text("Pick Image from Camera",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w800, fontSize: 15)),
-                      onPressed: () async {
-                        XFile? image;
-                        image = await ImagePicker()
-                            .pickImage(source: ImageSource.camera);
-                        if (image == null) {
-                          return;
-                        }
-                      }),
-                ],
-              ),
-            ))));
   }
 }
