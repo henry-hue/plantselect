@@ -1,8 +1,12 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'plant.dart';
 import 'package:collection/collection.dart';
+
+import 'allplants.dart';
 
 
 
@@ -49,15 +53,27 @@ class _MyPlantsState extends State<MyPlants> {
             itemBuilder: (context, index) {
               Plant plant = snapshot.data![index];
               return ListTile(
-              title: Center(child: Text('${plant.values[3]} ${plant.values[1]}',
-              style: const TextStyle(
-                  fontWeight: FontWeight.w800, fontSize: 15),)),
-            subtitle: Center(child: 
-            Text('''${plant.values[2]} ${plant.values[0]}
-                    ''')),
+                
+              title: Column(
+               children: <Widget>[
+
+                Text('''${plant.values[0]}: ${plant.values[3]} ${plant.values[1]}'''),
+
+                ElevatedButton(child: Text('Delete'),  iconAlignment: IconAlignment.end,
+ onPressed: () {})
+              ],
+            ),
+                
+                  
+                  
+          
+    
+
+           
                 
                 
                 onTap: () {
+    
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -65,6 +81,8 @@ class _MyPlantsState extends State<MyPlants> {
                     ),
                   );
                 },
+
+              
               );
             },
           );
@@ -90,7 +108,10 @@ class SelectedPlants extends StatelessWidget {
   final List<String> attr = [
     'Date',	
     'Botanic Name',
-    'Notes'
+    'Living',
+    	'Quantity',
+      	'Nursery',
+        	'Seed'
   ];
   final List<String> plantInfo = [];
 

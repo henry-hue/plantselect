@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'plant.dart';
 import 'package:gsheets/gsheets.dart';
+import 'dart:io';
+
+
 
 const _credentials = r'''
 {
@@ -39,9 +42,9 @@ class _AddPlantState extends State<AddPlant> {
   // TextField Controllers
   //TextEditingController DateController = TextEditingController();
   TextEditingController plantController = TextEditingController();
-  TextEditingController livingController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
   TextEditingController nurseryController = TextEditingController();
+
 
   bool isAlive = false;
   bool isSeed = false;
@@ -52,6 +55,10 @@ class _AddPlantState extends State<AddPlant> {
     //ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
     // _scaffoldKey.currentState!.showSnackBar(snackBar);
+  }
+
+  void deleteRow() async {
+    
   }
 
   void addRow() async {
@@ -72,9 +79,10 @@ class _AddPlantState extends State<AddPlant> {
     final newRow = {
       'Date': justDate,
       'Plant': plantController.text,
-      'Living': livingController.text,
+      'Living': isAlive,
       'Quantity': quantityController.text,
-      'Nursery': nurseryController.text
+      'Nursery': nurseryController.text,
+      'Seed': isSeed
     };
     await sheet.values.map.appendRow(newRow);
   }
@@ -82,18 +90,24 @@ class _AddPlantState extends State<AddPlant> {
   // Method to Submit Feedback and save it in Google Sheets
   void _submitForm() {
     addRow();
+    
   }
 
-  void _navigateToNextScreen() async {
-    XFile? image;
-    image = await ImagePicker()
-        .pickImage(source: ImageSource.camera);
-    if (image == null) {
-      return;
-    // Navigator.of(context)
-    //     .push(MaterialPageRoute(builder: (context) => AddPhoto()));
+
+  XFile? imageFile;
+
+  selectFile() async {
+    XFile? file = await ImagePicker().pickImage(
+    source: ImageSource.camera, maxHeight: 1800, maxWidth: 1800);
+    
+    if (file != null) {
+      setState(() {
+        imageFile = XFile(file.path);
+      });
+      
+    }
   }
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -103,8 +117,8 @@ class _AddPlantState extends State<AddPlant> {
             appBar: AppBar(
                 title: const Text('search for plant or type in plant name')),
             body: Center(
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                child: ListView(
+                    //mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                   SearchAnchor(builder:
                       (BuildContext context, SearchController controller) {
@@ -192,10 +206,21 @@ class _AddPlantState extends State<AddPlant> {
                           ],
                         ),
                       )),
+                  if (imageFile == null)
                   ElevatedButton(
-                    onPressed: _navigateToNextScreen,
+                    onPressed: selectFile,
                     child: const Text('Next: take picture'),
                   ),
+                  if (imageFile != null)
+                  Container(
+              child: Image.file(File(imageFile!.path)),
+             ),
+            if (imageFile != null)
+             ElevatedButton(
+              onPressed: _submitForm,
+              child: const Text('Submit Plant'),
+             )
                 ]))));
   }
 }
+
