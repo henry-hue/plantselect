@@ -8,8 +8,6 @@ import 'myplants.dart';
 
 
 
-
-
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 

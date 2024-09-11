@@ -57,9 +57,7 @@ class _AddPlantState extends State<AddPlant> {
     // _scaffoldKey.currentState!.showSnackBar(snackBar);
   }
 
-  void deleteRow() async {
-    
-  }
+  
 
   void addRow() async {
     // init GSheets
