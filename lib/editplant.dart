@@ -1,10 +1,14 @@
-// ignore_for_file: must_be_immutable
+import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'plant.dart';
+import 'package:collection/collection.dart';
+
 import 'package:gsheets/gsheets.dart';
-import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+
 
 
 
@@ -27,17 +31,22 @@ const _credentials = r'''
 const _spreadsheetId = '1lHYYVl_AJE5lBt4F43CtAvuO7G2xXFgRFZ0jc4fyrCc';
 const tab = 'rraymond';
 
-class AddPlant extends StatefulWidget {
-  const AddPlant({super.key, required this.plants});
-  final List<Plant> plants;
+
+class EditPlant extends StatefulWidget {
+  const EditPlant({super.key, required this.plant});
+  final Plant plant;
 
   @override
-  State<AddPlant> createState() => _AddPlantState();
+  State<EditPlant> createState() => _EditPlantState();
+
+  
 }
 
-class _AddPlantState extends State<AddPlant> {
+class _EditPlantState extends State<EditPlant> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+
 
   // TextField Controllers
   //TextEditingController DateController = TextEditingController();
@@ -46,8 +55,13 @@ class _AddPlantState extends State<AddPlant> {
   TextEditingController nurseryController = TextEditingController();
 
 
-  bool isAlive = false;
-  bool isSeed = false;
+  bool isAlive = true;
+  bool isSeed = true;
+
+
+
+
+
 
   // Method to show snackbar with 'message'.
   _showSnackbar(String message) {
@@ -60,6 +74,7 @@ class _AddPlantState extends State<AddPlant> {
   
 
   void addRow() async {
+
     // init GSheets
     final gsheets = GSheets(_credentials);
     // fetch spreadsheet by its id
@@ -70,19 +85,14 @@ class _AddPlantState extends State<AddPlant> {
     // create worksheet if it does not exist yet
     sheet ??= await ss.addWorksheet(tab);
 
-    DateTime now = DateTime.now();
-    DateTime date = DateTime(now.year, now.month, now.day);
-    String justDate = date.toString().substring(0, 10);
-    //await sheet.values.insertValue(DateController.text, column: 1, row: 2);
-    final newRow = {
-      'Date': justDate,
-      'Plant': plantController.text,
-      'Living': isAlive,
-      'Quantity': quantityController.text,
-      'Nursery': nurseryController.text,
-      'Seed': isSeed
-    };
-    await sheet.values.map.appendRow(newRow);
+    
+    
+    var index = widget.plant.values[0];
+    //await sheet.values.map.appendRow(newRow);
+      await sheet.values.insertValueByKeys(isSeed, columnKey: 'Seed', rowKey: index);
+      await sheet.values.insertValueByKeys(isAlive, columnKey: 'Living', rowKey: index);
+      await sheet.values.insertValueByKeys(quantityController.text, columnKey: 'Quantity', rowKey: index);
+
   }
 
   // Method to Submit Feedback and save it in Google Sheets
@@ -106,53 +116,22 @@ class _AddPlantState extends State<AddPlant> {
     }
   }
   
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         key: _scaffoldKey,
+        
         home: Scaffold(
             appBar: AppBar(
-                title: const Text('search for plant or type in plant name')),
+        
+        backgroundColor: Colors.lightGreen,
+        
+        title: Image.asset('assets/images/logo.png'),
+      ),
             body: Center(
                 child: ListView(
                     //mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                  SearchAnchor(builder:
-                      (BuildContext context, SearchController controller) {
-                    return SearchBar(
-                      controller: controller,
-                      padding: const WidgetStatePropertyAll<EdgeInsets>(
-                          EdgeInsets.symmetric(horizontal: 16.0)),
-                      onTap: () {
-                        controller.openView();
-                      },
-                      onChanged: (_) {
-                        controller.openView();
-                      },
-                      leading: const Icon(Icons.search),
-                    );
-                  }, suggestionsBuilder:
-                      (BuildContext context, SearchController controller) {
-                    String searchText = controller.text;
-                    List<Plant> filteredPlants = widget.plants
-                        .where((plant) => plant.values[0]
-                            .toLowerCase()
-                            .contains(searchText.toLowerCase()))
-                        .toList();
-                    return List<ListTile>.generate(
-                      filteredPlants.length,
-                      (int index) {
-                        final String item = filteredPlants[index].values[0];
-                        return ListTile(
-                            title: Text(item),
-                            onTap: () {
-                              plantController.text = item;
-                              controller.closeView(plantController.text);
-                            });
-                      },
-                    );
-                  }),
                   Form(
                       key: _formKey,
                       child: Padding(
@@ -160,23 +139,14 @@ class _AddPlantState extends State<AddPlant> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            TextFormField(
-                              controller: plantController,
-                              decoration: const InputDecoration(
-                                  labelText: 'Plant Name'),
-                            ),
+                            
                             TextFormField(
                               controller: quantityController,
                               decoration: const InputDecoration(
                                 labelText: 'Quantity',
                               ),
                             ),
-                            TextFormField(
-                              controller: nurseryController,
-                              decoration: const InputDecoration(
-                                labelText: 'Nursery',
-                              ),
-                            ),
+                            
                             FormField<bool>(builder: (state) {
                               return CheckboxListTile(
                                   value: isAlive,
@@ -204,24 +174,9 @@ class _AddPlantState extends State<AddPlant> {
                           ],
                         ),
                       )),
-                  if (imageFile == null)
-                  ElevatedButton(
-                    onPressed: selectFile,
-                    child: const Text('Next: take picture'),
-                  ),
-                  if (imageFile != null)
-                  Container(
-              child: Image.file(File(imageFile!.path)),
-             ),
-            if (imageFile != null)
-             ElevatedButton(
-              onPressed: _submitForm,
-              child: const Text('Submit Plant'),
-             )
+                      ElevatedButton(onPressed: _submitForm,
+                       child: const Text('Save Changes')),
+                 
                 ]))));
   }
 }
-
-
-
-

@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -6,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'plant.dart';
 import 'package:collection/collection.dart';
 
-import 'allplants.dart';
+import 'editplant.dart';
 
 
 
@@ -21,8 +20,6 @@ class MyPlants extends StatefulWidget {
 
 
 class _MyPlantsState extends State<MyPlants> {
-
-
 
  Future<List<Plant>> fetchPlants() async {
     const String url =
@@ -57,19 +54,16 @@ class _MyPlantsState extends State<MyPlants> {
               title: Column(
                children: <Widget>[
 
-                Text('''${plant.values[0]}: ${plant.values[3]} ${plant.values[1]}'''),
+                Text('''${plant.values[1]}: ${plant.values[4]} ${plant.values[2]}'''),
 
-                ElevatedButton(child: Text('Delete'),  iconAlignment: IconAlignment.end,
- onPressed: () {})
+                ElevatedButton(child: Text('Edit'),  iconAlignment: IconAlignment.end,
+ onPressed: () {
+  Navigator.of(context).push(MaterialPageRoute(builder: (context) => 
+  EditPlant(plant: plant)));
+
+ })
               ],
             ),
-                
-                  
-                  
-          
-    
-
-           
                 
                 
                 onTap: () {
@@ -128,7 +122,13 @@ class SelectedPlants extends StatelessWidget {
     }
   return Scaffold(
       appBar: AppBar(
-        title:  Text(plant.values[1]),
+        // TRY THIS: Try changing the color here to a specific color (to
+        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
+        // change color while the other colors stay the same.
+        backgroundColor: Colors.lightGreen,
+        // Here we take the value from the MyHomePage object that was created by
+        // the App.build method, and use it to set our appbar title.
+        title: Image.asset('assets/images/logo.png'),
       ),
       body: ListView.builder(
     itemCount: plantInfo.length,
@@ -138,3 +138,8 @@ class SelectedPlants extends StatelessWidget {
       );
 }
 }
+
+
+
+
+
