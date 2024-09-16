@@ -1,7 +1,10 @@
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'plant.dart';
 import 'package:collection/collection.dart';
 
@@ -11,8 +14,9 @@ import 'editplant.dart';
 
 
 class MyPlants extends StatefulWidget {
-  const MyPlants({super.key, required this.plants});
+  const MyPlants({super.key, required this.plants, required Directory? this.picPath});
   final List<Plant> plants;
+  final Directory? picPath;
   @override
   State<MyPlants> createState() => _MyPlantsState();
   
@@ -68,10 +72,12 @@ class _MyPlantsState extends State<MyPlants> {
                 
                 onTap: () {
     
+
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SelectedPlants(plant: plant),
+                      builder: (context) => SelectedPlants(plant: plant, picPath: widget.picPath),
                     ),
                   );
                 },
@@ -95,8 +101,13 @@ class _MyPlantsState extends State<MyPlants> {
 }
 
 
+
+
+
 class SelectedPlants extends StatelessWidget {
   final Plant plant;
+  final Directory? picPath;
+
   final List<String> plantStr = [];
 
   final List<String> attr = [
@@ -109,17 +120,33 @@ class SelectedPlants extends StatelessWidget {
   ];
   final List<String> plantInfo = [];
 
-  SelectedPlants({super.key, required this.plant});
+
+
+
+
+
+
+  SelectedPlants({super.key, required this.plant, required this.picPath});
   @override
-  Widget build(BuildContext context) {
+  Widget build (BuildContext context) {
     for (final value in plant.values) {
       plantStr.add(value.toString());
     }
     
-
     for (final pairs in IterableZip([attr, plantStr])) {
       plantInfo.add('${pairs[0]} : ${pairs[1]}');
     }
+
+
+//Directory dir = directory();
+    // getting a directory path for saving
+String path = picPath!.path;
+print('hello');
+//File image = File(imageFile!.path);
+//FileImage(File(path
+// copy the file to a new path
+//final File newImage = await image.copy('$path/$name');
+
   return Scaffold(
       appBar: AppBar(
         // TRY THIS: Try changing the color here to a specific color (to

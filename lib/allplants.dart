@@ -2,10 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'plant.dart';
 import 'package:gsheets/gsheets.dart';
 import 'dart:io';
-
 
 
 const _credentials = r'''
@@ -91,6 +91,21 @@ class _AddPlantState extends State<AddPlant> {
     
   }
 
+getRowCount() async {
+   // init GSheets
+    final gsheets = GSheets(_credentials);
+    // fetch spreadsheet by its id
+    final ss = await gsheets.spreadsheet(_spreadsheetId);
+
+    // get worksheet by its title
+    var sheet = ss.worksheetByTitle(tab);
+    // create worksheet if it does not exist yet
+    sheet ??= await ss.addWorksheet(tab);
+  return sheet.rowCount + 1;
+}
+
+
+
 
   XFile? imageFile;
 
@@ -102,8 +117,18 @@ class _AddPlantState extends State<AddPlant> {
       setState(() {
         imageFile = XFile(file.path);
       });
-      
     }
+final Directory dir = await getApplicationDocumentsDirectory();
+
+
+    // getting a directory path for saving
+final String path = dir.path;
+
+File image = File(imageFile!.path);
+var name = getRowCount();
+// copy the file to a new path
+await image.copy('$path/$name');
+
   }
   
 

@@ -1,11 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 import 'plant.dart';
 import 'allplants.dart';
 import 'myplants.dart';
-import 'editplant.dart';
 
 
 
@@ -70,12 +72,19 @@ class _MyHomePageState extends State<MyHomePage> {
   int currentPageIndex = 0;
   List<Plant> plants = [];
   Map<String, Plant> plantByBotanicName = {};
+  Directory? picPath;
 
   @override
   void initState() {
     super.initState();
 
     fetchPlants();
+    directory();
+  }
+
+  Future directory() async{
+      picPath = await getApplicationDocumentsDirectory();
+
   }
 
   Future<void> fetchPlants() async {
@@ -143,7 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: AddPlant(plants: plants),
         ),
         Card(
-          child: MyPlants(plants: plants),
+          child: MyPlants(plants: plants, picPath: picPath),
         ),
       ][currentPageIndex],
     );
