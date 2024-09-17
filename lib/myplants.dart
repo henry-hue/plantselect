@@ -108,13 +108,12 @@ class SelectedPlants extends StatelessWidget {
     }
 
     // print out directory contents for debugging
-    picPath!.listSync().forEach((e) {
-      print(e.path);
-    });
+    //picPath!.listSync().forEach((e) {
+    // print(e.path);
+    //});
     String path = picPath!.path;
     String name = plantStr[0];
     String fullPath = '$path/$name';
-    print(fullPath);
 
     return Scaffold(
       appBar: AppBar(

@@ -53,21 +53,6 @@ class _EditPlantState extends State<EditPlant> {
   bool isAlive = true;
   bool isSeed = true;
 
-
-
-
-
-
-  // Method to show snackbar with 'message'.
-  _showSnackbar(String message) {
-    final snackBar = SnackBar(content: Text(message));
-    //ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-    // _scaffoldKey.currentState!.showSnackBar(snackBar);
-  }
-
-  
-
   void addRow() async {
 
     // init GSheets

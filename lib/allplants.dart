@@ -48,14 +48,6 @@ class _AddPlantState extends State<AddPlant> {
   bool isAlive = false;
   bool isSeed = false;
 
-  // Method to show snackbar with 'message'.
-  _showSnackbar(String message) {
-    final snackBar = SnackBar(content: Text(message));
-    //ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-    // _scaffoldKey.currentState!.showSnackBar(snackBar);
-  }
-
   void addRow() async {
     // init GSheets
     final gsheets = GSheets(_credentials);
@@ -97,7 +89,8 @@ class _AddPlantState extends State<AddPlant> {
     var sheet = ss.worksheetByTitle(tab);
     // create worksheet if it does not exist yet
     sheet ??= await ss.addWorksheet(tab);
-    return sheet.rowCount + 1;
+    var row = await sheet.values.lastRow(length: 1);
+    return int.parse(row![0]) + 1;
   }
 
   XFile? imageFile;
@@ -118,9 +111,7 @@ class _AddPlantState extends State<AddPlant> {
 
     File image = File(imageFile!.path);
     var name = await getRowCount();
-// copy the file to a new path
 
-    print('$path/$name');
     await image.copy('$path/$name');
   }
 
