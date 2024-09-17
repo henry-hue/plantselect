@@ -3,15 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 import 'plant.dart';
 import 'package:collection/collection.dart';
 
 import 'editplant.dart';
 
 class MyPlants extends StatefulWidget {
-  const MyPlants(
-      {super.key, required this.plants, required this.picPath});
+  const MyPlants({super.key, required this.plants, required this.picPath});
   final List<Plant> plants;
   final Directory? picPath;
   @override
@@ -50,12 +48,12 @@ class _MyPlantsState extends State<MyPlants> {
                     Text(
                         '''${plant.values[1]}: ${plant.values[4]} ${plant.values[2]}'''),
                     ElevatedButton(
-                        child: Text('Edit'),
                         iconAlignment: IconAlignment.end,
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => EditPlant(plant: plant)));
-                        })
+                        },
+                        child: const Text('Edit'))
                   ],
                 ),
                 onTap: () {
@@ -134,9 +132,7 @@ class SelectedPlants extends StatelessWidget {
             if (index < plantInfo.length) {
               return Text(plantInfo[index]);
             } else {
-              return Container(
-                child: Image.file(File(fullPath)),
-              );
+              return Image.file(File(fullPath));
             }
           }),
     );

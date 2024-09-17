@@ -227,9 +227,7 @@ class _AddPlantState extends State<AddPlant> {
                       child: const Text('Next: take picture'),
                     ),
                   if (imageFile != null)
-                    Container(
-                      child: Image.file(File(imageFile!.path)),
-                    ),
+                    Image.file(File(imageFile!.path)),
                   if (imageFile != null)
                     ElevatedButton(
                       onPressed: _submitForm,
