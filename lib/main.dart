@@ -149,7 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ]),
       body: <Widget>[
         Card(
-          child: AddPlant(plants: plants),
+          child: AddPlant(plants: plants, picPath: picPath),
         ),
         Card(
           child: MyPlants(plants: plants, picPath: picPath),

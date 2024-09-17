@@ -7,7 +7,6 @@ import 'plant.dart';
 import 'package:gsheets/gsheets.dart';
 import 'dart:io';
 
-
 const _credentials = r'''
 {
   "type": "service_account",
@@ -28,8 +27,9 @@ const _spreadsheetId = '1lHYYVl_AJE5lBt4F43CtAvuO7G2xXFgRFZ0jc4fyrCc';
 const tab = 'rraymond';
 
 class AddPlant extends StatefulWidget {
-  const AddPlant({super.key, required this.plants});
+  const AddPlant({super.key, required this.plants, required this.picPath});
   final List<Plant> plants;
+  final Directory? picPath;
 
   @override
   State<AddPlant> createState() => _AddPlantState();
@@ -45,7 +45,6 @@ class _AddPlantState extends State<AddPlant> {
   TextEditingController quantityController = TextEditingController();
   TextEditingController nurseryController = TextEditingController();
 
-
   bool isAlive = false;
   bool isSeed = false;
 
@@ -56,8 +55,6 @@ class _AddPlantState extends State<AddPlant> {
 
     // _scaffoldKey.currentState!.showSnackBar(snackBar);
   }
-
-  
 
   void addRow() async {
     // init GSheets
@@ -88,11 +85,10 @@ class _AddPlantState extends State<AddPlant> {
   // Method to Submit Feedback and save it in Google Sheets
   void _submitForm() {
     addRow();
-    
   }
 
-getRowCount() async {
-   // init GSheets
+  getRowCount() async {
+    // init GSheets
     final gsheets = GSheets(_credentials);
     // fetch spreadsheet by its id
     final ss = await gsheets.spreadsheet(_spreadsheetId);
@@ -101,36 +97,32 @@ getRowCount() async {
     var sheet = ss.worksheetByTitle(tab);
     // create worksheet if it does not exist yet
     sheet ??= await ss.addWorksheet(tab);
-  return sheet.rowCount + 1;
-}
-
-
-
+    return sheet.rowCount + 1;
+  }
 
   XFile? imageFile;
 
   selectFile() async {
-    XFile? file = await ImagePicker().pickImage(
-    source: ImageSource.camera, maxHeight: 1800, maxWidth: 1800);
-    
+    XFile? file = await ImagePicker()
+        .pickImage(source: ImageSource.camera, maxHeight: 1800, maxWidth: 1800);
+
     if (file != null) {
       setState(() {
         imageFile = XFile(file.path);
       });
     }
-final Directory dir = await getApplicationDocumentsDirectory();
-
+    final Directory dir = await getApplicationDocumentsDirectory();
 
     // getting a directory path for saving
-final String path = dir.path;
+    final String path = dir.path;
 
-File image = File(imageFile!.path);
-var name = getRowCount();
+    File image = File(imageFile!.path);
+    var name = await getRowCount();
 // copy the file to a new path
-await image.copy('$path/$name');
 
+    print('$path/$name');
+    await image.copy('$path/$name');
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -230,23 +222,19 @@ await image.copy('$path/$name');
                         ),
                       )),
                   if (imageFile == null)
-                  ElevatedButton(
-                    onPressed: selectFile,
-                    child: const Text('Next: take picture'),
-                  ),
+                    ElevatedButton(
+                      onPressed: selectFile,
+                      child: const Text('Next: take picture'),
+                    ),
                   if (imageFile != null)
-                  Container(
-              child: Image.file(File(imageFile!.path)),
-             ),
-            if (imageFile != null)
-             ElevatedButton(
-              onPressed: _submitForm,
-              child: const Text('Submit Plant'),
-             )
+                    Container(
+                      child: Image.file(File(imageFile!.path)),
+                    ),
+                  if (imageFile != null)
+                    ElevatedButton(
+                      onPressed: _submitForm,
+                      child: const Text('Submit Plant'),
+                    )
                 ]))));
   }
 }
-
-
-
-

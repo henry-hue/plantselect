@@ -11,7 +11,7 @@ import 'editplant.dart';
 
 class MyPlants extends StatefulWidget {
   const MyPlants(
-      {super.key, required this.plants, required Directory? this.picPath});
+      {super.key, required this.plants, required this.picPath});
   final List<Plant> plants;
   final Directory? picPath;
   @override
@@ -109,8 +109,10 @@ class SelectedPlants extends StatelessWidget {
       plantInfo.add('${pairs[0]} : ${pairs[1]}');
     }
 
-//Directory dir = directory();
-    // getting a directory path for saving
+    // print out directory contents for debugging
+    picPath!.listSync().forEach((e) {
+      print(e.path);
+    });
     String path = picPath!.path;
     String name = plantStr[0];
     String fullPath = '$path/$name';
