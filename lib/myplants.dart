@@ -8,6 +8,8 @@ import 'package:collection/collection.dart';
 
 import 'editplant.dart';
 
+import 'package:exif/exif.dart';
+
 class MyPlants extends StatefulWidget {
   const MyPlants({super.key, required this.plants, required this.picPath});
   final List<Plant> plants;

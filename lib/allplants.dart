@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:plantselect/myplants.dart';
 import 'plant.dart';
 import 'package:gsheets/gsheets.dart';
 import 'dart:io';
@@ -76,6 +77,11 @@ class _AddPlantState extends State<AddPlant> {
 
   // Method to Submit Feedback and save it in Google Sheets
   void _submitForm() {
+    Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          MyPlants(plants: widget.plants, picPath: widget.picPath)));
     addRow();
   }
 
