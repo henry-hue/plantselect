@@ -8,8 +8,6 @@ import 'package:collection/collection.dart';
 
 import 'editplant.dart';
 
-import 'package:exif/exif.dart';
-
 class MyPlants extends StatefulWidget {
   const MyPlants({super.key, required this.plants, required this.picPath});
   final List<Plant> plants;
@@ -113,9 +111,15 @@ class SelectedPlants extends StatelessWidget {
     //picPath!.listSync().forEach((e) {
     // print(e.path);
     //});
-    String path = picPath!.path;
-    String name = plantStr[0];
-    String fullPath = '$path/$name';
+    Image? picture;
+    var attributeCount = plantInfo.length;
+    if (picPath != null) {
+      String path = picPath!.path;
+      String name = plantStr[0];
+      String fullPath = '$path/$name';
+      picture = Image.file(File(fullPath));
+      attributeCount += 1;
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -128,12 +132,12 @@ class SelectedPlants extends StatelessWidget {
         title: Image.asset('assets/images/logo.png'),
       ),
       body: ListView.builder(
-          itemCount: plantInfo.length + 1,
+          itemCount: attributeCount,
           itemBuilder: (BuildContext context, int index) {
             if (index < plantInfo.length) {
               return Text(plantInfo[index]);
             } else {
-              return Image.file(File(fullPath));
+              return picture;
             }
           }),
     );
