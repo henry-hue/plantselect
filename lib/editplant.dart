@@ -24,12 +24,12 @@ const _credentials = r'''
 ''';
 
 const _spreadsheetId = '1lHYYVl_AJE5lBt4F43CtAvuO7G2xXFgRFZ0jc4fyrCc';
-const tab = 'rraymond';
 
 
 class EditPlant extends StatefulWidget {
-  const EditPlant({super.key, required this.plant});
+  const EditPlant({super.key, required this.plant, required this.username});
   final Plant plant;
+  final String username;
 
   @override
   State<EditPlant> createState() => _EditPlantState();
@@ -40,7 +40,7 @@ class EditPlant extends StatefulWidget {
 class _EditPlantState extends State<EditPlant> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
+  //final String username;
 
 
   // TextField Controllers
@@ -61,9 +61,9 @@ class _EditPlantState extends State<EditPlant> {
     final ss = await gsheets.spreadsheet(_spreadsheetId);
 
     // get worksheet by its title
-    var sheet = ss.worksheetByTitle(tab);
+    var sheet = ss.worksheetByTitle(widget.username);
     // create worksheet if it does not exist yet
-    sheet ??= await ss.addWorksheet(tab);
+    sheet ??= await ss.addWorksheet(widget.username);
 
     
     

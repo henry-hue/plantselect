@@ -73,6 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Plant> plants = [];
   Map<String, Plant> plantByBotanicName = {};
   Directory? picPath;
+  String username = 'h';
 
   @override
   void initState() {
@@ -149,10 +150,10 @@ class _MyHomePageState extends State<MyHomePage> {
           ]),
       body: <Widget>[
         Card(
-          child: AddPlant(plants: plants, picPath: picPath),
+          child: AddPlant(plants: plants, picPath: picPath, username: username),
         ),
         Card(
-          child: MyPlants(plants: plants, picPath: picPath),
+          child: MyPlants(plants: plants, picPath: picPath, username: username),
         ),
       ][currentPageIndex],
     );

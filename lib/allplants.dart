@@ -25,12 +25,12 @@ const _credentials = r'''
 ''';
 
 const _spreadsheetId = '1lHYYVl_AJE5lBt4F43CtAvuO7G2xXFgRFZ0jc4fyrCc';
-const tab = 'rraymond';
 
 class AddPlant extends StatefulWidget {
-  const AddPlant({super.key, required this.plants, required this.picPath});
+  const AddPlant({super.key, required this.plants, required this.picPath, required this.username});
   final List<Plant> plants;
   final Directory? picPath;
+  final String username;
 
   @override
   State<AddPlant> createState() => _AddPlantState();
@@ -56,9 +56,9 @@ class _AddPlantState extends State<AddPlant> {
     final ss = await gsheets.spreadsheet(_spreadsheetId);
 
     // get worksheet by its title
-    var sheet = ss.worksheetByTitle(tab);
+    var sheet = ss.worksheetByTitle('henry-hue');
     // create worksheet if it does not exist yet
-    sheet ??= await ss.addWorksheet(tab);
+    sheet ??= await ss.addWorksheet('new');
 
     DateTime now = DateTime.now();
     DateTime date = DateTime(now.year, now.month, now.day);
@@ -81,7 +81,8 @@ class _AddPlantState extends State<AddPlant> {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          MyPlants(plants: widget.plants, picPath: widget.picPath)));
+                          MyPlants(plants: widget.plants, picPath: widget.picPath,
+                           username: widget.username)));
     addRow();
   }
 
@@ -90,11 +91,12 @@ class _AddPlantState extends State<AddPlant> {
     final gsheets = GSheets(_credentials);
     // fetch spreadsheet by its id
     final ss = await gsheets.spreadsheet(_spreadsheetId);
-
+    print('common gsheets');
+      ss.addWorksheet('added-sheet');
     // get worksheet by its title
-    var sheet = ss.worksheetByTitle(tab);
+    var sheet = ss.worksheetByTitle('henry-hue');
     // create worksheet if it does not exist yet
-    sheet ??= await ss.addWorksheet(tab);
+    sheet ??= await ss.addWorksheet('henry-hue');
     var row = await sheet.values.lastRow(length: 1);
     return int.parse(row![0]) + 1;
   }

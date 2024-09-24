@@ -9,9 +9,10 @@ import 'package:collection/collection.dart';
 import 'editplant.dart';
 
 class MyPlants extends StatefulWidget {
-  const MyPlants({super.key, required this.plants, required this.picPath});
+  const MyPlants({super.key, required this.plants, required this.picPath, required this.username});
   final List<Plant> plants;
   final Directory? picPath;
+  final String username;
   @override
   State<MyPlants> createState() => _MyPlantsState();
 }
@@ -51,7 +52,7 @@ class _MyPlantsState extends State<MyPlants> {
                         iconAlignment: IconAlignment.end,
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => EditPlant(plant: plant)));
+                              builder: (context) => EditPlant(plant: plant, username: widget.username)));
                         },
                         child: const Text('Edit'))
                   ],
