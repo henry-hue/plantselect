@@ -35,7 +35,11 @@ class _MyPlantsState extends State<MyPlants> {
   }
 
   accessSaved () async {
+    
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.remove('username');
+
+
   final String? name = prefs.getString('username');
   return name;
   }
@@ -44,6 +48,7 @@ class _MyPlantsState extends State<MyPlants> {
   Widget build(BuildContext context) {
 
     final String? name = accessSaved();
+ 
 
     return FutureBuilder<List<Plant>>(
       future: fetchPlants(),
@@ -57,8 +62,9 @@ class _MyPlantsState extends State<MyPlants> {
                 
                 title: Column(
                   children: <Widget>[
+                    
                     Text(
-                        '''$name ${plant.values[1]}: ${plant.values[4]} ${plant.values[2]}'''),
+                        '''${plant.values[4]} ${plant.values[2]}'''),
                     ElevatedButton(
                         iconAlignment: IconAlignment.end,
                         onPressed: () {
@@ -106,7 +112,7 @@ class EnterUsername extends StatelessWidget {
   void saveUsername() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.setString('username', usernameController.text);
-
+  
   }
 
   @override
