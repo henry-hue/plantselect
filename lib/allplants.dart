@@ -56,9 +56,9 @@ class _AddPlantState extends State<AddPlant> {
     final ss = await gsheets.spreadsheet(_spreadsheetId);
 
     // get worksheet by its title
-    var sheet = ss.worksheetByTitle('henry-hue');
+    var sheet = ss.worksheetByTitle('does not exist');
     // create worksheet if it does not exist yet
-    sheet ??= await ss.addWorksheet('new');
+    sheet ??= await ss.addWorksheet('new sheet by henry');
 
     DateTime now = DateTime.now();
     DateTime date = DateTime(now.year, now.month, now.day);
@@ -91,8 +91,6 @@ class _AddPlantState extends State<AddPlant> {
     final gsheets = GSheets(_credentials);
     // fetch spreadsheet by its id
     final ss = await gsheets.spreadsheet(_spreadsheetId);
-    print('common gsheets');
-      ss.addWorksheet('added-sheet');
     // get worksheet by its title
     var sheet = ss.worksheetByTitle('henry-hue');
     // create worksheet if it does not exist yet

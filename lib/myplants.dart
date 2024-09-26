@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'plant.dart';
 import 'package:collection/collection.dart';
 
@@ -33,8 +34,17 @@ class _MyPlantsState extends State<MyPlants> {
     }
   }
 
+  accessSaved () async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final String? name = prefs.getString('username');
+  return name;
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    final String? name = accessSaved();
+
     return FutureBuilder<List<Plant>>(
       future: fetchPlants(),
       builder: (context, snapshot) {
@@ -44,10 +54,11 @@ class _MyPlantsState extends State<MyPlants> {
             itemBuilder: (context, index) {
               Plant plant = snapshot.data![index];
               return ListTile(
+                
                 title: Column(
                   children: <Widget>[
                     Text(
-                        '''${plant.values[1]}: ${plant.values[4]} ${plant.values[2]}'''),
+                        '''$name ${plant.values[1]}: ${plant.values[4]} ${plant.values[2]}'''),
                     ElevatedButton(
                         iconAlignment: IconAlignment.end,
                         onPressed: () {
@@ -72,10 +83,53 @@ class _MyPlantsState extends State<MyPlants> {
         } else if (snapshot.hasError) {
           return Center(child: Text('${snapshot.error}'));
         }
+        else if (name == null) {
+          Navigator.push(context,
+          MaterialPageRoute(builder: (context) =>
+          EnterUsername()
+          )
+          );
+        }
 
         // By default, show a loading spinner
         return const Center(child: CircularProgressIndicator());
       },
+    );
+  }
+}
+
+class EnterUsername extends StatelessWidget {
+  EnterUsername({super.key});
+
+  TextEditingController usernameController = TextEditingController();
+
+  void saveUsername() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('username', usernameController.text);
+
+  }
+
+  @override
+  Widget build(BuildContext context){
+    return MaterialApp(
+      home: Scaffold(
+      body: Center(
+        child: ListView(
+        children: <Widget> [
+        TextFormField(
+          controller: usernameController,
+          decoration: const InputDecoration(
+            labelText: 'Username'
+          )
+        ),
+        ElevatedButton(
+          onPressed: saveUsername,
+          child: const Text('Submit'),
+          )
+        ]
+      )
+      )
+    )
     );
   }
 }
