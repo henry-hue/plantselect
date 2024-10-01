@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'plant.dart';
 import 'allplants.dart';
 import 'myplants.dart';
-
-
+import 'enterUsername.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,26 +24,24 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      
-
       title: 'PlantSelect',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a blue toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-      ),
+          // This is the theme of your application.
+          //
+          // TRY THIS: Try running your application with "flutter run". You'll see
+          // the application has a blue toolbar. Then, without quitting the app,
+          // try changing the seedColor in the colorScheme below to Colors.green
+          // and then invoke "hot reload" (save your changes or press the "hot
+          // reload" button in a Flutter-supported IDE, or press "r" if you used
+          // the command line to start the app).
+          //
+          // Notice that the counter didn't reset back to zero; the application
+          // state is not lost during the reload. To reset the state, use hot
+          // restart instead.
+          //
+          // This works for code too, not just values: Most code changes can be
+          // tested with just a hot reload.
+          ),
       home: const MyHomePage(title: 'PlantSelect'),
     );
   }
@@ -72,19 +70,31 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Plant> plants = [];
   Map<String, Plant> plantByBotanicName = {};
   Directory? picPath;
-  String username = 'h';
+  String? username;
+
+  getUsername() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    //await prefs.remove('username');
+    setUsername(prefs.getString('username'));
+    
+  }
+
+  setUsername(String? name) {
+    setState(() {
+      username = name;
+    });
+  }
+
+  Future directory() async {
+    picPath = await getApplicationDocumentsDirectory();
+  }
 
   @override
   void initState() {
     super.initState();
-
+    getUsername();
     fetchPlants();
     directory();
-  }
-
-  Future directory() async{
-      picPath = await getApplicationDocumentsDirectory();
-
   }
 
   Future<void> fetchPlants() async {
@@ -117,44 +127,51 @@ class _MyHomePageState extends State<MyHomePage> {
       // Wait until fetch completes
       return const Center(child: CircularProgressIndicator());
     }
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Colors.lightGreen,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Image.asset('assets/images/logo.png'),
-      ),
-      bottomNavigationBar: NavigationBar(
-          onDestinationSelected: (int index) {
-            setState(() {
-              currentPageIndex = index;
-            });
-          },
-          indicatorColor: Colors.amber,
-          selectedIndex: currentPageIndex,
-          destinations: const <Widget>[
-            NavigationDestination(
-              selectedIcon: Icon(Icons.home),
-              icon: Icon(Icons.home_outlined),
-              label: 'Add Plant',
-            ),
-            NavigationDestination(
-              selectedIcon: Icon(Icons.money),
-              icon: Icon(Icons.money),
-              label: 'My Plants',
-            ),
-          ]),
-      body: <Widget>[
-        Card(
-          child: AddPlant(plants: plants, picPath: picPath, username: username),
+
+    if (username == null) {
+      return EnterUsername(setUsername: setUsername);
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          // TRY THIS: Try changing the color here to a specific color (to
+          // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
+          // change color while the other colors stay the same.
+          backgroundColor: Colors.lightGreen,
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: Image.asset('assets/images/logo.png'),
         ),
-        Card(
-          child: MyPlants(plants: plants, picPath: picPath, username: username),
-        ),
-      ][currentPageIndex],
-    );
+        bottomNavigationBar: NavigationBar(
+            onDestinationSelected: (int index) {
+              setState(() {
+                currentPageIndex = index;
+              });
+            },
+            indicatorColor: Colors.amber,
+            selectedIndex: currentPageIndex,
+            destinations: const <Widget>[
+              NavigationDestination(
+                selectedIcon: Icon(Icons.home),
+                icon: Icon(Icons.home_outlined),
+                label: 'Add Plant',
+              ),
+              NavigationDestination(
+                selectedIcon: Icon(Icons.money),
+                icon: Icon(Icons.money),
+                label: 'My Plants',
+              ),
+            ]),
+        body: <Widget>[
+          Card(
+            child:
+                AddPlant(plants: plants, picPath: picPath, username: username!),
+          ),
+          Card(
+            child:
+                MyPlants(plants: plants, picPath: picPath, username: username!),
+          ),
+        ][currentPageIndex],
+      );
+    }
   }
 }

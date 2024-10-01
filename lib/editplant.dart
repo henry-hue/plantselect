@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'plant.dart';
-
 import 'package:gsheets/gsheets.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -28,7 +26,7 @@ const _spreadsheetId = '1lHYYVl_AJE5lBt4F43CtAvuO7G2xXFgRFZ0jc4fyrCc';
 
 class EditPlant extends StatefulWidget {
   const EditPlant({super.key, required this.plant, required this.username});
-  final Plant plant;
+  final List plant;
   final String username;
 
   @override
@@ -40,7 +38,6 @@ class EditPlant extends StatefulWidget {
 class _EditPlantState extends State<EditPlant> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  //final String username;
 
 
   // TextField Controllers
@@ -67,7 +64,7 @@ class _EditPlantState extends State<EditPlant> {
 
     
     
-    var index = widget.plant.values[0];
+    var index = widget.plant[0];
     //await sheet.values.map.appendRow(newRow);
       await sheet.values.insertValueByKeys(isSeed, columnKey: 'Seed', rowKey: index);
       await sheet.values.insertValueByKeys(isAlive, columnKey: 'Living', rowKey: index);
