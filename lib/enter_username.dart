@@ -3,8 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class EnterUsername extends StatefulWidget {
 
-  EnterUsername({super.key, required this.setUsername});
-      Function setUsername;
+  const EnterUsername({super.key, required this.setUsername});
+      final Function setUsername;
 
 
 

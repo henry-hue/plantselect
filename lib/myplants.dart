@@ -46,7 +46,7 @@ class _MyPlantsState extends State<MyPlants> {
     var sheet = ss.worksheetByTitle(widget.username);
       sheet ??= await ss.addWorksheet(widget.username);
 
-    List<List<String>> plants = await sheet!.values.allRows();
+    List<List<String>> plants = await sheet.values.allRows();
     print(plants);
     return plants;
   }

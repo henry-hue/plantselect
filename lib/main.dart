@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'plant.dart';
 import 'allplants.dart';
 import 'myplants.dart';
-import 'enterUsername.dart';
+import 'enter_username.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
