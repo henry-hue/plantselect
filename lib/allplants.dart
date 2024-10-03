@@ -60,12 +60,7 @@ class _AddPlantState extends State<AddPlant> {
 
   // Method to Submit Feedback and save it in Google Sheets
   void _submitForm() {
-    Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          MyPlants(plants: widget.plants, picPath: widget.picPath,
-                           username: widget.username)));
+    Navigator.pop(context, true);
     addRow();
   }
 
@@ -208,7 +203,8 @@ class _AddPlantState extends State<AddPlant> {
                     ),
                   if (imageFile != null)
                     Image.file(File(imageFile!.path)),
-                  if (imageFile != null)
+
+
                     ElevatedButton(
                       onPressed: _submitForm,
                       child: const Text('Submit Plant'),

@@ -39,12 +39,13 @@ class _MyPlantsState extends State<MyPlants> {
 
   @override
   Widget build(BuildContext context) {
-
-    return FutureBuilder<dynamic>(
+    return Material(
+    child: FutureBuilder<dynamic>(
       future: sheetsPlants(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return ListView.builder(
+          
+          return ListView.builder( 
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
               List plant = snapshot.data![index];
@@ -72,8 +73,10 @@ class _MyPlantsState extends State<MyPlants> {
                   );
                 },
               );
+              
             },
           );
+          
         } else if (snapshot.hasError) {
           return Center(child: Text('${snapshot.error}'));
         }
@@ -81,7 +84,9 @@ class _MyPlantsState extends State<MyPlants> {
         // By default, show a loading spinner
         return const Center(child: CircularProgressIndicator());
       },
+    )
     );
+    
   }
 }
 
