@@ -39,7 +39,7 @@ class _AddPlantState extends State<AddPlant> {
     final ss = await gsheets.spreadsheet(spreadsheetId);
 
     // get worksheet by its title
-    var sheet = ss.worksheetByTitle('does not exist');
+    var sheet = ss.worksheetByTitle(widget.username);
     // create worksheet if it does not exist yet
     sheet ??= await ss.addWorksheet('new sheet by henry');
 
