@@ -115,6 +115,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
 void goToAddPlant() {
+
+setState(() {
+  
+});
+
  Navigator.push(
                     context,
                     MaterialPageRoute(

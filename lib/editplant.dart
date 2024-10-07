@@ -17,7 +17,6 @@ class EditPlant extends StatefulWidget {
 
 class _EditPlantState extends State<EditPlant> {
   final _formKey = GlobalKey<FormState>();
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
 
   // TextField Controllers
@@ -54,6 +53,7 @@ class _EditPlantState extends State<EditPlant> {
 
   // Method to Submit Feedback and save it in Google Sheets
   void _submitForm() {
+    Navigator.pop(context);
     addRow();
     
   }
@@ -75,10 +75,7 @@ class _EditPlantState extends State<EditPlant> {
   
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        key: _scaffoldKey,
-        
-        home: Scaffold(
+    return Scaffold(
             appBar: AppBar(
         
         backgroundColor: Colors.lightGreen,
@@ -134,6 +131,6 @@ class _EditPlantState extends State<EditPlant> {
                       ElevatedButton(onPressed: _submitForm,
                        child: const Text('Save Changes')),
                  
-                ]))));
+                ])));
   }
 }
