@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:plantselect/myplants.dart';
 import 'plant.dart';
 import 'credentials.dart';
 import 'package:gsheets/gsheets.dart';
@@ -21,7 +20,7 @@ class AddPlant extends StatefulWidget {
 
 class _AddPlantState extends State<AddPlant> {
   final _formKey = GlobalKey<FormState>();
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  //final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   // TextField Controllers
   //TextEditingController DateController = TextEditingController();
@@ -48,6 +47,7 @@ class _AddPlantState extends State<AddPlant> {
     String justDate = date.toString().substring(0, 10);
     //await sheet.values.insertValue(DateController.text, column: 1, row: 2);
     final newRow = {
+      '1' : '=IF(B1<>"", ROW(),)',
       'Date': justDate,
       'Plant': plantController.text,
       'Living': isAlive,
@@ -60,8 +60,9 @@ class _AddPlantState extends State<AddPlant> {
 
   // Method to Submit Feedback and save it in Google Sheets
   void _submitForm() {
-    Navigator.pop(context, true);
+    
     addRow();
+    Navigator.pop(context);
   }
 
   getRowCount() async {
@@ -101,9 +102,7 @@ class _AddPlantState extends State<AddPlant> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        key: _scaffoldKey,
-        home: Scaffold(
+    return  Scaffold(
             appBar: AppBar(
                 title: const Text('search for plant or type in plant name')),
             body: Center(
@@ -209,6 +208,6 @@ class _AddPlantState extends State<AddPlant> {
                       onPressed: _submitForm,
                       child: const Text('Submit Plant'),
                     )
-                ]))));
+                ])));
   }
 }

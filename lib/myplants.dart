@@ -29,7 +29,7 @@ class _MyPlantsState extends State<MyPlants> {
     var sheet = ss.worksheetByTitle(widget.username);
       sheet ??= await ss.addWorksheet(widget.username);
 
-      final firstRow = ['=ArrayFormula(IF(B1<>"", ROW(),))', 'Date', 'Plant', 'Living', 'Quantity', 'Nursery', 'Seed'];			
+      final firstRow = ['=IF(B1<>"", ROW(),)', 'Date', 'Plant', 'Living', 'Quantity', 'Nursery', 'Seed'];			
         await sheet.values.insertRow(1, firstRow);
         														
 

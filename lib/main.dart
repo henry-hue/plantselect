@@ -114,6 +114,17 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+void goToAddPlant() {
+ Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          AddPlant(plants: plants, picPath: picPath, username: username!),
+                    ),
+                  );
+}
+
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -131,7 +142,9 @@ class _MyHomePageState extends State<MyHomePage> {
     if (username == null) {
       return EnterUsername(setUsername: setUsername);
     } else {
-      return Scaffold(
+      return MaterialApp(
+        //key: _scaffoldKey,
+        home: Scaffold(
         appBar: AppBar(
           // TRY THIS: Try changing the color here to a specific color (to
           // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
@@ -141,36 +154,20 @@ class _MyHomePageState extends State<MyHomePage> {
           // the App.build method, and use it to set our appbar title.
           title: Image.asset('assets/images/logo.png'),
         ),
-        bottomNavigationBar: NavigationBar(
-            onDestinationSelected: (int index) {
-              setState(() {
-                currentPageIndex = index;
-              });
-            },
-            indicatorColor: Colors.amber,
-            selectedIndex: currentPageIndex,
-            destinations: const <Widget>[
-              NavigationDestination(
-                selectedIcon: Icon(Icons.home),
-                icon: Icon(Icons.home_outlined),
-                label: 'Add Plant',
-              ),
-              NavigationDestination(
-                selectedIcon: Icon(Icons.money),
-                icon: Icon(Icons.money),
-                label: 'My Plants',
-              ),
-            ]),
+
+        floatingActionButton: FloatingActionButton(
+        onPressed: goToAddPlant,
+        tooltip: 'Add Plant',
+        child: const Icon(Icons.add),
+      ),
+
         body: <Widget>[
-          Card(
-            child:
-                AddPlant(plants: plants, picPath: picPath, username: username!),
-          ),
           Card(
             child:
                 MyPlants(plants: plants, picPath: picPath, username: username!),
           ),
         ][currentPageIndex],
+      )
       );
     }
   }
