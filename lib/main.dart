@@ -7,7 +7,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'plant.dart';
-import 'allplants.dart';
 import 'myplants.dart';
 import 'enter_username.dart';
 
@@ -76,7 +75,6 @@ class _MyHomePageState extends State<MyHomePage> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     //await prefs.remove('username');
     setUsername(prefs.getString('username'));
-    
   }
 
   setUsername(String? name) {
@@ -114,22 +112,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-void goToAddPlant() {
-
-setState(() {
-  
-});
-
- Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          AddPlant(plants: plants, picPath: picPath, username: username!),
-                    ),
-                  );
-}
-
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -148,31 +130,7 @@ setState(() {
       return EnterUsername(setUsername: setUsername);
     } else {
       return MaterialApp(
-        //key: _scaffoldKey,
-        home: Scaffold(
-        appBar: AppBar(
-          // TRY THIS: Try changing the color here to a specific color (to
-          // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-          // change color while the other colors stay the same.
-          backgroundColor: Colors.lightGreen,
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
-          title: Image.asset('assets/images/logo.png'),
-        ),
-
-        floatingActionButton: FloatingActionButton(
-        onPressed: goToAddPlant,
-        tooltip: 'Add Plant',
-        child: const Icon(Icons.add),
-      ),
-
-        body: <Widget>[
-          Card(
-            child:
-                MyPlants(plants: plants, picPath: picPath, username: username!),
-          ),
-        ][currentPageIndex],
-      )
+        home: MyPlants(plants: plants, picPath: picPath, username: username!),
       );
     }
   }

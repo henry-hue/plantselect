@@ -63,6 +63,7 @@ class _AddPlantState extends State<AddPlant> {
     
     addRow();
     Navigator.pop(context);
+
   }
 
   getRowCount() async {
@@ -104,7 +105,14 @@ class _AddPlantState extends State<AddPlant> {
   Widget build(BuildContext context) {
     return  Scaffold(
             appBar: AppBar(
-                title: const Text('search for plant or type in plant name')),
+          // TRY THIS: Try changing the color here to a specific color (to
+          // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
+          // change color while the other colors stay the same.
+          backgroundColor: Colors.lightGreen,
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: Image.asset('assets/images/logo.png'),
+        ),
             body: Center(
                 child: ListView(
                     //mainAxisAlignment: MainAxisAlignment.start,

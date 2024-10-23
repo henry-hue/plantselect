@@ -5,9 +5,10 @@ import 'package:collection/collection.dart';
 import 'editplant.dart';
 import 'package:gsheets/gsheets.dart';
 import 'credentials.dart';
+import 'allplants.dart';
 
 class MyPlants extends StatefulWidget {
-  const MyPlants(
+   MyPlants(
       {super.key,
       required this.plants,
       required this.picPath,
@@ -15,78 +16,114 @@ class MyPlants extends StatefulWidget {
   final List<Plant> plants;
   final Directory? picPath;
   final String username;
+  List<List<String>> myplants = [];
+
   @override
   State<MyPlants> createState() => _MyPlantsState();
 }
 
 class _MyPlantsState extends State<MyPlants> {
-
   sheetsPlants() async {
     final gsheets = GSheets(credentials);
     // fetch spreadsheet by its id
     final ss = await gsheets.spreadsheet(spreadsheetId);
 
     var sheet = ss.worksheetByTitle(widget.username);
-      sheet ??= await ss.addWorksheet(widget.username);
+    sheet ??= await ss.addWorksheet(widget.username);
 
-      final firstRow = ['=IF(B1<>"", ROW(),)', 'Date', 'Plant', 'Living', 'Quantity', 'Nursery', 'Seed'];			
-        await sheet.values.insertRow(1, firstRow);
-        														
+    final firstRow = [
+      '=IF(B1<>"", ROW(),)',
+      'Date',
+      'Plant',
+      'Living',
+      'Quantity',
+      'Nursery',
+      'Seed'
+    ];
+    await sheet.values.insertRow(1, firstRow);
+    widget.myplants = await sheet.values.allRows();
+    return widget.myplants;
+  }
 
-    List<List<String>> plants = await sheet.values.allRows();
-    return plants;
+  void goToAddPlant() {
+    setState(() {
+      widget.myplants = [];
+    });
+
+
+
+  Navigator.push(context, MaterialPageRoute(builder: (context) => AddPlant(
+    plants: widget.plants,
+            picPath: widget.picPath,
+            username: widget.username
+  ))).then((value) { setState(() {});});
+
+
   }
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-    child: FutureBuilder<dynamic>(
-      future: sheetsPlants(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          
-          return ListView.builder( 
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              List plant = snapshot.data![index];
-              return ListTile(
-                title: Column(
-                  children: <Widget>[
-                    Text('''${plant[4]} ${plant[2]}'''),
-                    ElevatedButton(
-                        iconAlignment: IconAlignment.end,
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => EditPlant(
-                                  plant: plant, username: widget.username)));
-                        },
-                        child: const Text('Edit'))
-                  ],
-                ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          SelectedPlants(plant: plant, picPath: widget.picPath),
+    return Scaffold(
+        appBar: AppBar(
+          // TRY THIS: Try changing the color here to a specific color (to
+          // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
+          // change color while the other colors stay the same.
+          backgroundColor: Colors.lightGreen,
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: Image.asset('assets/images/logo.png'),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: goToAddPlant,
+          tooltip: 'Add Plant',
+          child: const Icon(Icons.add),
+        ),
+        body: FutureBuilder<dynamic>(
+          future: sheetsPlants(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                itemCount: snapshot.data!.length -1 ,
+                itemBuilder: (context, index) {
+                  
+                  List plant = snapshot.data![index +1]; //so now its gonna try to get one more than exists
+                  return ListTile(
+                    title: Column(
+                      children: <Widget>[
+                        Text('''${plant[4]} ${plant[2]}'''),
+                        ElevatedButton(
+                            iconAlignment: IconAlignment.end,
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => EditPlant(
+                                      plant: plant,
+                                      username: widget.username)));
+                            },
+                            child: const Text('Edit'))
+                      ],
                     ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SelectedPlants(
+                              plant: plant, picPath: widget.picPath),
+                        ),
+                      );
+                    },
                   );
-                },
+                }
+                
               );
-              
-            },
-          );
-          
-        } else if (snapshot.hasError) {
-          return Center(child: Text('${snapshot.error}'));
-        }
+            
+            } else if (snapshot.hasError) {
+              return Center(child: Text('${snapshot.error}'));
+            }
 
-        // By default, show a loading spinner
-        return const Center(child: CircularProgressIndicator());
-      },
-    )
-    );
-    
+            // By default, show a loading spinner
+            return const Center(child: CircularProgressIndicator());
+          },
+        ));
   }
 }
 
