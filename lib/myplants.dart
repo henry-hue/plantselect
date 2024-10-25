@@ -41,7 +41,8 @@ class _MyPlantsState extends State<MyPlants> {
       'Seed'
     ];
     await sheet.values.insertRow(1, firstRow);
-    widget.myplants = await sheet.values.allRows();
+    widget.myplants = await sheet.values.allRows(fromRow: 2);
+    widget.myplants = widget.myplants.reversed.toList();
     return widget.myplants;
   }
 
@@ -83,10 +84,10 @@ class _MyPlantsState extends State<MyPlants> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return ListView.builder(
-                itemCount: snapshot.data!.length -1 ,
+                itemCount: snapshot.data!.length, 
                 itemBuilder: (context, index) {
                   
-                  List plant = snapshot.data![index +1]; //so now its gonna try to get one more than exists
+                  List plant = snapshot.data![index]; 
                   return ListTile(
                     title: Column(
                       children: <Widget>[
@@ -118,6 +119,9 @@ class _MyPlantsState extends State<MyPlants> {
             
             } else if (snapshot.hasError) {
               return Center(child: Text('${snapshot.error}'));
+            }
+            else {
+              print('fffffff');
             }
 
             // By default, show a loading spinner

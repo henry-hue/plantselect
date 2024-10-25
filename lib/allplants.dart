@@ -8,6 +8,11 @@ import 'credentials.dart';
 import 'package:gsheets/gsheets.dart';
 import 'dart:io';
 
+import 'package:image/image.dart' as img; 
+import 'package:exif/exif.dart'; 
+
+
+
 class AddPlant extends StatefulWidget {
   const AddPlant({super.key, required this.plants, required this.picPath, required this.username});
   final List<Plant> plants;
@@ -30,6 +35,8 @@ class _AddPlantState extends State<AddPlant> {
 
   bool isAlive = false;
   bool isSeed = false;
+
+  Map<String, dynamic>? _metadata; 
 
   void addRow() async {
     // init GSheets
@@ -55,6 +62,9 @@ class _AddPlantState extends State<AddPlant> {
       'Nursery': nurseryController.text,
       'Seed': isSeed
     };
+    //final newestRow = ['=IF(B1<>"", ROW(),)', justDate, plantController.text, isAlive, quantityController.text, nurseryController.text, isSeed];
+    
+    //await sheet.values.insertRow(1, newestRow);
     await sheet.values.map.appendRow(newRow);
   }
 
@@ -81,25 +91,47 @@ class _AddPlantState extends State<AddPlant> {
 
   XFile? imageFile;
 
+
+
   selectFile() async {
     XFile? file = await ImagePicker()
         .pickImage(source: ImageSource.camera, maxHeight: 1800, maxWidth: 1800);
 
+    // getting a directory path for saving
+         final Directory dir = await getApplicationDocumentsDirectory();
+    final String path = dir.path;
+
+
     if (file != null) {
       setState(() {
         imageFile = XFile(file.path);
+
+
+
+         _metadata = null; // Reset metadata when a new image is selected 
+           // _extractMetadata(); 
       });
     }
-    final Directory dir = await getApplicationDocumentsDirectory();
-
-    // getting a directory path for saving
-    final String path = dir.path;
-
-    File image = File(imageFile!.path);
+    
     var name = await getRowCount();
+          File image = File(imageFile!.path);
 
     await image.copy('$path/$name');
+
+    
   }
+
+//   Future<void> _extractMetadata() async { 
+// try { 
+//   final bytes = await image!.readAsBytes(); 
+//   final image = img.decodeImage(bytes); 
+//   if (image != null) { 
+//     final exifData = await readExifFromBytes(bytes);
+//     setState(() { _metadata = exifData; }); } 
+//   }catch (e) { 
+//   print('Error extracting metadata: $e'); 
+//  }
+// } 
 
   @override
   Widget build(BuildContext context) {
