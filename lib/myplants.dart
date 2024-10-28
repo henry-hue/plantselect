@@ -38,7 +38,7 @@ class _MyPlantsState extends State<MyPlants> {
       'Living',
       'Quantity',
       'Nursery',
-      'Seed'
+      'Planted As'
     ];
     await sheet.values.insertRow(1, firstRow);
     widget.myplants = await sheet.values.allRows(fromRow: 2);

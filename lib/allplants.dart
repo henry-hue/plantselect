@@ -33,8 +33,10 @@ class _AddPlantState extends State<AddPlant> {
   TextEditingController quantityController = TextEditingController();
   TextEditingController nurseryController = TextEditingController();
 
-  bool isAlive = false;
   bool isSeed = false;
+  bool isAlive = true;
+  String plantedAs = 'Planted as Living Plant';
+
 
   Map<String, dynamic>? _metadata; 
 
@@ -49,6 +51,12 @@ class _AddPlantState extends State<AddPlant> {
     // create worksheet if it does not exist yet
     sheet ??= await ss.addWorksheet('new sheet by henry');
 
+  if (isSeed) {
+    plantedAs = 'Planted as Seed';
+  }
+    
+
+
     DateTime now = DateTime.now();
     DateTime date = DateTime(now.year, now.month, now.day);
     String justDate = date.toString().substring(0, 10);
@@ -60,11 +68,9 @@ class _AddPlantState extends State<AddPlant> {
       'Living': isAlive,
       'Quantity': quantityController.text,
       'Nursery': nurseryController.text,
-      'Seed': isSeed
+      'Planted As': plantedAs,
     };
-    //final newestRow = ['=IF(B1<>"", ROW(),)', justDate, plantController.text, isAlive, quantityController.text, nurseryController.text, isSeed];
     
-    //await sheet.values.insertRow(1, newestRow);
     await sheet.values.map.appendRow(newRow);
   }
 
@@ -73,7 +79,6 @@ class _AddPlantState extends State<AddPlant> {
     
     addRow();
     Navigator.pop(context);
-
   }
 
   getRowCount() async {
@@ -208,22 +213,11 @@ class _AddPlantState extends State<AddPlant> {
                                 labelText: 'Nursery',
                               ),
                             ),
-                            FormField<bool>(builder: (state) {
-                              return CheckboxListTile(
-                                  value: isAlive,
-                                  title: const Text('Living Plant'),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      //save checkbox value to variable that store terms and notify form that state changed
-                                      isAlive = !isAlive;
-                                      state.didChange(value);
-                                    });
-                                  });
-                            }),
+                          
                             FormField<bool>(builder: (state) {
                               return CheckboxListTile(
                                   value: isSeed,
-                                  title: const Text('Seed'),
+                                  title: const Text('Planted as Seed'),
                                   onChanged: (value) {
                                     setState(() {
                                       //save checkbox value to variable that store terms and notify form that state changed
