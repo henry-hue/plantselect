@@ -8,7 +8,7 @@ import 'credentials.dart';
 import 'allplants.dart';
 
 class MyPlants extends StatefulWidget {
-   MyPlants(
+  const MyPlants(
       {super.key,
       required this.plants,
       required this.picPath,
@@ -16,7 +16,6 @@ class MyPlants extends StatefulWidget {
   final List<Plant> plants;
   final Directory? picPath;
   final String username;
-  List<List<String>> myplants = [];
 
   @override
   State<MyPlants> createState() => _MyPlantsState();
@@ -41,25 +40,21 @@ class _MyPlantsState extends State<MyPlants> {
       'Planted As'
     ];
     await sheet.values.insertRow(1, firstRow);
-    widget.myplants = await sheet.values.allRows(fromRow: 2);
-    widget.myplants = widget.myplants.reversed.toList();
-    return widget.myplants;
+    List<List<String>> myplants = await sheet.values.allRows(fromRow: 2);
+    myplants = myplants.reversed.toList();
+    return myplants;
   }
 
   void goToAddPlant() {
-    setState(() {
-      widget.myplants = [];
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => AddPlant(
+                plants: widget.plants,
+                picPath: widget.picPath,
+                username: widget.username))).then((value) {
+      setState(() {});
     });
-
-
-
-  Navigator.push(context, MaterialPageRoute(builder: (context) => AddPlant(
-    plants: widget.plants,
-            picPath: widget.picPath,
-            username: widget.username
-  ))).then((value) { setState(() {});});
-
-
   }
 
   @override
@@ -84,44 +79,37 @@ class _MyPlantsState extends State<MyPlants> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return ListView.builder(
-                itemCount: snapshot.data!.length, 
-                itemBuilder: (context, index) {
-                  
-                  List plant = snapshot.data![index]; 
-                  return ListTile(
-                    title: Column(
-                      children: <Widget>[
-                        Text('''${plant[4]} ${plant[2]}'''),
-                        ElevatedButton(
-                            iconAlignment: IconAlignment.end,
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => EditPlant(
-                                      plant: plant,
-                                      username: widget.username)));
-                            },
-                            child: const Text('Edit'))
-                      ],
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SelectedPlants(
-                              plant: plant, picPath: widget.picPath),
-                        ),
-                      );
-                    },
-                  );
-                }
-                
-              );
-            
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    List plant = snapshot.data![index];
+                    return ListTile(
+                      title: Column(
+                        children: <Widget>[
+                          Text('''${plant[4]} ${plant[2]}'''),
+                          ElevatedButton(
+                              iconAlignment: IconAlignment.end,
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => EditPlant(
+                                        plant: plant,
+                                        username: widget.username)));
+                              },
+                              child: const Text('Edit'))
+                        ],
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SelectedPlants(
+                                plant: plant, picPath: widget.picPath),
+                          ),
+                        );
+                      },
+                    );
+                  });
             } else if (snapshot.hasError) {
               return Center(child: Text('${snapshot.error}'));
-            }
-            else {
-              print('fffffff');
             }
 
             // By default, show a loading spinner
