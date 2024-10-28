@@ -34,9 +34,10 @@ class _AddPlantState extends State<AddPlant> {
   TextEditingController nurseryController = TextEditingController();
 
   bool isSeed = false;
-  bool isAlive = true;
-  String plantedAs = 'Planted as Living Plant';
+    String plantedAs = 'Planted as Living Plant';
 
+  bool isAlive = true;
+String living = 'Alive';
 
   Map<String, dynamic>? _metadata; 
 
@@ -65,7 +66,7 @@ class _AddPlantState extends State<AddPlant> {
       '1' : '=IF(B1<>"", ROW(),)',
       'Date': justDate,
       'Plant': plantController.text,
-      'Living': isAlive,
+      'Living': living,
       'Quantity': quantityController.text,
       'Nursery': nurseryController.text,
       'Planted As': plantedAs,

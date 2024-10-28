@@ -89,10 +89,14 @@ class _MyPlantsState extends State<MyPlants> {
                           ElevatedButton(
                               iconAlignment: IconAlignment.end,
                               onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => EditPlant(
-                                        plant: plant,
-                                        username: widget.username)));
+                                Navigator.push(context,
+                                    MaterialPageRoute(
+                                        builder: (context) => EditPlant(
+                                            plant: plant,
+                                            username: widget.username)))
+                                    .then((value) {
+                                  setState(() {});
+                                });
                               },
                               child: const Text('Edit'))
                         ],
