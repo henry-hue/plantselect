@@ -6,6 +6,7 @@ import 'editplant.dart';
 import 'package:gsheets/gsheets.dart';
 import 'credentials.dart';
 import 'allplants.dart';
+import 'main.dart';
 
 class MyPlants extends StatefulWidget {
   const MyPlants(
@@ -45,6 +46,17 @@ class _MyPlantsState extends State<MyPlants> {
     return myplants;
   }
 
+  void gotoEditPlant(plant) {
+    Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    EditPlant(plant: plant, username: widget.username)))
+        .then((value) {
+      setState(() {sheetsPlants();});
+    });
+  }
+
   void goToAddPlant() {
     Navigator.push(
         context,
@@ -59,15 +71,15 @@ class _MyPlantsState extends State<MyPlants> {
 
   @override
   Widget build(BuildContext context) {
+    double _myToolbarHeight = 200;
     return Scaffold(
         appBar: AppBar(
-          // TRY THIS: Try changing the color here to a specific color (to
-          // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-          // change color while the other colors stay the same.
-          backgroundColor: Colors.lightGreen,
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
-          title: Image.asset('assets/images/logo.png'),
+          backgroundColor: primaryColor,
+          title: SizedBox(
+            height: _myToolbarHeight,
+            child: Image.asset('assets/images/topDesign.png'),
+          ),
+          toolbarHeight: _myToolbarHeight,
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: goToAddPlant,
@@ -76,7 +88,9 @@ class _MyPlantsState extends State<MyPlants> {
         ),
         body: FutureBuilder<dynamic>(
           future: sheetsPlants(),
+          
           builder: (context, snapshot) {
+             
             if (snapshot.hasData) {
               return ListView.builder(
                   itemCount: snapshot.data!.length,
@@ -89,14 +103,7 @@ class _MyPlantsState extends State<MyPlants> {
                           ElevatedButton(
                               iconAlignment: IconAlignment.end,
                               onPressed: () {
-                                Navigator.push(context,
-                                    MaterialPageRoute(
-                                        builder: (context) => EditPlant(
-                                            plant: plant,
-                                            username: widget.username)))
-                                    .then((value) {
-                                  setState(() {});
-                                });
+                                gotoEditPlant(plant);
                               },
                               child: const Text('Edit'))
                         ],
@@ -112,9 +119,17 @@ class _MyPlantsState extends State<MyPlants> {
                       },
                     );
                   });
-            } else if (snapshot.hasError) {
+            } 
+            else if (snapshot.hasError) {
               return Center(child: Text('${snapshot.error}'));
             }
+
+          else if (!snapshot.hasData) {
+              return const ListTile(
+              title: Text('Click the plus button to add plants')
+              );
+            }
+           
 
             // By default, show a loading spinner
             return const Center(child: CircularProgressIndicator());
@@ -166,24 +181,20 @@ class SelectedPlants extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Colors.lightGreen,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Image.asset('assets/images/logo.png'),
-      ),
-      body: ListView.builder(
-          itemCount: attributeCount,
-          itemBuilder: (BuildContext context, int index) {
-            if (index < plantInfo.length) {
-              return Text(plantInfo[index]);
-            } else {
-              return picture;
-            }
-          }),
-    );
+        appBar: AppBar(
+          backgroundColor: primaryColor,
+          title: Image.asset('assets/images/logo.png'),
+        ),
+        body: Center(
+          child: ListView.builder(
+              itemCount: attributeCount,
+              itemBuilder: (BuildContext context, int index) {
+                if (index < plantInfo.length) {
+                  return Text(plantInfo[index]);
+                } else {
+                  return picture;
+                }
+              }),
+        ));
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'main.dart';
 
 class EnterUsername extends StatefulWidget {
 
@@ -26,7 +27,8 @@ class _EnterUsername extends State<EnterUsername> {
     return MaterialApp(
         home: Scaffold(
             appBar: AppBar(
-              backgroundColor: Colors.lightGreen,
+                  backgroundColor: primaryColor,
+
               title: Image.asset('assets/images/logo.png'),
             ),
             body: Center(

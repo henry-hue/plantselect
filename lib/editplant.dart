@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gsheets/gsheets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'credentials.dart';
+import 'main.dart';
 
 class EditPlant extends StatefulWidget {
   const EditPlant({super.key, required this.plant, required this.username});
@@ -71,7 +72,8 @@ class _EditPlantState extends State<EditPlant> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.lightGreen,
+              backgroundColor: primaryColor,
+
           title: Image.asset('assets/images/logo.png'),
         ),
         body: Center(

@@ -11,6 +11,10 @@ import 'plant.dart';
 import 'myplants.dart';
 import 'enter_username.dart';
 
+
+const primaryColor = Color(0xFF046a38);
+
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -19,6 +23,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+  
 
   // This widget is the root of your application.
   @override
@@ -39,7 +44,7 @@ class MyApp extends StatelessWidget {
       bodyMedium: GoogleFonts.merriweather(),
       displaySmall: GoogleFonts.pacifico(),
     ),
-  
+  primaryColor: primaryColor,
           ),
       home: const MyHomePage(title: 'PlantSelect'),
     );

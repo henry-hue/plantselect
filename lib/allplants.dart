@@ -7,6 +7,7 @@ import 'plant.dart';
 import 'credentials.dart';
 import 'package:gsheets/gsheets.dart';
 import 'dart:io';
+import 'main.dart';
 
 import 'package:image/image.dart' as img; 
 import 'package:exif/exif.dart'; 
@@ -121,6 +122,14 @@ String living = 'Alive';
     
     var name = await getRowCount();
           File image = File(imageFile!.path);
+          
+           final bytes = await image!.readAsBytes(); 
+  final theImage= img.decodeImage(bytes); 
+  if (theImage != null) { 
+    final exifData = await readExifFromBytes(bytes);
+    setState(() { _metadata = exifData; }); } 
+
+    print(_metadata);
 
     await image.copy('$path/$name');
 
@@ -129,7 +138,7 @@ String living = 'Alive';
 
 //   Future<void> _extractMetadata() async { 
 // try { 
-//   final bytes = await image!.readAsBytes(); 
+//  final bytes = await image!.readAsBytes(); 
 //   final image = img.decodeImage(bytes); 
 //   if (image != null) { 
 //     final exifData = await readExifFromBytes(bytes);
@@ -143,12 +152,8 @@ String living = 'Alive';
   Widget build(BuildContext context) {
     return  Scaffold(
             appBar: AppBar(
-          // TRY THIS: Try changing the color here to a specific color (to
-          // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-          // change color while the other colors stay the same.
-          backgroundColor: Colors.lightGreen,
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
+              backgroundColor: primaryColor,
+
           title: Image.asset('assets/images/logo.png'),
         ),
             body: Center(
