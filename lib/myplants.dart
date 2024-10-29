@@ -53,7 +53,9 @@ class _MyPlantsState extends State<MyPlants> {
                 builder: (context) =>
                     EditPlant(plant: plant, username: widget.username)))
         .then((value) {
-      setState(() {sheetsPlants();});
+      setState(() {
+        sheetsPlants();
+      });
     });
   }
 
@@ -88,10 +90,12 @@ class _MyPlantsState extends State<MyPlants> {
         ),
         body: FutureBuilder<dynamic>(
           future: sheetsPlants(),
-          
           builder: (context, snapshot) {
-             
             if (snapshot.hasData) {
+              if (snapshot.data!.length == 0) {
+                return const ListTile(
+                    title: Text('Click the plus button to add plants'));
+              }
               return ListView.builder(
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
@@ -119,17 +123,9 @@ class _MyPlantsState extends State<MyPlants> {
                       },
                     );
                   });
-            } 
-            else if (snapshot.hasError) {
+            } else if (snapshot.hasError) {
               return Center(child: Text('${snapshot.error}'));
             }
-
-          else if (!snapshot.hasData) {
-              return const ListTile(
-              title: Text('Click the plus button to add plants')
-              );
-            }
-           
 
             // By default, show a loading spinner
             return const Center(child: CircularProgressIndicator());
