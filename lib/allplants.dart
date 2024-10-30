@@ -56,16 +56,12 @@ String living = 'Alive';
   if (isSeed) {
     plantedAs = 'Planted as Seed';
   }
-    
+   
 
 
-    DateTime now = DateTime.now();
-    DateTime date = DateTime(now.year, now.month, now.day);
-    String justDate = date.toString().substring(0, 10);
-    //await sheet.values.insertValue(DateController.text, column: 1, row: 2);
     final newRow = {
+      
       '1' : '=IF(B1<>"", ROW(),)',
-      'Date': justDate,
       'Plant': plantController.text,
       'Living': living,
       'Quantity': quantityController.text,
@@ -74,12 +70,14 @@ String living = 'Alive';
     };
     
     await sheet.values.map.appendRow(newRow);
+
+
   }
 
   // Method to Submit Feedback and save it in Google Sheets
   void _submitForm() {
-    
     addRow();
+    
     Navigator.pop(context);
   }
 

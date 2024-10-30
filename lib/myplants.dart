@@ -33,12 +33,11 @@ class _MyPlantsState extends State<MyPlants> {
 
     final firstRow = [
       '=IF(B1<>"", ROW(),)',
-      'Date',
       'Plant',
       'Living',
       'Quantity',
       'Nursery',
-      'Planted As'
+      'Planted As',
     ];
     await sheet.values.insertRow(1, firstRow);
     List<List<String>> myplants = await sheet.values.allRows(fromRow: 2);
@@ -103,7 +102,7 @@ class _MyPlantsState extends State<MyPlants> {
                     return ListTile(
                       title: Column(
                         children: <Widget>[
-                          Text('''${plant[4]} ${plant[2]}'''),
+                          Text('''${plant[3]} ${plant[1]}'''),
                           ElevatedButton(
                               iconAlignment: IconAlignment.end,
                               onPressed: () {
@@ -125,6 +124,8 @@ class _MyPlantsState extends State<MyPlants> {
                   });
             } else if (snapshot.hasError) {
               return Center(child: Text('${snapshot.error}'));
+            } else if (!snapshot.hasData) {
+              return Center(child: Text('Click the plus button to add plants'));
             }
 
             // By default, show a loading spinner
@@ -141,26 +142,26 @@ class SelectedPlants extends StatelessWidget {
   final List<String> plantStr = [];
 
   final List<String> attr = [
-    'Row',
-    'Date',
-    'Botanic Name',
+    'Common Name',
     'Living',
     'Quantity',
     'Nursery',
-    'Seed'
+    'Origin'
   ];
-  final List<String> plantInfo = [];
+  List<String> plantInfo = [];
 
   SelectedPlants({super.key, required this.plant, required this.picPath});
   @override
   Widget build(BuildContext context) {
-    for (final value in plant) {
-      plantStr.add(value.toString());
-    }
+   
 
-    for (final pairs in IterableZip([attr, plantStr])) {
-      plantInfo.add('${pairs[0]} : ${pairs[1]}');
-    }
+    plantInfo = [
+      '${attr[0]} : ${plant[1]}',
+      '${attr[1]} : ${plant[2]}',
+      '${attr[2]} : ${plant[3]}',
+      '${attr[3]} : ${plant[4]}',
+      '${attr[4]} : ${plant[5]}',
+    ];
 
     // print out directory contents for debugging
     //picPath!.listSync().forEach((e) {
@@ -182,15 +183,19 @@ class SelectedPlants extends StatelessWidget {
           title: Image.asset('assets/images/logo.png'),
         ),
         body: Center(
-          child: ListView.builder(
-              itemCount: attributeCount,
-              itemBuilder: (BuildContext context, int index) {
-                if (index < plantInfo.length) {
-                  return Text(plantInfo[index]);
-                } else {
-                  return picture;
-                }
-              }),
-        ));
+            child: Column(children: <Widget>[
+          Expanded(
+              child: SizedBox(
+                  height: 400.0,
+                  child: ListView.builder(
+                      itemCount: attributeCount,
+                      itemBuilder: (BuildContext context, int index) {
+                        if (index < plantInfo.length) {
+                          return Text(plantInfo[index]);
+                        } else {
+                          return picture;
+                        }
+                      })))
+        ])));
   }
 }
