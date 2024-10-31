@@ -139,7 +139,6 @@ class SelectedPlants extends StatelessWidget {
   final List plant;
   final Directory? picPath;
 
-  final List<String> plantStr = [];
 
   final List<String> attr = [
     'Common Name',
@@ -167,13 +166,23 @@ class SelectedPlants extends StatelessWidget {
     //picPath!.listSync().forEach((e) {
     // print(e.path);
     //});
-    Image? picture;
+    // Image? picture;
+    // var attributeCount = plantInfo.length;
+    // if (picPath != null) {
+    //   String path = picPath!.path;
+    //   String name = plant[1];
+    //   String fullPath = '$path/$name';
+    //   picture = Image.file(File(fullPath));
+    //   attributeCount += 1;
+    // }
+
+     Image? picture;
     var attributeCount = plantInfo.length;
     if (picPath != null) {
       String path = picPath!.path;
-      String name = plantStr[0];
-      String fullPath = '$path/$name';
-      picture = Image.file(File(fullPath));
+      //String name = plant[1];
+      //String fullPath = '$path/$name';
+      picture = Image.file(File(path));
       attributeCount += 1;
     }
 
