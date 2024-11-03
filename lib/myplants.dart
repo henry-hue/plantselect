@@ -162,29 +162,22 @@ class SelectedPlants extends StatelessWidget {
       '${attr[4]} : ${plant[5]}',
     ];
 
-    // print out directory contents for debugging
-    //picPath!.listSync().forEach((e) {
-    // print(e.path);
-    //});
-    // Image? picture;
-    // var attributeCount = plantInfo.length;
-    // if (picPath != null) {
-    //   String path = picPath!.path;
-    //   String name = plant[1];
-    //   String fullPath = '$path/$name';
-    //   picture = Image.file(File(fullPath));
-    //   attributeCount += 1;
-    // }
-
-     Image? picture;
+   // print out directory contents for debugging
+    picPath!.listSync().forEach((e) {
+    print(e.path);
+    });
+    Image? picture;
     var attributeCount = plantInfo.length;
     if (picPath != null) {
       String path = picPath!.path;
-      //String name = plant[1];
-      //String fullPath = '$path/$name';
-      picture = Image.file(File(path));
-      attributeCount += 1;
+      String name = plant[1];
+      String fullPath = '$path/$name.png';
+      picture = Image.file(File(fullPath));
+     attributeCount += 1;
+      print(fullPath);
+      
     }
+
 
     return Scaffold(
         appBar: AppBar(
@@ -202,7 +195,8 @@ class SelectedPlants extends StatelessWidget {
                         if (index < plantInfo.length) {
                           return Text(plantInfo[index]);
                         } else {
-                          return picture;
+                          print('else triggered');
+                          return Container(child: picture);
                         }
                       })))
         ])));
