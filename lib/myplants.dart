@@ -190,8 +190,6 @@ class SelectedPlants extends StatelessWidget {
 
     var attributeCount = plantInfo.length;
 
-    attributeCount += 1;
-
     return Scaffold(
         appBar: AppBar(
           backgroundColor: primaryColor,
@@ -200,7 +198,11 @@ class SelectedPlants extends StatelessWidget {
         body: FutureBuilder<File>(
             future: getFile(name),
             builder: (context, snapshot) {
-              Image picture = Image.file(snapshot.data!);
+              Image? picture;
+              if (snapshot.hasData && snapshot.data!.existsSync()) {
+                picture = Image.file(snapshot.data!);
+                attributeCount += 1; // add room for picture at end
+              }
 
               return Center(
                   child: Column(children: <Widget>[
