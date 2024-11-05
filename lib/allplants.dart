@@ -129,7 +129,7 @@ String living = 'Alive';
 //             final File newImage = await image.copy('$path/$plantName.png');
 
 String plantName = plantController.text;
-File dest = getFile('''$plantName.png''') as File;
+File dest = await getFile('''$plantName.png''') as File;
 copyFile(image, dest);
 
 

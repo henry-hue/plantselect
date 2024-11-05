@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:path_provider/path_provider.dart';
 import 'plant.dart';
 import 'package:collection/collection.dart';
 import 'editplant.dart';
@@ -135,10 +137,22 @@ class _MyPlantsState extends State<MyPlants> {
   }
 }
 
+Future<String> get _photoLibrary async {
+  final base = await getApplicationDocumentsDirectory();
+  final directory =
+      await Directory("${base.path}/images/").create(recursive: true);
+  print(directory.path);
+  return directory.path;
+}
+
+Future<File> getFile(String name) async {
+  final path = await _photoLibrary;
+  return File('$path/$name');
+}
+
 class SelectedPlants extends StatelessWidget {
   final List plant;
   final Directory? picPath;
-
 
   final List<String> attr = [
     'Common Name',
@@ -152,8 +166,6 @@ class SelectedPlants extends StatelessWidget {
   SelectedPlants({super.key, required this.plant, required this.picPath});
   @override
   Widget build(BuildContext context) {
-   
-
     plantInfo = [
       '${attr[0]} : ${plant[1]}',
       '${attr[1]} : ${plant[2]}',
@@ -162,43 +174,49 @@ class SelectedPlants extends StatelessWidget {
       '${attr[4]} : ${plant[5]}',
     ];
 
-   // print out directory contents for debugging
-    picPath!.listSync().forEach((e) {
-    print(e.path);
-    });
-    Image? picture;
-    var attributeCount = plantInfo.length;
-    if (picPath != null) {
-      String path = picPath!.path;
-      String name = plant[1];
-      String fullPath = '$path/$name.png';
-      picture = Image.file(File(fullPath));
-     attributeCount += 1;
-      print(fullPath);
-      
-    }
+    // print out directory contents for debugging
+    // picPath!.listSync().forEach((e) {
+    // print(e.path);
+    // });
+    // Image? picture;
+    // if (picPath != null) {
+    //   String path = picPath!.path;
+    //   String fullPath = '$path/$name.png';
+    //   picture = Image.file(File(fullPath));
 
+    String plantName = plant[1];
+    String name = '''$plantName.png''';
+    //File file = File(getFile(name));
+
+    var attributeCount = plantInfo.length;
+
+    attributeCount += 1;
 
     return Scaffold(
         appBar: AppBar(
           backgroundColor: primaryColor,
           title: Image.asset('assets/images/logo.png'),
         ),
-        body: Center(
-            child: Column(children: <Widget>[
-          Expanded(
-              child: SizedBox(
-                  height: 400.0,
-                  child: ListView.builder(
-                      itemCount: attributeCount,
-                      itemBuilder: (BuildContext context, int index) {
-                        if (index < plantInfo.length) {
-                          return Text(plantInfo[index]);
-                        } else {
-                          print('else triggered');
-                          return Container(child: picture);
-                        }
-                      })))
-        ])));
+        body: FutureBuilder<File>(
+            future: getFile(name),
+            builder: (context, snapshot) {
+              Image picture = Image.file(snapshot.data!);
+
+              return Center(
+                  child: Column(children: <Widget>[
+                Expanded(
+                    child: SizedBox(
+                        height: 400.0,
+                        child: ListView.builder(
+                            itemCount: attributeCount,
+                            itemBuilder: (BuildContext context, int index) {
+                              if (index < plantInfo.length) {
+                                return Text(plantInfo[index]);
+                              } else {
+                                return Container(child: picture);
+                              }
+                            })))
+              ]));
+            }));
   }
 }
