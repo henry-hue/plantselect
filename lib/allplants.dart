@@ -184,10 +184,12 @@ String living = 'Alive';
                       filteredPlants.length,
                       (int index) {
                         final String item = filteredPlants[index].values[0];
+                        final String botanicName = filteredPlants[index].values[1];
+
                         return ListTile(
                             title: Text(item),
                             onTap: () {
-                              plantController.text = item;
+                              plantController.text = '$item ($botanicName)';
                               controller.closeView(plantController.text);
                             });
                       },
