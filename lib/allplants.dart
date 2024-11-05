@@ -13,6 +13,23 @@ import 'package:image/image.dart' as img;
 import 'package:exif/exif.dart'; 
 
 
+ Future<String> get _photoLibrary async {
+    final base = await getApplicationDocumentsDirectory();
+    final directory =
+        await Directory("${base.path}/images/").create(recursive: true);
+    return directory.path;
+  }
+
+Future<File> getFile(String name) async {
+    final path = await _photoLibrary;
+    return File('$path/$name');
+  }
+
+  Future<File> copyFile(File src, File dest) async {
+    return src.copySync(dest.path);
+  }
+
+
 
 class AddPlant extends StatefulWidget {
   const AddPlant({super.key, required this.plants, required this.picPath, required this.username});
@@ -102,9 +119,18 @@ String living = 'Alive';
     XFile? file = await ImagePicker()
         .pickImage(source: ImageSource.camera, maxHeight: 1800, maxWidth: 1800);
 
+        final File image = File(file!.path); 
+
+
     // getting a directory path for saving
-         final Directory dir = await getApplicationDocumentsDirectory();
-    final String path = dir.path;
+//          final Directory dir = await getApplicationDocumentsDirectory();
+//     final String path = dir.path;
+// String plantName = plantController.text;
+//             final File newImage = await image.copy('$path/$plantName.png');
+
+String plantName = plantController.text;
+File dest = getFile('''$plantName.png''') as File;
+copyFile(image, dest);
 
 
     if (file != null) {
@@ -113,38 +139,12 @@ String living = 'Alive';
 
 
 
-         _metadata = null; // Reset metadata when a new image is selected 
-           // _extractMetadata(); 
       });
     }
     
-    var name = await getRowCount();
-          File image = File(imageFile!.path);
-          
-           final bytes = await image!.readAsBytes(); 
-  final theImage= img.decodeImage(bytes); 
-  if (theImage != null) { 
-    final exifData = await readExifFromBytes(bytes);
-    setState(() { _metadata = exifData; }); } 
-
-    print(_metadata);
-
-    await image.copy('$path/$name');
-
-    
   }
 
-//   Future<void> _extractMetadata() async { 
-// try { 
-//  final bytes = await image!.readAsBytes(); 
-//   final image = img.decodeImage(bytes); 
-//   if (image != null) { 
-//     final exifData = await readExifFromBytes(bytes);
-//     setState(() { _metadata = exifData; }); } 
-//   }catch (e) { 
-//   print('Error extracting metadata: $e'); 
-//  }
-// } 
+
 
   @override
   Widget build(BuildContext context) {
