@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -9,9 +10,6 @@ import 'package:gsheets/gsheets.dart';
 import 'dart:io';
 import 'main.dart';
 
-import 'package:image/image.dart' as img;
-import 'package:exif/exif.dart';
-
 Future<String> get _photoLibrary async {
   final base = await getApplicationDocumentsDirectory();
   final directory =
@@ -20,6 +18,9 @@ Future<String> get _photoLibrary async {
 }
 
 Future<File> getFile(String name) async {
+  if (kIsWeb) {
+    return File("");
+  }
   final path = await _photoLibrary;
   return File('$path/$name');
 }
@@ -44,10 +45,7 @@ class AddPlant extends StatefulWidget {
 
 class _AddPlantState extends State<AddPlant> {
   final _formKey = GlobalKey<FormState>();
-  //final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  // TextField Controllers
-  //TextEditingController DateController = TextEditingController();
   TextEditingController plantController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
   TextEditingController nurseryController = TextEditingController();
@@ -57,8 +55,6 @@ class _AddPlantState extends State<AddPlant> {
 
   bool isAlive = true;
   String living = 'Alive';
-
-  Map<String, dynamic>? _metadata;
 
   void addRow() async {
     // init GSheets
@@ -213,7 +209,7 @@ class _AddPlantState extends State<AddPlant> {
                       ],
                     ),
                   )),
-              if (imageFile == null)
+              if (!kIsWeb && imageFile == null)
                 ElevatedButton(
                   onPressed: selectFile,
                   child: const Text('Next: take picture'),

@@ -1,9 +1,8 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 import 'plant.dart';
-import 'package:collection/collection.dart';
 import 'editplant.dart';
 import 'package:gsheets/gsheets.dart';
 import 'credentials.dart';
@@ -74,15 +73,15 @@ class _MyPlantsState extends State<MyPlants> {
 
   @override
   Widget build(BuildContext context) {
-    double _myToolbarHeight = 200;
+    double myToolbarHeight = 200;
     return Scaffold(
         appBar: AppBar(
           backgroundColor: primaryColor,
           title: SizedBox(
-            height: _myToolbarHeight,
+            height: myToolbarHeight,
             child: Image.asset('assets/images/topDesign.png'),
           ),
-          toolbarHeight: _myToolbarHeight,
+          toolbarHeight: myToolbarHeight,
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: goToAddPlant,
@@ -141,15 +140,18 @@ Future<String> get _photoLibrary async {
   final base = await getApplicationDocumentsDirectory();
   final directory =
       await Directory("${base.path}/images/").create(recursive: true);
-  print(directory.path);
   return directory.path;
 }
 
 Future<File> getFile(String name) async {
+  if (kIsWeb) {
+    return File("");
+  }
   final path = await _photoLibrary;
   return File('$path/$name');
 }
 
+// ignore: must_be_immutable
 class SelectedPlants extends StatelessWidget {
   final List plant;
   final Directory? picPath;
