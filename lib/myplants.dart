@@ -8,6 +8,8 @@ import 'package:gsheets/gsheets.dart';
 import 'credentials.dart';
 import 'allplants.dart';
 import 'main.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 
 class MyPlants extends StatefulWidget {
   const MyPlants(
@@ -39,6 +41,8 @@ class _MyPlantsState extends State<MyPlants> {
       'Quantity',
       'Nursery',
       'Planted As',
+      'latitude',
+      'longitude',
     ];
     await sheet.values.insertRow(1, firstRow);
     List<List<String>> myplants = await sheet.values.allRows(fromRow: 2);
@@ -176,21 +180,12 @@ class SelectedPlants extends StatelessWidget {
       '${attr[4]} : ${plant[5]}',
     ];
 
-    // print out directory contents for debugging
-    // picPath!.listSync().forEach((e) {
-    // print(e.path);
-    // });
-    // Image? picture;
-    // if (picPath != null) {
-    //   String path = picPath!.path;
-    //   String fullPath = '$path/$name.png';
-    //   picture = Image.file(File(fullPath));
+  
 
     String plantName = plant[1];
     String name = '''$plantName.png''';
-    //File file = File(getFile(name));
 
-    var attributeCount = plantInfo.length;
+    var attributeCount = 6;
 
     return Scaffold(
         appBar: AppBar(
@@ -201,7 +196,7 @@ class SelectedPlants extends StatelessWidget {
             future: getFile(name),
             builder: (context, snapshot) {
               Image? picture;
-              if (snapshot.hasData && snapshot.data!.existsSync()) {
+              if (!kIsWeb) {
                 picture = Image.file(snapshot.data!);
                 attributeCount += 1; // add room for picture at end
               }

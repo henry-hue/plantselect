@@ -9,6 +9,7 @@ import 'credentials.dart';
 import 'package:gsheets/gsheets.dart';
 import 'dart:io';
 import 'main.dart';
+import 'package:geolocator/geolocator.dart';
 
 Future<String> get _photoLibrary async {
   final base = await getApplicationDocumentsDirectory();
@@ -78,6 +79,8 @@ class _AddPlantState extends State<AddPlant> {
       'Quantity': quantityController.text,
       'Nursery': nurseryController.text,
       'Planted As': plantedAs,
+      'latitude': latitude,
+      'longitude': longitude,
     };
 
     await sheet.values.map.appendRow(newRow);
@@ -86,7 +89,6 @@ class _AddPlantState extends State<AddPlant> {
   // Method to Submit Feedback and save it in Google Sheets
   void _submitForm() {
     addRow();
-
     Navigator.pop(context);
   }
 
@@ -118,6 +120,64 @@ class _AddPlantState extends State<AddPlant> {
 
       setState(() {
         imageFile = XFile(file.path);
+      });
+    }
+  }
+
+  String _location = 'Getting location...';
+  String latitude = 'y axis';
+  String longitude = 'x axis'; 
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
+  // Function to get the current location
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Check if location services are enabled
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      setState(() {
+        _location = 'Location services are disabled.';
+      });
+      return;
+    }
+
+    // Check for permissions
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        setState(() {
+          _location = 'Location permissions are denied.';
+        });
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      setState(() {
+        _location = 'Location permissions are permanently denied.';
+      });
+      return;
+    }
+
+    // Get the current position
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    if (this.mounted) {
+      setState(() {
+        _location =
+            'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
+        latitude = '${position.latitude}';
+        longitude = '${position.longitude}';
       });
     }
   }
@@ -216,7 +276,10 @@ class _AddPlantState extends State<AddPlant> {
                 ),
               if (imageFile != null) Image.file(File(imageFile!.path)),
               ElevatedButton(
-                onPressed: _submitForm,
+                onPressed: () {
+                  _getCurrentLocation();
+                  _submitForm();
+                },
                 child: const Text('Submit Plant'),
               )
             ])));
