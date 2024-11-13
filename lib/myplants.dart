@@ -2,14 +2,14 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:plantselect/map.dart';
 import 'plant.dart';
 import 'editplant.dart';
 import 'package:gsheets/gsheets.dart';
 import 'credentials.dart';
 import 'allplants.dart';
 import 'main.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
+import 'map.dart';
 
 class MyPlants extends StatefulWidget {
   const MyPlants(
@@ -75,6 +75,10 @@ class _MyPlantsState extends State<MyPlants> {
     });
   }
 
+
+
+  int currentPageIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     double myToolbarHeight = 200;
@@ -92,6 +96,26 @@ class _MyPlantsState extends State<MyPlants> {
           tooltip: 'Add Plant',
           child: const Icon(Icons.add),
         ),
+        bottomNavigationBar: NavigationBar(
+            onDestinationSelected: (int index) {
+              setState(() {
+                currentPageIndex = index;
+              });
+            },
+            indicatorColor: Colors.amber,
+            selectedIndex: currentPageIndex,
+            destinations: const <Widget>[
+              NavigationDestination(
+                selectedIcon: Icon(Icons.home),
+                icon: Icon(Icons.home_outlined),
+                label: 'My Plants',
+              ),
+              NavigationDestination(
+                selectedIcon: Icon(Icons.business),
+                icon: Icon(Icons.home_outlined),
+                label: 'Map',
+              ),
+            ]),
         body: FutureBuilder<dynamic>(
           future: sheetsPlants(),
           builder: (context, snapshot) {
@@ -100,33 +124,39 @@ class _MyPlantsState extends State<MyPlants> {
                 return const ListTile(
                     title: Text('Click the plus button to add plants'));
               }
-              return ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    List plant = snapshot.data![index];
-                    return ListTile(
-                      title: Column(
-                        children: <Widget>[
-                          Text('''${plant[3]} ${plant[1]}'''),
-                          ElevatedButton(
-                              iconAlignment: IconAlignment.end,
-                              onPressed: () {
-                                gotoEditPlant(plant);
-                              },
-                              child: const Text('Edit'))
-                        ],
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SelectedPlants(
-                                plant: plant, picPath: widget.picPath),
+              return <Widget>[
+                // Home page
+                Card(
+                  child: ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        List plant = snapshot.data![index];
+                        return ListTile(
+                          title: Column(
+                            children: <Widget>[
+                              Text('''${plant[3]} ${plant[1]}'''),
+                              ElevatedButton(
+                                  iconAlignment: IconAlignment.end,
+                                  onPressed: () {
+                                    gotoEditPlant(plant);
+                                  },
+                                  child: const Text('Edit'))
+                            ],
                           ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SelectedPlants(
+                                    plant: plant, picPath: widget.picPath),
+                              ),
+                            );
+                          },
                         );
-                      },
-                    );
-                  });
+                      }),
+                ),
+                Card(child: MapPage(data: snapshot.data))
+              ][currentPageIndex];
             } else if (snapshot.hasError) {
               return Center(child: Text('${snapshot.error}'));
             } else if (!snapshot.hasData) {
@@ -179,8 +209,6 @@ class SelectedPlants extends StatelessWidget {
       '${attr[3]} : ${plant[4]}',
       '${attr[4]} : ${plant[5]}',
     ];
-
-  
 
     String plantName = plant[1];
     String name = '''$plantName.png''';
