@@ -178,12 +178,13 @@ Future<String> get _photoLibrary async {
   return directory.path;
 }
 
-Future<File> getFile(String name) async {
+Future<String> getFile(String name) async {
   if (kIsWeb) {
-    return File("");
+    return "";
   }
   final path = await _photoLibrary;
-  return File('$path/$name');
+  print('$path/$name');
+  return '$path/$name';
 }
 
 // ignore: must_be_immutable
@@ -218,19 +219,19 @@ class SelectedPlants extends StatelessWidget {
     String plantName = plant[1];
     String name = '''$plantName.png''';
 
-    var attributeCount = 6;
+    var attributeCount = plantInfo.length;
 
     return Scaffold(
         appBar: AppBar(
           backgroundColor: primaryColor,
           title: Image.asset('assets/images/logo.png'),
         ),
-        body: FutureBuilder<File>(
+        body: FutureBuilder<String>(
             future: getFile(name),
             builder: (context, snapshot) {
               Image? picture;
-              if (!kIsWeb) {
-                picture = Image.file(snapshot.data!);
+              if (!kIsWeb && snapshot.hasData) {
+                picture = Image.file(File(snapshot.data!));
                 attributeCount += 1; // add room for picture at end
               }
 

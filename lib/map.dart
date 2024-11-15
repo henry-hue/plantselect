@@ -8,7 +8,7 @@ class MapPage extends StatefulWidget {
   final List<List<String>> data;
 
   @override
-  _MapPageState createState() => _MapPageState();
+  State<MapPage> createState() => _MapPageState();
 }
 
 class _MapPageState extends State<MapPage> {

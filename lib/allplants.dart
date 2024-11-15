@@ -51,7 +51,7 @@ class _AddPlantState extends State<AddPlant> {
   TextEditingController quantityController = TextEditingController();
   TextEditingController nurseryController = TextEditingController();
   TextEditingController notesController = TextEditingController();
-  TextEditingController nativeController = TextEditingController();
+  TextEditingController nativeController = TextEditingController(text:"Unknown");
 
   bool isSeed = false;
   String plantedAs = 'Planted as Living Plant';
@@ -176,7 +176,7 @@ class _AddPlantState extends State<AddPlant> {
       desiredAccuracy: LocationAccuracy.high,
     );
 
-    if (this.mounted) {
+    if (mounted) {
       setState(() {
         _location =
             'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
