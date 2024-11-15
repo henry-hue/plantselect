@@ -3,12 +3,9 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
-
 class MapPage extends StatefulWidget {
-   const MapPage(
-      {super.key,
-      required this.data});
-    final List<List<String>> data;
+  const MapPage({super.key, required this.data});
+  final List<List<String>> data;
 
   @override
   _MapPageState createState() => _MapPageState();
@@ -30,20 +27,36 @@ class _MapPageState extends State<MapPage> {
   Future<void> _getCurrentLocation() async {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-
     setState(() {
       _currentPosition = LatLng(position.latitude, position.longitude);
+
+      int lengthData = widget.data.length;
+      for (var i = 0; i < lengthData; i++) {
+
+        double latitude = double.parse(widget.data[i][6]);
+        double longitude = double.parse(widget.data[i][7]);
+        LatLng plant = LatLng(latitude, longitude);
+
+        _markers.add(
+          Marker(
+            point: plant,
+            child: Text(widget.data[i][1]),
+            width: 60,
+            height: 60,
+            //builder: (ctx) => Icon(Icons.location_on, color: Colors.red, size: 40),
+          ),
+        );
+      }
+
       _markers.add(
-        Marker(
-          point: _currentPosition,
-          child: ColoredBox(color: Colors.black)
-          //builder: (ctx) => Icon(Icons.location_on, color: Colors.red, size: 40),
-        ),
+        Marker(point: _currentPosition, child: ColoredBox(color: Colors.black)
+            //builder: (ctx) => Icon(Icons.location_on, color: Colors.red, size: 40),
+            ),
       );
     });
 
     // Move the map's camera to the current location
-    _mapController.move(_currentPosition, 14);
+    _mapController.move(_currentPosition, 30);
   }
 
   @override
@@ -55,13 +68,15 @@ class _MapPageState extends State<MapPage> {
           : FlutterMap(
               mapController: _mapController,
               options: MapOptions(
-               // center: _currentPosition,
-                maxZoom: 14,
+                initialCenter: _currentPosition,
+                // center: _currentPosition,
+                maxZoom: 40,
                 //interactiveFlags: InteractiveFlag.all,
               ),
               children: [
                 TileLayer(
-                  urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  urlTemplate:
+                      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                   subdomains: ['a', 'b', 'c'],
                 ),
                 MarkerLayer(markers: _markers.toList()),

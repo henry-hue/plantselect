@@ -20,7 +20,7 @@ class _EditPlantState extends State<EditPlant> {
   //TextEditingController DateController = TextEditingController();
   TextEditingController plantController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
-  TextEditingController nurseryController = TextEditingController();
+  TextEditingController notesController = TextEditingController();
 
   bool isDead = false;
   String living = 'Alive';
@@ -46,6 +46,8 @@ class _EditPlantState extends State<EditPlant> {
         .insertValueByKeys(living, columnKey: 'Living', rowKey: index);
     await sheet.values.insertValueByKeys(quantityController.text,
         columnKey: 'Quantity', rowKey: index);
+        await sheet.values.insertValueByKeys(notesController.text,
+        columnKey: 'Notes', rowKey: index);
   }
 
   // Method to Submit Feedback and save it in Google Sheets
@@ -102,6 +104,12 @@ class _EditPlantState extends State<EditPlant> {
                           controller: quantityController,
                           decoration: const InputDecoration(
                             labelText: 'Quantity',
+                          ),
+                        ),
+                        TextFormField(
+                          controller: notesController,
+                          decoration: const InputDecoration(
+                            labelText: 'Notes',
                           ),
                         ),
                         FormField<bool>(builder: (state) {

@@ -50,6 +50,8 @@ class _AddPlantState extends State<AddPlant> {
   TextEditingController plantController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
   TextEditingController nurseryController = TextEditingController();
+  TextEditingController notesController = TextEditingController();
+  TextEditingController nativeController = TextEditingController();
 
   bool isSeed = false;
   String plantedAs = 'Planted as Living Plant';
@@ -81,6 +83,8 @@ class _AddPlantState extends State<AddPlant> {
       'Planted As': plantedAs,
       'latitude': latitude,
       'longitude': longitude,
+      'Notes': notesController.text,
+      'North American Native': nativeController.text,
     };
 
     await sheet.values.map.appendRow(newRow);
@@ -126,7 +130,7 @@ class _AddPlantState extends State<AddPlant> {
 
   String _location = 'Getting location...';
   String latitude = 'y axis';
-  String longitude = 'x axis'; 
+  String longitude = 'x axis';
 
   @override
   void initState() {
@@ -220,11 +224,15 @@ class _AddPlantState extends State<AddPlant> {
                   (int index) {
                     final String item = filteredPlants[index].values[0];
                     final String botanicName = filteredPlants[index].values[1];
+                   final String nativeStatus = filteredPlants[index].values[14];
+
+                    
 
                     return ListTile(
                         title: Text(item),
                         onTap: () {
                           plantController.text = '$item ($botanicName)';
+                          nativeController.text = nativeStatus;
                           controller.closeView(plantController.text);
                         });
                   },
@@ -252,6 +260,19 @@ class _AddPlantState extends State<AddPlant> {
                           controller: nurseryController,
                           decoration: const InputDecoration(
                             labelText: 'Nursery',
+                          ),
+                        ),
+                        TextFormField(
+                          controller: notesController,
+                          decoration: const InputDecoration(
+                            labelText: 'Notes',
+                          ),
+                        ),
+                        TextFormField(
+                          controller: nativeController,
+                          decoration: const InputDecoration(
+                            labelText:
+                                'North American Native (Yes, No, Unknown)',
                           ),
                         ),
                         FormField<bool>(builder: (state) {

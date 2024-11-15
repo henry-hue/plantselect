@@ -9,7 +9,6 @@ import 'package:gsheets/gsheets.dart';
 import 'credentials.dart';
 import 'allplants.dart';
 import 'main.dart';
-import 'map.dart';
 
 class MyPlants extends StatefulWidget {
   const MyPlants(
@@ -43,6 +42,8 @@ class _MyPlantsState extends State<MyPlants> {
       'Planted As',
       'latitude',
       'longitude',
+      'Notes',
+      'North American Native',
     ];
     await sheet.values.insertRow(1, firstRow);
     List<List<String>> myplants = await sheet.values.allRows(fromRow: 2);
@@ -74,8 +75,6 @@ class _MyPlantsState extends State<MyPlants> {
       setState(() {});
     });
   }
-
-
 
   int currentPageIndex = 0;
 
@@ -145,12 +144,14 @@ class _MyPlantsState extends State<MyPlants> {
                           ),
                           onTap: () {
                             Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SelectedPlants(
-                                    plant: plant, picPath: widget.picPath),
-                              ),
-                            );
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SelectedPlants(
+                                            plant: plant,
+                                            picPath: widget.picPath)))
+                                .then((value) {
+                              setState(() {});
+                            });
                           },
                         );
                       }),
@@ -195,7 +196,9 @@ class SelectedPlants extends StatelessWidget {
     'Living',
     'Quantity',
     'Nursery',
-    'Origin'
+    'Origin',
+    'Notes',
+    'North American Natve',
   ];
   List<String> plantInfo = [];
 
@@ -208,6 +211,8 @@ class SelectedPlants extends StatelessWidget {
       '${attr[2]} : ${plant[3]}',
       '${attr[3]} : ${plant[4]}',
       '${attr[4]} : ${plant[5]}',
+      '${attr[5]} : ${plant[8]}',
+      '${attr[6]} : ${plant[9]}',
     ];
 
     String plantName = plant[1];
