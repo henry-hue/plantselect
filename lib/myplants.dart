@@ -183,7 +183,6 @@ Future<String> getFile(String name) async {
     return "";
   }
   final path = await _photoLibrary;
-  print('$path/$name');
   return '$path/$name';
 }
 
