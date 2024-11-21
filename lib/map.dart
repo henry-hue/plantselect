@@ -13,8 +13,8 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   late MapController _mapController;
-  late LatLng _currentPosition;
-  Set<Marker> _markers = {};
+  LatLng? _currentPosition;
+  final Set<Marker> _markers = {};
 
   @override
   void initState() {
@@ -32,7 +32,6 @@ class _MapPageState extends State<MapPage> {
 
       int lengthData = widget.data.length;
       for (var i = 0; i < lengthData; i++) {
-
         double latitude = double.parse(widget.data[i][6]);
         double longitude = double.parse(widget.data[i][7]);
         LatLng plant = LatLng(latitude, longitude);
@@ -49,39 +48,36 @@ class _MapPageState extends State<MapPage> {
       }
 
       _markers.add(
-        Marker(point: _currentPosition, child: ColoredBox(color: Colors.black)
+        Marker(point: _currentPosition!, child: ClipOval(child:ColoredBox(color: Colors.blue))
             //builder: (ctx) => Icon(Icons.location_on, color: Colors.red, size: 40),
             ),
       );
     });
 
     // Move the map's camera to the current location
-    _mapController.move(_currentPosition, 30);
+    _mapController.move(_currentPosition!, 60);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Flutter Map with GPS Coordinates')),
-      body: _currentPosition == null
-          ? Center(child: CircularProgressIndicator())
-          : FlutterMap(
-              mapController: _mapController,
-              options: MapOptions(
-                initialCenter: _currentPosition,
-                // center: _currentPosition,
-                maxZoom: 40,
-                //interactiveFlags: InteractiveFlag.all,
-              ),
-              children: [
-                TileLayer(
-                  urlTemplate:
-                      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  subdomains: ['a', 'b', 'c'],
-                ),
-                MarkerLayer(markers: _markers.toList()),
-              ],
+    return _currentPosition == null
+        ? Center(child: CircularProgressIndicator())
+        : FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              initialCenter: _currentPosition!,
+              // center: _currentPosition,
+              maxZoom: 60,
+              //interactiveFlags: InteractiveFlag.all,
             ),
-    );
+            children: [
+              TileLayer(
+                urlTemplate:
+                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                subdomains: ['a', 'b', 'c'],
+              ),
+              MarkerLayer(markers: _markers.toList()),
+            ],
+          );
   }
 }
