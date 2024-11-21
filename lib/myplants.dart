@@ -44,6 +44,7 @@ class _MyPlantsState extends State<MyPlants> {
       'longitude',
       'Notes',
       'North American Native',
+      'Date',
     ];
     await sheet.values.insertRow(1, firstRow);
     List<List<String>> myplants = await sheet.values.allRows(fromRow: 2);
@@ -191,28 +192,26 @@ class SelectedPlants extends StatelessWidget {
   final List plant;
   final Directory? picPath;
 
-  final List<String> attr = [
-    'Common Name',
-    'Living',
-    'Quantity',
-    'Nursery',
-    'Origin',
-    'Notes',
-    'North American Natve',
-  ];
   List<String> plantInfo = [];
 
   SelectedPlants({super.key, required this.plant, required this.picPath});
   @override
   Widget build(BuildContext context) {
+    // gsheets returns date fields as a fractional number of days since 1/1/1900. Unix Epoch is 1/1/1970 
+    // See https://stackoverflow.com/questions/66582839/flutter-get-form-google-sheet-but-date-time-can-not-convert/70747943
+    var date = "";
+    if (plant.length > 10) {
+      date = DateTime.fromMillisecondsSinceEpoch(((double.parse('${plant[10]}')-25569)*86400000).toInt(),isUtc: true).toIso8601String();
+    }
     plantInfo = [
-      '${attr[0]} : ${plant[1]}',
-      '${attr[1]} : ${plant[2]}',
-      '${attr[2]} : ${plant[3]}',
-      '${attr[3]} : ${plant[4]}',
-      '${attr[4]} : ${plant[5]}',
-      '${attr[5]} : ${plant[8]}',
-      '${attr[6]} : ${plant[9]}',
+      'Common Name : ${plant[1]}',
+      'Living : ${plant[2]}',
+      'Quantity : ${plant[3]}',
+      'Nursery : ${plant[4]}',
+      'Origin : ${plant[5]}',
+      'Notes : ${plant[8]}',
+      'North American Natve : ${plant[9]}',
+      'Date : $date',
     ];
 
     String plantName = plant[1];
@@ -230,8 +229,11 @@ class SelectedPlants extends StatelessWidget {
             builder: (context, snapshot) {
               Image? picture;
               if (!kIsWeb && snapshot.hasData) {
-                picture = Image.file(File(snapshot.data!));
-                attributeCount += 1; // add room for picture at end
+                File file = File(snapshot.data!);
+                if (file.existsSync()) {
+                  picture = Image.file(file);
+                  attributeCount += 1; // add room for picture at end
+                }
               }
 
               return Center(

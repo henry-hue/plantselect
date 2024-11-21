@@ -68,7 +68,7 @@ class _AddPlantState extends State<AddPlant> {
     // get worksheet by its title
     var sheet = ss.worksheetByTitle(widget.username);
     // create worksheet if it does not exist yet
-    sheet ??= await ss.addWorksheet('new sheet by henry');
+    sheet ??= await ss.addWorksheet(widget.username);
 
     if (isSeed) {
       plantedAs = 'Planted as Seed';
@@ -85,6 +85,7 @@ class _AddPlantState extends State<AddPlant> {
       'longitude': longitude,
       'Notes': notesController.text,
       'North American Native': nativeController.text,
+      'Date': DateTime.now().toIso8601String(),
     };
 
     await sheet.values.map.appendRow(newRow);
