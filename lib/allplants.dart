@@ -130,8 +130,8 @@ class _AddPlantState extends State<AddPlant> {
   }
 
   String _location = 'Getting location...';
-  String latitude = 'y axis';
-  String longitude = 'x axis';
+  String latitude = 'Unknown location';
+  String longitude = 'Unknown location';
 
   @override
   void initState() {

@@ -29,13 +29,15 @@
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>neededtocaptureplantphotos</string>
+	<string>Allows taking photograph of plant</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>We need your location for...</string>
+	<string>We need your location to record where plants are</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We need your location for...</string>
+	<string>We need your location to record where plants are</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>We need your location to record where plants are</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>neededtoaccessplantphotos</string>
+	<string>Allows using photographs of plant</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIFileSharingEnabled</key>
