@@ -35,10 +35,12 @@ class AddPlant extends StatefulWidget {
       {super.key,
       required this.plants,
       required this.picPath,
-      required this.username});
+      required this.username,
+      required this.wishList});
   final List<Plant> plants;
   final Directory? picPath;
   final String username;
+  final bool wishList;
 
   @override
   State<AddPlant> createState() => _AddPlantState();
@@ -86,6 +88,7 @@ class _AddPlantState extends State<AddPlant> {
       'Notes': notesController.text,
       'North American Native': nativeController.text,
       'Date': DateTime.now().toIso8601String(),
+      'WishList': widget.wishList,
     };
 
     await sheet.values.map.appendRow(newRow);
@@ -291,7 +294,7 @@ class _AddPlantState extends State<AddPlant> {
                       ],
                     ),
                   )),
-              if (!kIsWeb && imageFile == null)
+              if (!kIsWeb && !widget.wishList && imageFile == null)
                 ElevatedButton(
                   onPressed: selectFile,
                   child: const Text('Next: take picture'),
@@ -299,7 +302,9 @@ class _AddPlantState extends State<AddPlant> {
               if (imageFile != null) Image.file(File(imageFile!.path)),
               ElevatedButton(
                 onPressed: () {
-                  _getCurrentLocation();
+                  if (!widget.wishList) {
+                    _getCurrentLocation();
+                  }
                   _submitForm();
                 },
                 child: const Text('Submit Plant'),

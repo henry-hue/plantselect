@@ -45,6 +45,7 @@ class _MyPlantsState extends State<MyPlants> {
       'Notes',
       'North American Native',
       'Date',
+      'WishList',
     ];
     await sheet.values.insertRow(1, firstRow);
     List<List<String>> myplants = await sheet.values.allRows(fromRow: 2);
@@ -72,7 +73,9 @@ class _MyPlantsState extends State<MyPlants> {
             builder: (context) => AddPlant(
                 plants: widget.plants,
                 picPath: widget.picPath,
-                username: widget.username))).then((value) {
+                username: widget.username,
+                wishList: (currentPageIndex == 2),
+                ))).then((value) {
       setState(() {});
     });
   }
@@ -111,9 +114,14 @@ class _MyPlantsState extends State<MyPlants> {
                 label: 'My Plants',
               ),
               NavigationDestination(
-                selectedIcon: Icon(Icons.business),
-                icon: Icon(Icons.home_outlined),
+                selectedIcon: Icon(Icons.map),
+                icon: Icon(Icons.map_outlined),
                 label: 'Map',
+              ),
+               NavigationDestination(
+                selectedIcon: Icon(Icons.card_giftcard),
+                icon: Icon(Icons.card_giftcard_outlined),
+                label: 'My WishList',
               ),
             ]),
         body: FutureBuilder<dynamic>(
@@ -124,13 +132,23 @@ class _MyPlantsState extends State<MyPlants> {
                 return const ListTile(
                     title: Text('Click the plus button to add plants'));
               }
+              // Build wishliat and myplants lists
+              List<List<String>> myPlants = [];
+              List<List<String>> wishListPlants = [];
+              for (final plant in snapshot.data) {
+                if (plant.length > 11 && plant[11] == 'true') {
+                  wishListPlants.add(plant);
+                } else {
+                  myPlants.add(plant);
+                }
+              }
               return <Widget>[
                 // Home page
                 Card(
                   child: ListView.builder(
-                      itemCount: snapshot.data!.length,
+                      itemCount: myPlants.length,
                       itemBuilder: (context, index) {
-                        List plant = snapshot.data![index];
+                        List plant = myPlants[index];
                         return ListTile(
                           title: Column(
                             children: <Widget>[
@@ -157,7 +175,21 @@ class _MyPlantsState extends State<MyPlants> {
                         );
                       }),
                 ),
-                Card(child: MapPage(data: snapshot.data))
+                Card(child: MapPage(data: myPlants)),
+                Card(
+                  child: ListView.builder(
+                      itemCount: wishListPlants.length,
+                      itemBuilder: (context, index) {
+                        List plant = wishListPlants[index];
+                        return ListTile(
+                          title: Column(
+                            children: <Widget>[
+                              Text('''WishList Plant: ${plant[3]} ${plant[1]}'''),
+                            ],
+                          ),
+                        );
+                      }),
+                ),
               ][currentPageIndex];
             } else if (snapshot.hasError) {
               return Center(child: Text('${snapshot.error}'));
@@ -203,6 +235,10 @@ class SelectedPlants extends StatelessWidget {
     if (plant.length > 10) {
       date = DateTime.fromMillisecondsSinceEpoch(((double.parse('${plant[10]}')-25569)*86400000).toInt(),isUtc: true).toIso8601String();
     }
+    var wishList = 'false';
+    if (plant.length > 11) {
+      wishList = '${plant[11]}';
+    }
     plantInfo = [
       'Common Name : ${plant[1]}',
       'Living : ${plant[2]}',
@@ -212,6 +248,7 @@ class SelectedPlants extends StatelessWidget {
       'Notes : ${plant[8]}',
       'North American Natve : ${plant[9]}',
       'Date : $date',
+      'WishList : $wishList',
     ];
 
     String plantName = plant[1];
