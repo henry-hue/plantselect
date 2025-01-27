@@ -71,10 +71,10 @@ class _MyPlantsState extends State<MyPlants> {
         context,
         MaterialPageRoute(
             builder: (context) => AddPlant(
-                plants: widget.plants,
-                picPath: widget.picPath,
-                username: widget.username,
-                wishList: (currentPageIndex == 2),
+                  plants: widget.plants,
+                  picPath: widget.picPath,
+                  username: widget.username,
+                  wishList: (currentPageIndex == 2),
                 ))).then((value) {
       setState(() {});
     });
@@ -93,6 +93,27 @@ class _MyPlantsState extends State<MyPlants> {
             child: Image.asset('assets/images/topDesign.png'),
           ),
           toolbarHeight: myToolbarHeight,
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text('Menu'),
+              ),
+              ListTile(
+                title: Text('Seach for Plant'),
+                onTap: () {
+                  // Update the state of the app
+                  // Then close the drawer
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: goToAddPlant,
@@ -118,7 +139,7 @@ class _MyPlantsState extends State<MyPlants> {
                 icon: Icon(Icons.map_outlined),
                 label: 'Map',
               ),
-               NavigationDestination(
+              NavigationDestination(
                 selectedIcon: Icon(Icons.card_giftcard),
                 icon: Icon(Icons.card_giftcard_outlined),
                 label: 'My WishList',
@@ -176,7 +197,6 @@ class _MyPlantsState extends State<MyPlants> {
                       }),
                 ),
                 Card(child: MapPage(data: myPlants)),
-
 
                 Card(
                   child: ListView.builder(
@@ -243,11 +263,15 @@ class SelectedPlants extends StatelessWidget {
   SelectedPlants({super.key, required this.plant, required this.picPath});
   @override
   Widget build(BuildContext context) {
-    // gsheets returns date fields as a fractional number of days since 1/1/1900. Unix Epoch is 1/1/1970 
+    // gsheets returns date fields as a fractional number of days since 1/1/1900. Unix Epoch is 1/1/1970
     // See https://stackoverflow.com/questions/66582839/flutter-get-form-google-sheet-but-date-time-can-not-convert/70747943
     var date = "";
     if (plant.length > 10) {
-      date = DateTime.fromMillisecondsSinceEpoch(((double.parse('${plant[10]}')-25569)*86400000).toInt(),isUtc: true).toIso8601String().split('T')[0];
+      date = DateTime.fromMillisecondsSinceEpoch(
+              ((double.parse('${plant[10]}') - 25569) * 86400000).toInt(),
+              isUtc: true)
+          .toIso8601String()
+          .split('T')[0];
     }
     var wishList = 'false';
     if (plant.length > 11) {
