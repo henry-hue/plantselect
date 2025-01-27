@@ -260,7 +260,7 @@ class SelectedPlants extends StatelessWidget {
       'Nursery : ${plant[4]}',
       'Origin : ${plant[5]}',
       'Notes : ${plant[8]}',
-      'North American Natve : ${plant[9]}',
+      'North American Native : ${plant[9]}',
       'Date : $date',
     ];
 
