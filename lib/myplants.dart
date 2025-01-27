@@ -247,7 +247,7 @@ class SelectedPlants extends StatelessWidget {
     // See https://stackoverflow.com/questions/66582839/flutter-get-form-google-sheet-but-date-time-can-not-convert/70747943
     var date = "";
     if (plant.length > 10) {
-      date = DateTime.fromMillisecondsSinceEpoch(((double.parse('${plant[10]}')-25569)*86400000).toInt(),isUtc: true).toIso8601String();
+      date = DateTime.fromMillisecondsSinceEpoch(((double.parse('${plant[10]}')-25569)*86400000).toInt(),isUtc: true).toIso8601String().split('T')[0];
     }
     var wishList = 'false';
     if (plant.length > 11) {
