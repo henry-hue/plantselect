@@ -184,12 +184,23 @@ class _MyPlantsState extends State<MyPlants> {
                       itemBuilder: (context, index) {
                         List plant = wishListPlants[index];
                         return ListTile(
-                          leading: Text('title'),
+                          leading: Text('Wishlist Plant:'),
                           title: Column(
                             children: <Widget>[
-                              Text('''WishList Plant: ${plant[3]} ${plant[1]}'''),
+                              Text('''${plant[3]} ${plant[1]}'''),
                             ],
                           ),
+                          onTap: () {
+                            Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SelectedPlants(
+                                            plant: plant,
+                                            picPath: widget.picPath)))
+                                .then((value) {
+                              setState(() {});
+                            });
+                          },
                         );
                       }),
                 ),
