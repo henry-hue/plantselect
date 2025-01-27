@@ -176,12 +176,15 @@ class _MyPlantsState extends State<MyPlants> {
                       }),
                 ),
                 Card(child: MapPage(data: myPlants)),
+
+
                 Card(
                   child: ListView.builder(
                       itemCount: wishListPlants.length,
                       itemBuilder: (context, index) {
                         List plant = wishListPlants[index];
                         return ListTile(
+                          leading: Text('title'),
                           title: Column(
                             children: <Widget>[
                               Text('''WishList Plant: ${plant[3]} ${plant[1]}'''),
@@ -248,7 +251,6 @@ class SelectedPlants extends StatelessWidget {
       'Notes : ${plant[8]}',
       'North American Natve : ${plant[9]}',
       'Date : $date',
-      'WishList : $wishList',
     ];
 
     String plantName = plant[1];
