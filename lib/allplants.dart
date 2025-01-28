@@ -53,7 +53,8 @@ class _AddPlantState extends State<AddPlant> {
   TextEditingController quantityController = TextEditingController();
   TextEditingController nurseryController = TextEditingController();
   TextEditingController notesController = TextEditingController();
-  TextEditingController nativeController = TextEditingController(text:"Unknown");
+  TextEditingController nativeController =
+      TextEditingController(text: "Unknown");
 
   bool isSeed = false;
   String plantedAs = 'Planted as Living Plant';
@@ -61,7 +62,7 @@ class _AddPlantState extends State<AddPlant> {
   bool isAlive = true;
   String living = 'Alive';
 
-  void addRow() async {
+  Future<dynamic> addRow() async {
     // init GSheets
     final gsheets = GSheets(credentials);
     // fetch spreadsheet by its id
@@ -91,13 +92,7 @@ class _AddPlantState extends State<AddPlant> {
       'WishList': widget.wishList,
     };
 
-    await sheet.values.map.appendRow(newRow);
-  }
-
-  // Method to Submit Feedback and save it in Google Sheets
-  void _submitForm() {
-    addRow();
-    Navigator.pop(context);
+    return await sheet.values.map.appendRow(newRow);
   }
 
   getRowCount() async {
@@ -228,9 +223,8 @@ class _AddPlantState extends State<AddPlant> {
                   (int index) {
                     final String item = filteredPlants[index].values[0];
                     final String botanicName = filteredPlants[index].values[1];
-                   final String nativeStatus = filteredPlants[index].values[14];
-
-                    
+                    final String nativeStatus =
+                        filteredPlants[index].values[14];
 
                     return ListTile(
                         title: Text(item),
@@ -305,7 +299,11 @@ class _AddPlantState extends State<AddPlant> {
                   if (!widget.wishList) {
                     _getCurrentLocation();
                   }
-                  _submitForm();
+                  addRow().then((result) {
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                    }
+                  });
                 },
                 child: const Text('Submit Plant'),
               )

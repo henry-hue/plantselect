@@ -25,7 +25,7 @@ class _EditPlantState extends State<EditPlant> {
   bool isDead = false;
   String living = 'Alive';
 
-  void addRow() async {
+  Future<dynamic> updateRow() async {
     // init GSheets
     final gsheets = GSheets(credentials);
     // fetch spreadsheet by its id
@@ -46,15 +46,8 @@ class _EditPlantState extends State<EditPlant> {
         .insertValueByKeys(living, columnKey: 'Living', rowKey: index);
     await sheet.values.insertValueByKeys(quantityController.text,
         columnKey: 'Quantity', rowKey: index);
-        await sheet.values.insertValueByKeys(notesController.text,
+    return await sheet.values.insertValueByKeys(notesController.text,
         columnKey: 'Notes', rowKey: index);
-  }
-
-  // Method to Submit Feedback and save it in Google Sheets
-  void _submitForm() {
-    addRow();
-
-    Navigator.pop(context);
   }
 
   XFile? imageFile;
@@ -74,65 +67,59 @@ class _EditPlantState extends State<EditPlant> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-              backgroundColor: primaryColor,
-
+          backgroundColor: primaryColor,
           title: Image.asset('assets/images/logo.png'),
         ),
         body: Center(
-         
-              
-          
-            child: ListView(
-             
-                  
-                children: <Widget>[
-                  Padding(
-                        padding: const EdgeInsets.only(top: 10.0, left: 20),
-                  child: Text('''Edit the ${widget.plant[4]} ${widget.plant[2]}''',
-              style: Theme.of(context).textTheme.titleLarge!
-              ),
-                  ),
-
-              Form(
-                  key: _formKey,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        TextFormField(
-                          controller: quantityController,
-                          decoration: const InputDecoration(
-                            labelText: 'Quantity',
-                          ),
-                        ),
-                        TextFormField(
-                          controller: notesController,
-                          decoration: const InputDecoration(
-                            labelText: 'Notes',
-                          ),
-                        ),
-                        FormField<bool>(builder: (state) {
-                          return CheckboxListTile(
-                              value: isDead,
-                              title: const Text('Plant is Dead'),
-                              onChanged: (value) {
-                                setState(() {
-                                  //save checkbox value to variable that store terms and notify form that state changed
-                                  isDead = !isDead;
-                                  state.didChange(value);
-                                });
-                              });
-                        }),
-                      ],
+            child: ListView(children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top: 10.0, left: 20),
+            child: Text('''Edit the ${widget.plant[4]} ${widget.plant[2]}''',
+                style: Theme.of(context).textTheme.titleLarge!),
+          ),
+          Form(
+              key: _formKey,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    TextFormField(
+                      controller: quantityController,
+                      decoration: const InputDecoration(
+                        labelText: 'Quantity',
+                      ),
                     ),
-                  )),
-              ElevatedButton(
-                  onPressed: _submitForm, child: const Text('Save Changes')),
-            ]
-            )
-          
-            )
-            );
+                    TextFormField(
+                      controller: notesController,
+                      decoration: const InputDecoration(
+                        labelText: 'Notes',
+                      ),
+                    ),
+                    FormField<bool>(builder: (state) {
+                      return CheckboxListTile(
+                          value: isDead,
+                          title: const Text('Plant is Dead'),
+                          onChanged: (value) {
+                            setState(() {
+                              //save checkbox value to variable that store terms and notify form that state changed
+                              isDead = !isDead;
+                              state.didChange(value);
+                            });
+                          });
+                    }),
+                  ],
+                ),
+              )),
+          ElevatedButton(
+              onPressed: () {
+                updateRow().then((result) {
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                });
+              },
+              child: const Text('Save Changes')),
+        ])));
   }
 }

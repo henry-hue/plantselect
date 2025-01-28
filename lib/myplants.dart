@@ -25,7 +25,7 @@ class MyPlants extends StatefulWidget {
 }
 
 class _MyPlantsState extends State<MyPlants> {
-  sheetsPlants() async {
+  fetchMyPlants() async {
     final gsheets = GSheets(credentials);
     // fetch spreadsheet by its id
     final ss = await gsheets.spreadsheet(spreadsheetId);
@@ -60,9 +60,7 @@ class _MyPlantsState extends State<MyPlants> {
                 builder: (context) =>
                     EditPlant(plant: plant, username: widget.username)))
         .then((value) {
-      setState(() {
-        sheetsPlants();
-      });
+      setState(() {});
     });
   }
 
@@ -146,7 +144,7 @@ class _MyPlantsState extends State<MyPlants> {
               ),
             ]),
         body: FutureBuilder<dynamic>(
-          future: sheetsPlants(),
+          future: fetchMyPlants(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data!.length == 0) {
@@ -184,14 +182,11 @@ class _MyPlantsState extends State<MyPlants> {
                           ),
                           onTap: () {
                             Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => SelectedPlants(
-                                            plant: plant,
-                                            picPath: widget.picPath)))
-                                .then((value) {
-                              setState(() {});
-                            });
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SelectedPlants(
+                                        plant: plant,
+                                        picPath: widget.picPath)));
                           },
                         );
                       }),
@@ -212,14 +207,11 @@ class _MyPlantsState extends State<MyPlants> {
                           ),
                           onTap: () {
                             Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => SelectedPlants(
-                                            plant: plant,
-                                            picPath: widget.picPath)))
-                                .then((value) {
-                              setState(() {});
-                            });
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SelectedPlants(
+                                        plant: plant,
+                                        picPath: widget.picPath)));
                           },
                         );
                       }),
