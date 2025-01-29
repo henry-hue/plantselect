@@ -17,13 +17,18 @@ class _EditPlantState extends State<EditPlant> {
   final _formKey = GlobalKey<FormState>();
 
   // TextField Controllers
-  //TextEditingController DateController = TextEditingController();
   TextEditingController plantController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
   TextEditingController notesController = TextEditingController();
 
   bool isDead = false;
-  String living = 'Alive';
+  @override
+  void initState() {
+    super.initState();
+    quantityController.text = widget.plant[3];
+    notesController.text = widget.plant[8];
+    isDead = widget.plant[2] == 'Dead';
+  }
 
   Future<dynamic> updateRow() async {
     // init GSheets
@@ -36,9 +41,7 @@ class _EditPlantState extends State<EditPlant> {
     // create worksheet if it does not exist yet
     sheet ??= await ss.addWorksheet(widget.username);
 
-    if (isDead) {
-      living = 'Dead';
-    }
+    String living = (isDead) ? "Dead" : "Alive";
 
     var index = widget.plant[0];
     //await sheet.values.map.appendRow(newRow);
@@ -74,7 +77,7 @@ class _EditPlantState extends State<EditPlant> {
             child: ListView(children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 10.0, left: 20),
-            child: Text('''Edit the ${widget.plant[4]} ${widget.plant[2]}''',
+            child: Text('''Edit plant ${widget.plant[1]}''',
                 style: Theme.of(context).textTheme.titleLarge!),
           ),
           Form(
@@ -96,18 +99,14 @@ class _EditPlantState extends State<EditPlant> {
                         labelText: 'Notes',
                       ),
                     ),
-                    FormField<bool>(builder: (state) {
-                      return CheckboxListTile(
-                          value: isDead,
-                          title: const Text('Plant is Dead'),
-                          onChanged: (value) {
-                            setState(() {
-                              //save checkbox value to variable that store terms and notify form that state changed
-                              isDead = !isDead;
-                              state.didChange(value);
-                            });
+                    CheckboxListTile(
+                        value: isDead,
+                        title: const Text('Plant is Dead'),
+                        onChanged: (value) {
+                          setState(() {
+                            isDead = !isDead;
                           });
-                    }),
+                        }),
                   ],
                 ),
               )),

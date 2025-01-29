@@ -171,9 +171,7 @@ class _AddPlantState extends State<AddPlant> {
     }
 
     // Get the current position
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
+    Position position = await Geolocator.getCurrentPosition();
 
     if (mounted) {
       setState(() {

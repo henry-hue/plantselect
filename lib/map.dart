@@ -25,8 +25,7 @@ class _MapPageState extends State<MapPage> {
 
   // Get the current location of the device
   Future<void> _getCurrentLocation() async {
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+    Position position = await Geolocator.getCurrentPosition();
     setState(() {
       _currentPosition = LatLng(position.latitude, position.longitude);
 
