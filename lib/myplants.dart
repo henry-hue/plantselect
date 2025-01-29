@@ -10,6 +10,8 @@ import 'credentials.dart';
 import 'allplants.dart';
 import 'main.dart';
 
+enum SortOrder { date, common, scientific }
+
 class MyPlants extends StatefulWidget {
   const MyPlants(
       {super.key,
@@ -25,6 +27,9 @@ class MyPlants extends StatefulWidget {
 }
 
 class _MyPlantsState extends State<MyPlants> {
+  SortOrder sortOrder = SortOrder.date;
+  int currentPageIndex = 0;
+
   fetchMyPlants() async {
     final gsheets = GSheets(credentials);
     // fetch spreadsheet by its id
@@ -49,7 +54,20 @@ class _MyPlantsState extends State<MyPlants> {
     ];
     await sheet.values.insertRow(1, firstRow);
     List<List<String>> myplants = await sheet.values.allRows(fromRow: 2);
-    myplants = myplants.reversed.toList();
+    if (sortOrder == SortOrder.date) {
+      myplants = myplants.reversed.toList();
+    } else if (sortOrder == SortOrder.common) {
+      myplants.sort((a, b) => a[1].compareTo(b[1]));
+    } else if (sortOrder == SortOrder.scientific) {
+      myplants.sort((a, b) {
+        List<String> aName = a[1].split('(');
+        List<String> bName = b[1].split('(');
+        if (aName.length < 2 || bName.length < 2) {
+          return a[1].compareTo(b[1]);
+        }
+        return aName[1].compareTo(bName[1]);
+      });
+    }
     return myplants;
   }
 
@@ -78,19 +96,14 @@ class _MyPlantsState extends State<MyPlants> {
     });
   }
 
-  int currentPageIndex = 0;
-
   @override
   Widget build(BuildContext context) {
-    double myToolbarHeight = 200;
     return Scaffold(
         appBar: AppBar(
           backgroundColor: primaryColor,
           title: SizedBox(
-            height: myToolbarHeight,
             child: Image.asset('assets/images/topDesign.png'),
           ),
-          toolbarHeight: myToolbarHeight,
         ),
         drawer: Drawer(
           child: ListView(
@@ -100,16 +113,37 @@ class _MyPlantsState extends State<MyPlants> {
                 decoration: BoxDecoration(
                   color: Colors.blue,
                 ),
-                child: Text('Menu'),
+                child: Text('Settings'),
               ),
-              ListTile(
-                title: Text('Seach for Plant'),
-                onTap: () {
-                  // Update the state of the app
-                  // Then close the drawer
-                  Navigator.pop(context);
-                },
-              ),
+              ExpansionTile(title: Text('Sort By:'), children: [
+                ListTile(
+                  title: Text('Date'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    setState(() {
+                      sortOrder = SortOrder.date;
+                    });
+                  },
+                ),
+                ListTile(
+                  title: Text('Common Name'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    setState(() {
+                      sortOrder = SortOrder.common;
+                    });
+                  },
+                ),
+                ListTile(
+                  title: Text('Scientific Name'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    setState(() {
+                      sortOrder = SortOrder.scientific;
+                    });
+                  },
+                ),
+              ]),
             ],
           ),
         ),
@@ -278,6 +312,7 @@ class SelectedPlants extends StatelessWidget {
       'Notes : ${plant[8]}',
       'North American Native : ${plant[9]}',
       'Date : $date',
+      'WishList : $wishList',
     ];
 
     String plantName = plant[1];
