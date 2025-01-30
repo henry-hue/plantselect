@@ -75,6 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Map<String, dynamic> plantByBotanicName = {};
   Directory? picPath;
   String? username;
+  int? userId;
 
   getUsername() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -82,10 +83,33 @@ class _MyHomePageState extends State<MyHomePage> {
     setUsername(prefs.getString('username'));
   }
 
-  setUsername(String? name) {
-    setState(() {
-      username = name;
-    });
+  setUsername(String? name) async {
+    if(name != null) {
+      //Look up name from DB
+      var resp = await http.get(
+        Uri.parse('${Constants.apiUrl}/api/user/name?name=$name'),
+        headers: {HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}'},
+      );
+      
+      var data = jsonDecode(resp.body);
+
+      if(data['user_id'] == null) {
+        //user does not exist - Add to DB
+        var resp = await http.post(
+          Uri.parse('${Constants.apiUrl}/api/user/name'),
+          headers: {
+            HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}',
+            'content-type': 'application/json',  
+          },
+          body: jsonEncode({'name': name}),
+        );
+        data = jsonDecode(resp.body); 
+      }
+      setState(() {
+        username = data['name'];
+        userId = data['user_id'];
+      });
+    }
   }
 
   Future directory() async {
@@ -102,26 +126,6 @@ class _MyHomePageState extends State<MyHomePage> {
     directory();
   }
 
-  // Future<void> fetchPlants() async {
-  //   const String url =
-  //       'https://script.googleusercontent.com/macros/echo?user_content_key=_B-W-AHmjR26KU5dTCw1S-B2DHZEuws01wTIWfteAhh1hJmlRPaKDGo9Y28yztqfS4hpvU0auyjWeXE6R04QW4DiUHEKgbgXm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnO2U0Bl7BUAklHHeNRDrUcIoEcGPmrrlK_ulnafppH3w7o8FAM3ee_EkorPOGtTMgbRERG-Fn53JVefYCVkuXGQB2G7xa3afN9z9Jw9Md8uu&lib=MxnqXoKCpdNq7DADJrJEvDBtmPjijWW5o';
-  //   final response = await http.get(Uri.parse(url));
-
-  //   if (response.statusCode == 200) {
-  //     List<dynamic> data = jsonDecode(response.body); 
-  //     List<dynamic> values = data.sublist(1);
-  //     print (values);
-  //     setState(() {
-  //       plants = values.map((json) => Plant.fromJson(json)).toList();
-  //       print(plants[0].values[1]);
-  //       plants.map((plant) => plantByBotanicName[plant.values[1]] = plant);
-  //     });
-        
-  //     print ('here');
-  //   } else {
-  //     throw Exception('Failed to load plants');
-  //   }
-  // }
 
   Future <void> fetchPlants() async {
     final  resp = await http.get(
