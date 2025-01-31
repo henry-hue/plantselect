@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 import 'package:plantselect/map.dart';
 import 'plant.dart';
 import 'editplant.dart';
@@ -9,16 +11,20 @@ import 'package:gsheets/gsheets.dart';
 import 'credentials.dart';
 import 'allplants.dart';
 import 'main.dart';
+import 'constants.dart';
 
 class MyPlants extends StatefulWidget {
-  const MyPlants(
-      {super.key,
-      required this.plants,
-      required this.picPath,
-      required this.username});
+  const MyPlants({
+    super.key,
+    required this.plants,
+    required this.picPath,
+    required this.username,
+    required this.userId,
+  });
   final List<Plant> plants;
   final Directory? picPath;
   final String username;
+  final int userId;
 
   @override
   State<MyPlants> createState() => _MyPlantsState();
@@ -26,29 +32,39 @@ class MyPlants extends StatefulWidget {
 
 class _MyPlantsState extends State<MyPlants> {
   sheetsPlants() async {
-    final gsheets = GSheets(credentials);
-    // fetch spreadsheet by its id
-    final ss = await gsheets.spreadsheet(spreadsheetId);
+    // final gsheets = GSheets(credentials);
+    // // fetch spreadsheet by its id
+    // final ss = await gsheets.spreadsheet(spreadsheetId);
 
-    var sheet = ss.worksheetByTitle(widget.username);
-    sheet ??= await ss.addWorksheet(widget.username);
+    // var sheet = ss.worksheetByTitle(widget.username);
+    // sheet ??= await ss.addWorksheet(widget.username);
 
-    final firstRow = [
-      '=IF(B1<>"", ROW(),)',
-      'Plant',
-      'Living',
-      'Quantity',
-      'Nursery',
-      'Planted As',
-      'latitude',
-      'longitude',
-      'Notes',
-      'North American Native',
-      'Date',
-    ];
-    await sheet.values.insertRow(1, firstRow);
-    List<List<String>> myplants = await sheet.values.allRows(fromRow: 2);
-    myplants = myplants.reversed.toList();
+    // final firstRow = [
+    //   '=IF(B1<>"", ROW(),)',
+    //   'Plant',
+    //   'Living',
+    //   'Quantity',
+    //   'Nursery',
+    //   'Planted As',
+    //   'latitude',
+    //   'longitude',
+    //   'Notes',
+    //   'North American Native',
+    //   'Date',
+    // ];
+    // await sheet.values.insertRow(1, firstRow);
+    // List<List<String>> myplants = await sheet.values.allRows(fromRow: 2);
+    // myplants = myplants.reversed.toList();
+    // return myplants;
+
+    var response = await http.get(
+      Uri.parse('${Constants.apiUrl}/api/plants/user-list?userId=${widget.userId}'),
+      headers: {HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}'},
+    );
+    print(response.body);
+    List myplants = jsonDecode(response.body);
+    print('getting plants');
+    print(myplants); 
     return myplants;
   }
 
@@ -72,7 +88,8 @@ class _MyPlantsState extends State<MyPlants> {
             builder: (context) => AddPlant(
                 plants: widget.plants,
                 picPath: widget.picPath,
-                username: widget.username))).then((value) {
+                username: widget.username,
+                userId: widget.userId))).then((value) {
       setState(() {});
     });
   }
@@ -119,7 +136,12 @@ class _MyPlantsState extends State<MyPlants> {
         body: FutureBuilder<dynamic>(
           future: sheetsPlants(),
           builder: (context, snapshot) {
+            print('snapshot');
+            print(snapshot.hasData);
             if (snapshot.hasData) {
+              print('here');
+              print(snapshot.data!.length);
+              print(snapshot.data![0]);
               if (snapshot.data!.length == 0) {
                 return const ListTile(
                     title: Text('Click the plus button to add plants'));
@@ -130,11 +152,11 @@ class _MyPlantsState extends State<MyPlants> {
                   child: ListView.builder(
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
-                        List plant = snapshot.data![index];
+                        Map<String, dynamic> plant = snapshot.data![index];
                         return ListTile(
                           title: Column(
                             children: <Widget>[
-                              Text('''${plant[3]} ${plant[1]}'''),
+                              Text('''${plant['quantity']} ${plant['plant_name']}'''),
                               ElevatedButton(
                                   iconAlignment: IconAlignment.end,
                                   onPressed: () {
@@ -143,21 +165,21 @@ class _MyPlantsState extends State<MyPlants> {
                                   child: const Text('Edit'))
                             ],
                           ),
-                          onTap: () {
-                            Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => SelectedPlants(
-                                            plant: plant,
-                                            picPath: widget.picPath)))
-                                .then((value) {
-                              setState(() {});
-                            });
-                          },
+                           onTap: () {
+                             Navigator.push(
+                                     context,
+                                     MaterialPageRoute(
+                                         builder: (context) => SelectedPlants(
+                                             plant: plant,
+                                             picPath: widget.picPath)))
+                                 .then((value) {
+                               setState(() {});
+                             });
+                           },
                         );
                       }),
                 ),
-                Card(child: MapPage(data: snapshot.data))
+                //Card(child: MapPage(data: snapshot.data))
               ][currentPageIndex];
             } else if (snapshot.hasError) {
               return Center(child: Text('${snapshot.error}'));
@@ -189,7 +211,7 @@ Future<String> getFile(String name) async {
 
 // ignore: must_be_immutable
 class SelectedPlants extends StatelessWidget {
-  final List plant;
+  final Map<String,dynamic> plant;
   final Directory? picPath;
 
   List<String> plantInfo = [];
@@ -201,20 +223,20 @@ class SelectedPlants extends StatelessWidget {
     // See https://stackoverflow.com/questions/66582839/flutter-get-form-google-sheet-but-date-time-can-not-convert/70747943
     var date = "";
     if (plant.length > 10) {
-      date = DateTime.fromMillisecondsSinceEpoch(((double.parse('${plant[10]}')-25569)*86400000).toInt(),isUtc: true).toIso8601String();
+      date = DateTime.fromMillisecondsSinceEpoch(((double.parse('${plant['insert_date']}')-25569)*86400000).toInt(),isUtc: true).toIso8601String();
     }
     plantInfo = [
-      'Common Name : ${plant[1]}',
-      'Living : ${plant[2]}',
-      'Quantity : ${plant[3]}',
-      'Nursery : ${plant[4]}',
-      'Origin : ${plant[5]}',
-      'Notes : ${plant[8]}',
-      'North American Natve : ${plant[9]}',
+      'Common Name : ${plant['plant_name']}',
+      'Living : ${plant['living']}',
+      'Quantity : ${plant['quantity']}',
+      'Nursery : ${plant['nursery']}',
+      'Origin : ${plant['origin']}',
+      'Notes : ${plant['notes']}',
+      'North American Natve : ${plant['north_american_native']}',
       'Date : $date',
     ];
 
-    String plantName = plant[1];
+    String plantName = plant['plant_name'];
     String name = '''$plantName.png''';
 
     var attributeCount = plantInfo.length;

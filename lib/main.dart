@@ -161,7 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return EnterUsername(setUsername: setUsername);
     } else {
       return MaterialApp(
-        home: MyPlants(plants: plants, picPath: picPath, username: username!),
+        home: MyPlants(plants: plants, picPath: picPath, username: username!, userId: userId!),
       );
     }
   }

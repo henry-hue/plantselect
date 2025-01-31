@@ -5,7 +5,7 @@ import 'package:latlong2/latlong.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key, required this.data});
-  final List<List<String>> data;
+  final List<Map<String, dynamic>> data;
 
   @override
   State<MapPage> createState() => _MapPageState();
@@ -32,14 +32,14 @@ class _MapPageState extends State<MapPage> {
 
       int lengthData = widget.data.length;
       for (var i = 0; i < lengthData; i++) {
-        double latitude = double.parse(widget.data[i][6]);
-        double longitude = double.parse(widget.data[i][7]);
+        double latitude = double.parse(widget.data[i]['latitude']);
+        double longitude = double.parse(widget.data[i]['longitude']);
         LatLng plant = LatLng(latitude, longitude);
 
         _markers.add(
           Marker(
             point: plant,
-            child: Text(widget.data[i][1]),
+            child: Text(widget.data[i]['plant_name']),
             width: 60,
             height: 60,
             //builder: (ctx) => Icon(Icons.location_on, color: Colors.red, size: 40),

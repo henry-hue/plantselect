@@ -1,15 +1,17 @@
 // ignore_for_file: must_be_immutable
-
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 import 'plant.dart';
 import 'credentials.dart';
 import 'package:gsheets/gsheets.dart';
 import 'dart:io';
 import 'main.dart';
 import 'package:geolocator/geolocator.dart';
+import 'constants.dart';
 
 Future<String> get _photoLibrary async {
   final base = await getApplicationDocumentsDirectory();
@@ -36,11 +38,13 @@ class AddPlant extends StatefulWidget
     super.key,
     required this.plants,
     required this.picPath,
-    required this.username
+    required this.username,
+    required this.userId,
   });
   final List<Plant> plants;
   final Directory? picPath;
   final String username;
+  final int userId;
 
   @override
   State<AddPlant> createState() => _AddPlantState();
@@ -54,44 +58,67 @@ class _AddPlantState extends State<AddPlant>
   TextEditingController quantityController = TextEditingController();
   TextEditingController nurseryController = TextEditingController();
   TextEditingController notesController = TextEditingController();
-  TextEditingController nativeController = TextEditingController(text: "Unknown");
+  //TextEditingController nativeController = TextEditingController(text: "Unknown");
 
   bool isSeed = false;
-  String plantedAs = 'Planted as Living Plant';
-
   bool isAlive = true;
-  String living = 'Alive';
+  String northAmericanNative = 'Unkown';
 
   void addRow() async {
-    // init GSheets
-    final gsheets = GSheets(credentials);
-    // fetch spreadsheet by its id
-    final ss = await gsheets.spreadsheet(spreadsheetId);
+    // // init GSheets
+    // final gsheets = GSheets(credentials);
+    // // fetch spreadsheet by its id
+    // final ss = await gsheets.spreadsheet(spreadsheetId);
 
-    // get worksheet by its title
-    var sheet = ss.worksheetByTitle(widget.username);
-    // create worksheet if it does not exist yet
-    sheet ??= await ss.addWorksheet(widget.username);
+    // // get worksheet by its title
+    // var sheet = ss.worksheetByTitle(widget.username);
+    // // create worksheet if it does not exist yet
+    // sheet ??= await ss.addWorksheet(widget.username);
 
-    if (isSeed) {
-      plantedAs = 'Planted as Seed';
-    }
+    // if (isSeed) {
+    //   plantedAs = 'Planted as Seed';
+    // }
 
-    final newRow = {
-      '1': '=IF(B1<>"", ROW(),)',
-      'Plant': plantController.text,
-      'Living': living,
-      'Quantity': quantityController.text,
-      'Nursery': nurseryController.text,
-      'Planted As': plantedAs,
+    // final newRow = {
+    //   '1': '=IF(B1<>"", ROW(),)',
+    //   'Plant': plantController.text,
+    //   'Living': living,
+    //   'Quantity': quantityController.text,
+    //   'Nursery': nurseryController.text,
+    //   'Planted As': plantedAs,
+    //   'latitude': latitude,
+    //   'longitude': longitude,
+    //   'Notes': notesController.text,
+    //   'North American Native': nativeController.text,
+    //   'Date': DateTime.now().toIso8601String(),
+    // };
+
+    // await sheet.values.map.appendRow(newRow);
+    print('adding row');
+
+    var data = {
+      'userId': widget.userId,
+      'plantName': plantController.text, 
+      'living': isAlive ? 'Y' : 'N',
+      'quantity': quantityController.text,
+      'nursery': nurseryController.text,
+      'plantedAs': isSeed ? 'Seed' : 'Alive',
       'latitude': latitude,
       'longitude': longitude,
-      'Notes': notesController.text,
-      'North American Native': nativeController.text,
-      'Date': DateTime.now().toIso8601String(),
+      'notes': notesController.text,
+      'northAmericanNative': northAmericanNative,
     };
+    print(data);
+    var response = await http.post(
+      Uri.parse('${Constants.apiUrl}/api/plants/save-user-plant'),
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}',
+        'content-type': 'application/json',  
+      },
+      body: jsonEncode(data),
+    );
 
-    await sheet.values.map.appendRow(newRow);
+    print(response.body);
   }
 
   // Method to Submit Feedback and save it in Google Sheets
@@ -237,7 +264,7 @@ class _AddPlantState extends State<AddPlant>
                     title: Text(item),
                     onTap: () {
                       plantController.text = '$item ($botanicName)';
-                      nativeController.text = nativeStatus;
+                      northAmericanNative = nativeStatus;
                       controller.closeView(plantController.text);
                     }
                   );
@@ -274,12 +301,19 @@ class _AddPlantState extends State<AddPlant>
                       labelText: 'Notes',
                     ),
                   ),
-                  TextFormField(
-                    controller: nativeController,
-                    decoration: const InputDecoration(
-                      labelText:
-                          'North American Native (Yes, No, Unknown)',
-                    ),
+                  DropdownButton(
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    items: ['Yes', 'No', 'Unknown'].map((String value) {
+                      return DropdownMenuItem<String> (
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        northAmericanNative = newValue ?? 'Unknown';
+                      });
+                    }
                   ),
                   FormField<bool>(builder: (state) {
                     return CheckboxListTile(
