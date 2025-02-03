@@ -205,7 +205,7 @@ class _MyPlantsState extends State<MyPlants> {
                         return ListTile(
                           title: Column(
                             children: <Widget>[
-                              Text('''${plant[3]} ${plant[1]}'''),
+                              Text('''${plant[1]} Quantity: ${plant[3]}'''),
                               ElevatedButton(
                                   iconAlignment: IconAlignment.end,
                                   onPressed: () {
@@ -236,7 +236,7 @@ class _MyPlantsState extends State<MyPlants> {
                           leading: Text('Wishlist Plant:'),
                           title: Column(
                             children: <Widget>[
-                              Text('''${plant[3]} ${plant[1]}'''),
+                              Text('''${plant[1]} Quantity: ${plant[3]}'''),
                             ],
                           ),
                           onTap: () {
