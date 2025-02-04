@@ -136,10 +136,10 @@ class _MyHomePageState extends State<MyHomePage> {
     List<dynamic> data = jsonDecode(resp.body);
 
     setState(() {
-       data.forEach((plantData) {
+       for (var plantData in data) {
          plants.add(Plant.fromJson(plantData));
          plantByBotanicName[plantData['botanic_name']] = plantData;
-       });
+       }
     });
   }
 

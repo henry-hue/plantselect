@@ -4,11 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
-import 'package:plantselect/map.dart';
 import 'plant.dart';
 import 'editplant.dart';
-import 'package:gsheets/gsheets.dart';
-import 'credentials.dart';
 import 'allplants.dart';
 import 'main.dart';
 import 'constants.dart';
@@ -61,10 +58,7 @@ class _MyPlantsState extends State<MyPlants> {
       Uri.parse('${Constants.apiUrl}/api/plants/user-list?userId=${widget.userId}'),
       headers: {HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}'},
     );
-    print(response.body);
     List myplants = jsonDecode(response.body);
-    print('getting plants');
-    print(myplants); 
     return myplants;
   }
 
@@ -73,7 +67,7 @@ class _MyPlantsState extends State<MyPlants> {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    EditPlant(plant: plant, username: widget.username)))
+                    EditPlant(plant: plant, username: widget.username, userId: widget.userId)))
         .then((value) {
       setState(() {
         sheetsPlants();
@@ -136,12 +130,7 @@ class _MyPlantsState extends State<MyPlants> {
         body: FutureBuilder<dynamic>(
           future: sheetsPlants(),
           builder: (context, snapshot) {
-            print('snapshot');
-            print(snapshot.hasData);
             if (snapshot.hasData) {
-              print('here');
-              print(snapshot.data!.length);
-              print(snapshot.data![0]);
               if (snapshot.data!.length == 0) {
                 return const ListTile(
                     title: Text('Click the plus button to add plants'));

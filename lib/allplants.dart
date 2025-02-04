@@ -108,7 +108,7 @@ class _AddPlantState extends State<AddPlant>
       'notes': notesController.text,
       'northAmericanNative': northAmericanNative,
     };
-    print(data);
+  
     var response = await http.post(
       Uri.parse('${Constants.apiUrl}/api/plants/save-user-plant'),
       headers: {
@@ -118,7 +118,7 @@ class _AddPlantState extends State<AddPlant>
       body: jsonEncode(data),
     );
 
-    print(response.body);
+
   }
 
   // Method to Submit Feedback and save it in Google Sheets
