@@ -64,7 +64,7 @@ class _AddPlantState extends State<AddPlant>
   bool isAlive = true;
   String northAmericanNative = 'Unkown';
 
-  void addRow() async {
+  Future<void> addRow() async {
     // // init GSheets
     // final gsheets = GSheets(credentials);
     // // fetch spreadsheet by its id
@@ -94,7 +94,6 @@ class _AddPlantState extends State<AddPlant>
     // };
 
     // await sheet.values.map.appendRow(newRow);
-    print('adding row');
 
     var data = {
       'userId': widget.userId,
@@ -118,12 +117,11 @@ class _AddPlantState extends State<AddPlant>
       body: jsonEncode(data),
     );
 
-
   }
 
   // Method to Submit Feedback and save it in Google Sheets
-  void _submitForm() {
-    addRow();
+  void _submitForm() async {
+    await addRow();
     Navigator.pop(context);
   }
 
@@ -245,9 +243,6 @@ class _AddPlantState extends State<AddPlant>
             }, 
             suggestionsBuilder: (BuildContext context, SearchController controller) {
               String searchText = controller.text;
-              print('widget');
-              print(widget.plants);
-              print(widget.plants[0].botanicName);
               List<Plant> filteredPlants = widget.plants
                 .where((plant) => plant.botanicName
                 .toLowerCase()
@@ -256,14 +251,13 @@ class _AddPlantState extends State<AddPlant>
               return List<ListTile>.generate(
                 filteredPlants.length,
                 (int index) {
-                  final String item = filteredPlants[index].botanicName;
                   final String botanicName = filteredPlants[index].botanicName;
                   final String nativeStatus = filteredPlants[index].native == 1 ? 'Yes' : 'No';
 
                   return ListTile(
-                    title: Text(item),
+                    title: Text(botanicName),
                     onTap: () {
-                      plantController.text = '$item ($botanicName)';
+                      plantController.text = botanicName;
                       northAmericanNative = nativeStatus;
                       controller.closeView(plantController.text);
                     }
@@ -301,7 +295,10 @@ class _AddPlantState extends State<AddPlant>
                       labelText: 'Notes',
                     ),
                   ),
-                  DropdownButton(
+                  DropdownButtonFormField(
+                    decoration: InputDecoration( 
+                      labelText: 'North American Native',
+                    ),
                     icon: const Icon(Icons.keyboard_arrow_down),
                     items: ['Yes', 'No', 'Unknown'].map((String value) {
                       return DropdownMenuItem<String> (

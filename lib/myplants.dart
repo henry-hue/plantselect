@@ -11,7 +11,7 @@ import 'main.dart';
 import 'constants.dart';
 
 class MyPlants extends StatefulWidget {
-  const MyPlants({
+  MyPlants({
     super.key,
     required this.plants,
     required this.picPath,
@@ -22,13 +22,39 @@ class MyPlants extends StatefulWidget {
   final Directory? picPath;
   final String username;
   final int userId;
+  bool sort = true;
+  int columnIndex = 0;
 
   @override
   State<MyPlants> createState() => _MyPlantsState();
 }
 
 class _MyPlantsState extends State<MyPlants> {
-  sheetsPlants() async {
+  var isAscending = true;
+  var sortColumnIndex = 0;
+  List<Map<String, dynamic>> myPlants = [];
+ 
+  @override
+  void initState() {
+    super.initState();
+    sheetsPlants();
+  }
+
+  onSortColumn(int columnIndex, bool ascending) {
+    print('in sort');
+    print(myPlants);
+    const columns = ['plant_name', 'quantity', 'nursery', 'planted_as'];
+    var columnName = columns[columnIndex];
+    if (ascending) {
+      myPlants.sort((a, b) => a[columnName].compareTo(b[columnName]));
+    } else {
+      myPlants.sort((a, b) => b[columnName].compareTo(a[columnName]));
+    }
+    print('after sort');
+    print(myPlants);
+  }
+
+  Future <void> sheetsPlants() async {
     // final gsheets = GSheets(credentials);
     // // fetch spreadsheet by its id
     // final ss = await gsheets.spreadsheet(spreadsheetId);
@@ -58,9 +84,12 @@ class _MyPlantsState extends State<MyPlants> {
       Uri.parse('${Constants.apiUrl}/api/plants/user-list?userId=${widget.userId}'),
       headers: {HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}'},
     );
-    List myplants = jsonDecode(response.body);
-    return myplants;
+    List<dynamic> plants = json.decode(response.body);
+    setState(() {
+      myPlants = plants.map((plant) => plant as Map<String, dynamic>).toList();
+    });
   }
+  
 
   void gotoEditPlant(plant) {
     Navigator.push(
@@ -68,10 +97,11 @@ class _MyPlantsState extends State<MyPlants> {
             MaterialPageRoute(
                 builder: (context) =>
                     EditPlant(plant: plant, username: widget.username, userId: widget.userId)))
-        .then((value) {
-      setState(() {
-        sheetsPlants();
-      });
+        .then((value) async {
+          await sheetsPlants();
+      // setState(() async {
+      //   await sheetsPlants();
+      // });
     });
   }
 
@@ -83,9 +113,13 @@ class _MyPlantsState extends State<MyPlants> {
                 plants: widget.plants,
                 picPath: widget.picPath,
                 username: widget.username,
-                userId: widget.userId))).then((value) {
-      setState(() {});
-    });
+                userId: widget.userId))
+              )
+              .then((value) {
+                setState(() {
+                  sheetsPlants();
+                });
+              });
   }
 
   int currentPageIndex = 0;
@@ -93,6 +127,7 @@ class _MyPlantsState extends State<MyPlants> {
   @override
   Widget build(BuildContext context) {
     double myToolbarHeight = 200;
+    
     return Scaffold(
         appBar: AppBar(
           backgroundColor: primaryColor,
@@ -127,60 +162,147 @@ class _MyPlantsState extends State<MyPlants> {
                 label: 'Map',
               ),
             ]),
-        body: FutureBuilder<dynamic>(
-          future: sheetsPlants(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data!.length == 0) {
-                return const ListTile(
-                    title: Text('Click the plus button to add plants'));
-              }
-              return <Widget>[
-                // Home page
-                Card(
-                  child: ListView.builder(
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        Map<String, dynamic> plant = snapshot.data![index];
-                        return ListTile(
-                          title: Column(
-                            children: <Widget>[
-                              Text('''${plant['quantity']} ${plant['plant_name']}'''),
-                              ElevatedButton(
+        body: Padding (
+          padding: const EdgeInsets.all(0.0),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: SingleChildScrollView (
+              scrollDirection: Axis.horizontal,
+              child:
+                DataTable(
+                      sortAscending: widget.sort,
+                      sortColumnIndex: widget.columnIndex,
+                      columns: <DataColumn> [
+                        DataColumn(
+                          label: const Expanded (
+                            child: Text (
+                              'Plant Name',
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                          ),
+                          onSort:(columnIndex, ascending) {
+                            setState(() {
+                              widget.sort = columnIndex == widget.columnIndex ? !widget.sort : true;
+                              widget.columnIndex = columnIndex;
+                            });
+                            onSortColumn(columnIndex, ascending);
+                          },
+                        ),
+                        DataColumn(
+                          label: const Expanded (
+                            child: Text (
+                              'Quantity',
+                              style: TextStyle(fontStyle: FontStyle.italic)
+                            ),
+                          ),
+                          onSort:(columnIndex, ascending) {
+                            setState(() {
+                              widget.sort = columnIndex == widget.columnIndex ? !widget.sort : true;
+                              widget.columnIndex = columnIndex;
+                            });
+                            onSortColumn(columnIndex, ascending);
+                          },
+                        ),
+                        
+                        DataColumn(
+                          label: const Expanded (
+                            child: Text (
+                              'Living',
+                              style: TextStyle(fontStyle: FontStyle.italic)
+                            ),
+                          ),
+                          onSort:(columnIndex, ascending) {
+                            setState(() {
+                              widget.sort = columnIndex == widget.columnIndex ? !widget.sort : true;
+                              widget.columnIndex = columnIndex;
+                            });
+                            onSortColumn(columnIndex, ascending);
+                          },
+                        ),
+                        DataColumn(
+                          label: const Expanded (
+                            child: Text (
+                              'Action',
+                              style: TextStyle(fontStyle: FontStyle.italic)
+                            ),
+                          ),
+                        ),
+                      ],
+
+                      rows: myPlants.map((plant) {
+                        return DataRow(
+                            cells: <DataCell> [
+                              DataCell(
+                                ConstrainedBox(
+                                  constraints: BoxConstraints(maxWidth: 250),
+                                  child:Text(plant['plant_name'].toString()),
+                                ),
+                              ),
+                              DataCell(Text(plant['quantity'].toString())),
+                              DataCell(Text(plant['living'] == 'Y' ? 'Yes' : 'No')),
+                              DataCell(
+                                ElevatedButton.icon(
                                   iconAlignment: IconAlignment.end,
+                                  icon: const Icon(Icons.edit),
                                   onPressed: () {
                                     gotoEditPlant(plant);
                                   },
-                                  child: const Text('Edit'))
+                                  label: const Text('Edit'),
+                                )
+                              )
                             ],
-                          ),
-                           onTap: () {
-                             Navigator.push(
-                                     context,
-                                     MaterialPageRoute(
-                                         builder: (context) => SelectedPlants(
-                                             plant: plant,
-                                             picPath: widget.picPath)))
-                                 .then((value) {
-                               setState(() {});
-                             });
-                           },
-                        );
-                      }),
-                ),
-                //Card(child: MapPage(data: snapshot.data))
-              ][currentPageIndex];
-            } else if (snapshot.hasError) {
-              return Center(child: Text('${snapshot.error}'));
-            } else if (!snapshot.hasData) {
-              return Center(child: Text('Click the plus button to add plants'));
-            }
-
-            // By default, show a loading spinner
-            return const Center(child: CircularProgressIndicator());
-          },
-        ));
+                          );
+                        }).toList(),
+                            
+                  ),
+            ),
+          ),
+        ),
+    );
   }
+
+
+
+
+
+
+
+
+
+
+                // Home page
+                // Card(
+                //   child: ListView.builder(
+                //       itemCount: snapshot.data!.length,
+                //       itemBuilder: (context, index) {
+                //         Map<String, dynamic> plant = snapshot.data![index];
+                //         return ListTile(
+                //           title: Column(
+                //             children: <Widget>[
+                //               Text('''${plant['quantity']} ${plant['plant_name']}'''),
+                //               ElevatedButton(
+                //                   iconAlignment: IconAlignment.end,
+                //                   onPressed: () {
+                //                     gotoEditPlant(plant);
+                //                   },
+                //                   child: const Text('Edit'))
+                //             ],
+                //           ),
+                //            onTap: () {
+                //              Navigator.push(
+                //                      context,
+                //                      MaterialPageRoute(
+                //                          builder: (context) => SelectedPlants(
+                //                              plant: plant,
+                //                              picPath: widget.picPath)))
+                //                  .then((value) {
+                //                setState(() {});
+                //              });
+                //            },
+                //         );
+                //       }),
+                // ),
+                //Card(child: MapPage(data: snapshot.data))
 }
 
 Future<String> get _photoLibrary async {
