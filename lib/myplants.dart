@@ -10,7 +10,7 @@ import 'credentials.dart';
 import 'allplants.dart';
 import 'main.dart';
 
-enum SortOrder { date, common, scientific }
+enum SortOrder { date, common, scientific, deadPlants}
 
 class MyPlants extends StatefulWidget {
   const MyPlants(
@@ -53,7 +53,21 @@ class _MyPlantsState extends State<MyPlants> {
       'WishList',
     ];
     await sheet.values.insertRow(1, firstRow);
-    List<List<String>> myplants = await sheet.values.allRows(fromRow: 2);
+    List<List<String>> allPlants = await sheet.values.allRows(fromRow: 2);
+    List<List<String>> buildDeadPlants = [];
+        List<List<String>> myplants = [];
+
+        
+for (List<String> plant in allPlants) {if (plant[2] == 'Alive') {
+              myplants.add(plant);
+            }
+            }
+    
+    for (List<String> plant in allPlants) {if (plant[2] == 'Dead') {
+              buildDeadPlants.add(plant);
+            }
+            }
+
     if (sortOrder == SortOrder.date) {
       myplants = myplants.reversed.toList();
     } else if (sortOrder == SortOrder.common) {
@@ -68,6 +82,10 @@ class _MyPlantsState extends State<MyPlants> {
         return aName[1].compareTo(bName[1]);
       });
     }
+            else if (sortOrder == SortOrder.deadPlants) {
+            myplants = buildDeadPlants;
+            }
+
     return myplants;
   }
 
@@ -143,6 +161,15 @@ class _MyPlantsState extends State<MyPlants> {
                     });
                   },
                 ),
+                ListTile(
+                  title: Text('Dead Plants'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    setState(() {
+                      sortOrder = SortOrder.deadPlants;
+                    });
+                  },
+                ),
               ]),
             ],
           ),
@@ -185,15 +212,17 @@ class _MyPlantsState extends State<MyPlants> {
                 return const ListTile(
                     title: Text('Click the plus button to add plants'));
               }
-              // Build wishliat and myplants lists
+              // Build wishlist and myplants and deadPlants lists
               List<List<String>> myPlants = [];
               List<List<String>> wishListPlants = [];
+
               for (final plant in snapshot.data) {
                 if (plant.length > 11 && plant[11] == 'true') {
                   wishListPlants.add(plant);
-                } else {
-                  myPlants.add(plant);
-                }
+                } 
+               else {
+                myPlants.add(plant);
+               }
               }
               return <Widget>[
                 // Home page

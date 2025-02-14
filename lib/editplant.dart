@@ -101,7 +101,7 @@ class _EditPlantState extends State<EditPlant> {
                     ),
                     CheckboxListTile(
                         value: isDead,
-                        title: const Text('Plant is Dead'),
+                        title: const Text('Mark Plant as Dead'),
                         onChanged: (value) {
                           setState(() {
                             isDead = !isDead;
