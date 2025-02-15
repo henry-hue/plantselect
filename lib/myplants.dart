@@ -51,6 +51,12 @@ class _MyPlantsState extends State<MyPlants> {
       'North American Native',
       'Date',
       'WishList',
+      'Sun',
+      'Soil',
+      'Water',
+      'Flowering Season',
+      'Plant Type',
+      'Annual Maintenance',
     ];
     await sheet.values.insertRow(1, firstRow);
     List<List<String>> allPlants = await sheet.values.allRows(fromRow: 2);
@@ -217,7 +223,7 @@ for (List<String> plant in allPlants) {if (plant[2] == 'Alive') {
               List<List<String>> wishListPlants = [];
 
               for (final plant in snapshot.data) {
-                if (plant.length > 11 && plant[11] == 'true') {
+                if (plant.length > 11 && plant[11] == 'true') { //is the 11 check needed? need to change number for new columns if so
                   wishListPlants.add(plant);
                 } 
                else {
@@ -234,7 +240,7 @@ for (List<String> plant in allPlants) {if (plant[2] == 'Alive') {
                         return ListTile(
                           title: Column(
                             children: <Widget>[
-                              Text('''${plant[1]} Quantity: ${plant[3]}'''),
+                              Text('''${plant[1]}, Quantity: ${plant[3]}'''),
                               ElevatedButton(
                                   iconAlignment: IconAlignment.end,
                                   onPressed: () {
@@ -328,21 +334,28 @@ class SelectedPlants extends StatelessWidget {
           .toIso8601String()
           .split('T')[0];
     }
-    var wishList = 'false';
-    if (plant.length > 11) {
-      wishList = '${plant[11]}';
-    }
+    // var wishList = 'false';
+    // if (plant.length > 11) {
+    //   wishList = '${plant[11]}';
+    // }
     plantInfo = [
-      'Common Name : ${plant[1]}',
-      'Living : ${plant[2]}',
+      '${plant[1]}',
+      'Date : $date',
+      'Sun : ${plant[12]}',
+      'Water : ${plant[14]}',
+'Soil : ${plant[13]}',
+'Plant Type : ${plant[16]}',
+'Flowering Season : ${plant[15]}',
+'Commercial Maintenance : ${plant[17]}',
+
+'Living : ${plant[2]}',
       'Quantity : ${plant[3]}',
       'Nursery : ${plant[4]}',
       'Origin : ${plant[5]}',
       'Notes : ${plant[8]}',
       'North American Native : ${plant[9]}',
-      'Date : $date',
-      'WishList : $wishList',
-    ];
+      
+   ];
 
     String plantName = plant[1];
     String name = '''$plantName.png''';
@@ -374,10 +387,14 @@ class SelectedPlants extends StatelessWidget {
                         child: ListView.builder(
                             itemCount: attributeCount,
                             itemBuilder: (BuildContext context, int index) {
-                              if (index < plantInfo.length) {
+                              if (index < 4) {
                                 return Text(plantInfo[index]);
-                              } else {
+                              } 
+                              else if (index == 6) {
                                 return Container(child: picture);
+                              }
+                              else if (index < plantInfo.length) {
+                                return Text(plantInfo[index]);
                               }
                             })))
               ]));

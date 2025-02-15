@@ -55,6 +55,17 @@ class _AddPlantState extends State<AddPlant> {
   TextEditingController notesController = TextEditingController();
   TextEditingController nativeController =
       TextEditingController(text: "Unknown");
+  TextEditingController sunController = TextEditingController(text: "Unknown");
+    TextEditingController soilController = TextEditingController(text: "Unknown");
+  TextEditingController waterController = TextEditingController(text: "Unknown");
+    TextEditingController typeController = TextEditingController(text: "Unknown");
+  TextEditingController floweringSeasonController = TextEditingController(text: "Unknown");
+  TextEditingController maintenanceController = TextEditingController(text: "Unknown");
+
+
+
+
+
 
   bool isSeed = false;
   String plantedAs = 'Planted as Living Plant';
@@ -90,6 +101,15 @@ class _AddPlantState extends State<AddPlant> {
       'North American Native': nativeController.text,
       'Date': DateTime.now().toIso8601String(),
       'WishList': widget.wishList,
+      'Sun' : sunController.text,
+            'Soil' : soilController.text,
+      'Water' : waterController.text,
+            'Plant Type' : typeController.text,
+      'Flowering Season' : floweringSeasonController.text,
+
+      'Annual Maintenance' : maintenanceController.text,
+
+
     };
 
     return await sheet.values.map.appendRow(newRow);
@@ -223,12 +243,26 @@ class _AddPlantState extends State<AddPlant> {
                     final String botanicName = filteredPlants[index].values[1];
                     final String nativeStatus =
                         filteredPlants[index].values[14];
+                       final String sun = filteredPlants[index].values[7];
+                                              final String soil = filteredPlants[index].values[10];
+                       final String water = filteredPlants[index].values[8];
+                                              final String type = filteredPlants[index].values[2];
+                       final String season= filteredPlants[index].values[5];
+                       final String maintenance = filteredPlants[index].values[16];
 
+
+ 
                     return ListTile(
                         title: Text(item),
                         onTap: () {
                           plantController.text = '$item ($botanicName)';
                           nativeController.text = nativeStatus;
+                          sunController.text = sun;
+                          soilController.text = soil;
+                          waterController.text = water;
+                          typeController.text = type;
+                          floweringSeasonController.text = season;
+                          maintenanceController.text = maintenance; 
                           controller.closeView(plantController.text);
                         });
                   },
