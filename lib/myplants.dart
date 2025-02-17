@@ -17,10 +17,12 @@ class MyPlants extends StatefulWidget {
       {super.key,
       required this.plants,
       required this.picPath,
-      required this.username});
+      required this.username,
+      required this.logout});
   final List<Plant> plants;
   final Directory? picPath;
   final String username;
+  final Function logout;
 
   @override
   State<MyPlants> createState() => _MyPlantsState();
@@ -177,6 +179,13 @@ class _MyPlantsState extends State<MyPlants> {
                   },
                 ),
               ]),
+              ListTile(
+                title: Text('Logout'),
+                onTap: () {
+                  Navigator.pop(context);
+                  widget.logout();
+                },
+              ),
             ],
           ),
         ),

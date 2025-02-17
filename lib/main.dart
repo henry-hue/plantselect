@@ -79,7 +79,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   getUsername() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    //await prefs.remove('username');
     setUsername(prefs.getString('username'));
   }
 
@@ -120,6 +119,14 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  void logout() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('username');
+    setState(() {
+      username = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -138,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return EnterUsername(setUsername: setUsername);
     } else {
       return MaterialApp(
-        home: MyPlants(plants: plants, picPath: picPath, username: username!),
+        home: MyPlants(plants: plants, picPath: picPath, username: username!, logout: logout),
       );
     }
   }
