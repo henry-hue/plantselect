@@ -10,7 +10,7 @@ import 'credentials.dart';
 import 'allplants.dart';
 import 'main.dart';
 
-enum SortOrder { date, common, scientific, deadPlants}
+enum SortOrder { date, common, scientific, deadPlants }
 
 class MyPlants extends StatefulWidget {
   const MyPlants(
@@ -44,7 +44,7 @@ class _MyPlantsState extends State<MyPlants> {
       'Living',
       'Quantity',
       'Nursery',
-      'Planted As',
+      'Origin',
       'latitude',
       'longitude',
       'Notes',
@@ -61,18 +61,19 @@ class _MyPlantsState extends State<MyPlants> {
     await sheet.values.insertRow(1, firstRow);
     List<List<String>> allPlants = await sheet.values.allRows(fromRow: 2);
     List<List<String>> buildDeadPlants = [];
-        List<List<String>> myplants = [];
+    List<List<String>> myplants = [];
 
-        
-for (List<String> plant in allPlants) {if (plant[2] == 'Alive') {
-              myplants.add(plant);
-            }
-            }
-    
-    for (List<String> plant in allPlants) {if (plant[2] == 'Dead') {
-              buildDeadPlants.add(plant);
-            }
-            }
+    for (List<String> plant in allPlants) {
+      if (plant[2] == 'Alive') {
+        myplants.add(plant);
+      }
+    }
+
+    for (List<String> plant in allPlants) {
+      if (plant[2] == 'Dead') {
+        buildDeadPlants.add(plant);
+      }
+    }
 
     if (sortOrder == SortOrder.date) {
       myplants = myplants.reversed.toList();
@@ -87,10 +88,9 @@ for (List<String> plant in allPlants) {if (plant[2] == 'Alive') {
         }
         return aName[1].compareTo(bName[1]);
       });
+    } else if (sortOrder == SortOrder.deadPlants) {
+      myplants = buildDeadPlants;
     }
-            else if (sortOrder == SortOrder.deadPlants) {
-            myplants = buildDeadPlants;
-            }
 
     return myplants;
   }
@@ -223,12 +223,12 @@ for (List<String> plant in allPlants) {if (plant[2] == 'Alive') {
               List<List<String>> wishListPlants = [];
 
               for (final plant in snapshot.data) {
-                if (plant.length > 11 && plant[11] == 'true') { //is the 11 check needed? need to change number for new columns if so
+                if (plant.length > 11 && plant[11] == 'true') {
+                  //is the 11 check needed? need to change number for new columns if so
                   wishListPlants.add(plant);
-                } 
-               else {
-                myPlants.add(plant);
-               }
+                } else {
+                  myPlants.add(plant);
+                }
               }
               return <Widget>[
                 // Home page
@@ -238,17 +238,15 @@ for (List<String> plant in allPlants) {if (plant[2] == 'Alive') {
                       itemBuilder: (context, index) {
                         List plant = myPlants[index];
                         return ListTile(
-                          title: Column(
-                            children: <Widget>[
-                              Text('''${plant[1]}, Quantity: ${plant[3]}'''),
-                              ElevatedButton(
-                                  iconAlignment: IconAlignment.end,
-                                  onPressed: () {
-                                    gotoEditPlant(plant);
-                                  },
-                                  child: const Text('Edit'))
-                            ],
-                          ),
+                          title: plant[3].isEmpty
+                              ? Text('''${plant[1]}''')
+                              : Text('''${plant[1]}, Quantity: ${plant[3]}'''),
+                          subtitle: ElevatedButton(
+                              iconAlignment: IconAlignment.end,
+                              onPressed: () {
+                                gotoEditPlant(plant);
+                              },
+                              child: const Text('Edit')),
                           onTap: () {
                             Navigator.push(
                                 context,
@@ -343,19 +341,17 @@ class SelectedPlants extends StatelessWidget {
       'Date : $date',
       'Sun : ${plant[12]}',
       'Water : ${plant[14]}',
-'Soil : ${plant[13]}',
-'Plant Type : ${plant[16]}',
-'Flowering Season : ${plant[15]}',
-'Commercial Maintenance : ${plant[17]}',
-
-'Living : ${plant[2]}',
+      'Soil : ${plant[13]}',
+      'Plant Type : ${plant[16]}',
+      'Flowering Season : ${plant[15]}',
+      'Commercial Maintenance : ${plant[17]}',
+      'Living : ${plant[2]}',
       'Quantity : ${plant[3]}',
       'Nursery : ${plant[4]}',
       'Origin : ${plant[5]}',
       'Notes : ${plant[8]}',
       'North American Native : ${plant[9]}',
-      
-   ];
+    ];
 
     String plantName = plant[1];
     String name = '''$plantName.png''';
@@ -389,11 +385,9 @@ class SelectedPlants extends StatelessWidget {
                             itemBuilder: (BuildContext context, int index) {
                               if (index < 4) {
                                 return Text(plantInfo[index]);
-                              } 
-                              else if (index == 6) {
+                              } else if (index == 7) {
                                 return Container(child: picture);
-                              }
-                              else if (index < plantInfo.length) {
+                              } else if (index < plantInfo.length) {
                                 return Text(plantInfo[index]);
                               }
                             })))

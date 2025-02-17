@@ -53,6 +53,7 @@ class _AddPlantState extends State<AddPlant> {
   TextEditingController quantityController = TextEditingController();
   TextEditingController nurseryController = TextEditingController();
   TextEditingController notesController = TextEditingController();
+
   TextEditingController nativeController =
       TextEditingController(text: "Unknown");
   TextEditingController sunController = TextEditingController(text: "Unknown");
@@ -68,7 +69,7 @@ class _AddPlantState extends State<AddPlant> {
 
 
   bool isSeed = false;
-  String plantedAs = 'Planted as Living Plant';
+  String plantedAs = 'not planted as seed';
 
   bool isAlive = true;
   String living = 'Alive';
@@ -85,7 +86,7 @@ class _AddPlantState extends State<AddPlant> {
     sheet ??= await ss.addWorksheet(widget.username);
 
     if (isSeed) {
-      plantedAs = 'Planted as Seed';
+      plantedAs = 'planted as seed';
     }
 
     final newRow = {
@@ -94,7 +95,7 @@ class _AddPlantState extends State<AddPlant> {
       'Living': living,
       'Quantity': quantityController.text,
       'Nursery': nurseryController.text,
-      'Planted As': plantedAs,
+      'Origin': plantedAs,
       'latitude': latitude,
       'longitude': longitude,
       'Notes': notesController.text,
@@ -286,6 +287,7 @@ class _AddPlantState extends State<AddPlant> {
                             labelText: 'Quantity',
                           ),
                         ),
+                        
                         TextFormField(
                           controller: nurseryController,
                           decoration: const InputDecoration(
