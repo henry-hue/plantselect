@@ -126,21 +126,23 @@ class _MyPlantsState extends State<MyPlants> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          leadingWidth: 25,
           backgroundColor: primaryColor,
           title: SizedBox(
-            child: Image.asset('assets/images/topDesign.png'),
+            child: Image.asset('assets/images/topDesign.png',
+            ),
           ),
         ),
         drawer: Drawer(
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(20),
+                  bottomRight: Radius.circular(20)),
+            ),
           child: ListView(
             padding: EdgeInsets.zero,
             children: <Widget>[
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-                child: Text('Settings'),
-              ),
+              
               ExpansionTile(title: Text('Sort By:'), children: [
                 ListTile(
                   title: Text('Date'),
@@ -248,8 +250,10 @@ class _MyPlantsState extends State<MyPlants> {
                         List plant = myPlants[index];
                         return ListTile(
                           title: plant[3].isEmpty
-                              ? Text('''${plant[1]}''')
-                              : Text('''${plant[1]}, Quantity: ${plant[3]}'''),
+                              ? Text('''${plant[1]}''',
+                              textAlign: TextAlign.center,)
+                              : Text('''${plant[1]}, Quantity: ${plant[3]}''',
+                              textAlign: TextAlign.center,),
                           subtitle: ElevatedButton(
                               iconAlignment: IconAlignment.end,
                               onPressed: () {
