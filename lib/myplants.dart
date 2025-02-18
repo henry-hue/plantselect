@@ -134,15 +134,11 @@ class _MyPlantsState extends State<MyPlants> {
           ),
         ),
         drawer: Drawer(
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(20),
-                  bottomRight: Radius.circular(20)),
-            ),
+          
           child: ListView(
             padding: EdgeInsets.zero,
             children: <Widget>[
-              
+              Padding(padding: EdgeInsets.only(top: 20)),
               ExpansionTile(title: Text('Sort By:'), children: [
                 ListTile(
                   title: Text('Date'),
