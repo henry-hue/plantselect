@@ -113,16 +113,18 @@ class _MyPlantsState extends State<MyPlants> {
 
   @override
   Widget build(BuildContext context) {
-    double myToolbarHeight = 150;
+    double myToolbarHeight = 120;
 
     return Scaffold(
         appBar: AppBar(
-          leadingWidth: 25,
+          titleSpacing: 0,
+          centerTitle: true,
+          //leadingWidth: 25,
           backgroundColor: primaryColor,
           title: SizedBox(
             height: myToolbarHeight,
             //width: 600,
-            child: Image.asset('assets/images/newdesign.png'),
+            child: Image.asset('assets/images/finalfinaldesign.png'),
           ),
           toolbarHeight: myToolbarHeight,
           
