@@ -17,10 +17,11 @@ class MyPlants extends StatefulWidget {
     required this.picPath,
     required this.username,
     required this.userId,
-  });
+    required this.logout});
   final List<Plant> plants;
   final Directory? picPath;
   final String username;
+  final Function logout;
   final int userId;
   bool sort = true;
   int columnIndex = 0;
@@ -32,6 +33,7 @@ class MyPlants extends StatefulWidget {
 class _MyPlantsState extends State<MyPlants> {
   var isAscending = true;
   var sortColumnIndex = 0;
+  int currentPageIndex = 0;
   List<Map<String, dynamic>> myPlants = [];
  
   @override
@@ -113,8 +115,9 @@ class _MyPlantsState extends State<MyPlants> {
                 plants: widget.plants,
                 picPath: widget.picPath,
                 username: widget.username,
-                userId: widget.userId))
-              )
+                userId: widget.userId,
+                wishList: (currentPageIndex == 2),
+              )))
               .then((value) {
                 setState(() {
                   sheetsPlants();
@@ -122,20 +125,77 @@ class _MyPlantsState extends State<MyPlants> {
               });
   }
 
-  int currentPageIndex = 0;
-
   @override
   Widget build(BuildContext context) {
-    double myToolbarHeight = 200;
-    
+    double myToolbarHeight = 120;
+
     return Scaffold(
         appBar: AppBar(
+          titleSpacing: 0,
+          centerTitle: true,
+          //leadingWidth: 25,
           backgroundColor: primaryColor,
           title: SizedBox(
             height: myToolbarHeight,
-            child: Image.asset('assets/images/topDesign.png'),
+            //width: 600,
+            child: Image.asset('assets/images/finalfinaldesign.png'),
           ),
           toolbarHeight: myToolbarHeight,
+          
+
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              Padding(padding: EdgeInsets.only(top: 20)),
+              ExpansionTile(title: Text('Sort By:'), children: [
+                ListTile(
+                  title: Text('Date'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    setState(() {
+                      sortOrder = SortOrder.date;
+                    });
+                  },
+                ),
+                ListTile(
+                  title: Text('Common Name'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    setState(() {
+                      sortOrder = SortOrder.common;
+                    });
+                  },
+                ),
+                ListTile(
+                  title: Text('Scientific Name'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    setState(() {
+                      sortOrder = SortOrder.scientific;
+                    });
+                  },
+                ),
+                ListTile(
+                  title: Text('Dead Plants'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    setState(() {
+                      sortOrder = SortOrder.deadPlants;
+                    });
+                  },
+                ),
+              ]),
+              ListTile(
+                title: Text('Logout'),
+                onTap: () {
+                  Navigator.pop(context);
+                  widget.logout();
+                },
+              ),
+            ],
+          ),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: goToAddPlant,
@@ -157,9 +217,14 @@ class _MyPlantsState extends State<MyPlants> {
                 label: 'My Plants',
               ),
               NavigationDestination(
-                selectedIcon: Icon(Icons.business),
-                icon: Icon(Icons.home_outlined),
+                selectedIcon: Icon(Icons.map),
+                icon: Icon(Icons.map_outlined),
                 label: 'Map',
+              ),
+              NavigationDestination(
+                selectedIcon: Icon(Icons.card_giftcard),
+                icon: Icon(Icons.card_giftcard_outlined),
+                label: 'My WishList',
               ),
             ]),
         body: Padding (
@@ -245,7 +310,7 @@ class _MyPlantsState extends State<MyPlants> {
                                   iconAlignment: IconAlignment.end,
                                   icon: const Icon(Icons.edit),
                                   onPressed: () {
-                                    gotoEditPlant(plant);
+                                    //gotoEditPlant(plant);
                                   },
                                   label: const Text('Edit'),
                                 )
@@ -321,21 +386,50 @@ Future<String> getFile(String name) async {
 }
 
 // ignore: must_be_immutable
-class SelectedPlants extends StatelessWidget {
+class SelectedPlants extends StatefulWidget {
+  const SelectedPlants(
+      {super.key,
+      required this.plant,
+      required this.picPath,
+      required this.username,
+      //required this.userId
+      });
+  final String username;
   final Map<String,dynamic> plant;
   final Directory? picPath;
 
+  @override
+  State<SelectedPlants> createState() => _SelectedPlantsState();
+}
+
+class _SelectedPlantsState extends State<SelectedPlants> {
   List<String> plantInfo = [];
 
-  SelectedPlants({super.key, required this.plant, required this.picPath});
+  void gotoEditPlant(plant) {
+    Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    EditPlant(plant: plant, username: widget.username)))
+        .then((value) {
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // gsheets returns date fields as a fractional number of days since 1/1/1900. Unix Epoch is 1/1/1970 
+    // gsheets returns date fields as a fractional number of days since 1/1/1900. Unix Epoch is 1/1/1970
     // See https://stackoverflow.com/questions/66582839/flutter-get-form-google-sheet-but-date-time-can-not-convert/70747943
     var date = "";
-    if (plant.length > 10) {
-      date = DateTime.fromMillisecondsSinceEpoch(((double.parse('${plant['insert_date']}')-25569)*86400000).toInt(),isUtc: true).toIso8601String();
+    if (widget.plant.length > 10) {
+      date = DateTime.fromMillisecondsSinceEpoch(
+              ((double.parse('${widget.plant[10]}') - 25569) * 86400000)
+                  .toInt(),
+              isUtc: true)
+          .toIso8601String()
+          .split('T')[0];
     }
+
     plantInfo = [
       'Common Name : ${plant['plant_name']}',
       'Living : ${plant['living']}',
@@ -344,13 +438,25 @@ class SelectedPlants extends StatelessWidget {
       'Origin : ${plant['origin']}',
       'Notes : ${plant['notes']}',
       'North American Natve : ${plant['north_american_native']}',
-      'Date : $date',
+      // 'Date : $date',
+      // 'Sun : ${widget.plant[12]}',
+      // 'Water : ${widget.plant[14]}',
+      // 'Soil : ${widget.plant[13]}',
+      // 'Plant Type : ${widget.plant[16]}',
+      // 'Flowering Season : ${widget.plant[15]}',
+      // 'Commercial Maintenance : ${widget.plant[17]}',
+      // 'Living : ${widget.plant[2]}',
+      // 'Quantity : ${widget.plant[3]}',
+      // 'Nursery : ${widget.plant[4]}',
+      // 'Origin : ${widget.plant[5]}',
+      // 'Notes : ${widget.plant[8]}',
+      // 'North American Native : ${widget.plant[9]}',
     ];
 
     String plantName = plant['plant_name'];
     String name = '''$plantName.png''';
 
-    var attributeCount = plantInfo.length;
+    var attributeCount = plantInfo.length + 1;
 
     return Scaffold(
         appBar: AppBar(
@@ -377,10 +483,19 @@ class SelectedPlants extends StatelessWidget {
                         child: ListView.builder(
                             itemCount: attributeCount,
                             itemBuilder: (BuildContext context, int index) {
-                              if (index < plantInfo.length) {
+                              if (index < 4) {
+                                return Text(plantInfo[index]);
+                              } else if (index == 7) {
+                                return Container(child: picture);
+                              } else if (index < plantInfo.length) {
                                 return Text(plantInfo[index]);
                               } else {
-                                return Container(child: picture);
+                                return ElevatedButton(
+                                    //iconAlignment: IconAlignment.end,
+                                    onPressed: () {
+                                      gotoEditPlant(widget.plant);
+                                    },
+                                    child: const Text('Edit'));
                               }
                             })))
               ]));

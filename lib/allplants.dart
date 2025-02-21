@@ -40,11 +40,13 @@ class AddPlant extends StatefulWidget
     required this.picPath,
     required this.username,
     required this.userId,
-  });
+  ,
+      required this.wishList});
   final List<Plant> plants;
   final Directory? picPath;
   final String username;
   final int userId;
+  final bool wishList;
 
   @override
   State<AddPlant> createState() => _AddPlantState();
@@ -58,7 +60,20 @@ class _AddPlantState extends State<AddPlant>
   TextEditingController quantityController = TextEditingController();
   TextEditingController nurseryController = TextEditingController();
   TextEditingController notesController = TextEditingController();
-  //TextEditingController nativeController = TextEditingController(text: "Unknown");
+
+  TextEditingController nativeController =
+      TextEditingController(text: "Unknown");
+  TextEditingController sunController = TextEditingController(text: "Unknown");
+    TextEditingController soilController = TextEditingController(text: "Unknown");
+  TextEditingController waterController = TextEditingController(text: "Unknown");
+    TextEditingController typeController = TextEditingController(text: "Unknown");
+  TextEditingController floweringSeasonController = TextEditingController(text: "Unknown");
+  TextEditingController maintenanceController = TextEditingController(text: "Unknown");
+
+
+
+
+
 
   bool isSeed = false;
   bool isAlive = true;
@@ -107,6 +122,7 @@ class _AddPlantState extends State<AddPlant>
       'notes': notesController.text,
       'northAmericanNative': northAmericanNative,
     };
+    //TODO: Add wishlist to object
   
     var response = await http.post(
       Uri.parse('${Constants.apiUrl}/api/plants/save-user-plant'),
@@ -202,9 +218,7 @@ class _AddPlantState extends State<AddPlant>
     }
 
     // Get the current position
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
+    Position position = await Geolocator.getCurrentPosition();
 
     if (mounted) {
       setState(() {
@@ -249,16 +263,36 @@ class _AddPlantState extends State<AddPlant>
                 .contains(searchText.toLowerCase()))
                 .toList();
               return List<ListTile>.generate(
+                //TODO: Alter api to return plant attributes
                 filteredPlants.length,
                 (int index) {
                   final String botanicName = filteredPlants[index].botanicName;
                   final String nativeStatus = filteredPlants[index].native == 1 ? 'Yes' : 'No';
+
+                    //TODO: 
+                    // final String sun = filteredPlants[index].values[7];
+                    //                           final String soil = filteredPlants[index].values[10];
+                    //    final String water = filteredPlants[index].values[8];
+                    //                           final String type = filteredPlants[index].values[2];
+                    //    final String season= filteredPlants[index].values[5];
+                    //    final String maintenance = filteredPlants[index].values[16];
+
 
                   return ListTile(
                     title: Text(botanicName),
                     onTap: () {
                       plantController.text = botanicName;
                       northAmericanNative = nativeStatus;
+
+                        //TODO: 
+                      // sunController.text = sun;
+                      //     soilController.text = soil;
+                      //     waterController.text = water;
+                      //     typeController.text = type;
+                      //     floweringSeasonController.text = season;
+                      //     maintenanceController.text = maintenance; 
+
+
                       controller.closeView(plantController.text);
                     }
                   );
@@ -328,7 +362,7 @@ class _AddPlantState extends State<AddPlant>
               ),
             )
           ),
-          if (!kIsWeb && imageFile == null)
+          if (!kIsWeb && !widget.wishList && imageFile == null)
             ElevatedButton(
               onPressed: selectFile,
               child: const Text('Next: take picture'),
@@ -336,8 +370,16 @@ class _AddPlantState extends State<AddPlant>
             if (imageFile != null) Image.file(File(imageFile!.path)),
             ElevatedButton(
               onPressed: () {
-                _getCurrentLocation();
+                if (!widget.wishList) {
+                  _getCurrentLocation();
+                }
                 _submitForm();
+                //TODO: Is AddRow necessary after submitForm()
+                // addRow().then((result) {
+                //     if (context.mounted) {
+                //       Navigator.of(context).pop();
+                //     }
+                //   });
               },
               child: const Text('Submit Plant'),
             )

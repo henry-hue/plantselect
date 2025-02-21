@@ -10,7 +10,11 @@ import 'constants.dart';
 import 'package:http/http.dart' as http;
 
 class EditPlant extends StatefulWidget {
-  const EditPlant({super.key, required this.plant, required this.username, required this.userId});
+  const EditPlant(
+      {super.key,
+      required this.plant,
+      required this.username,
+      required this.userId});
   final Map<String, dynamic> plant;
   final String username;
   final int userId;
@@ -22,7 +26,6 @@ class EditPlant extends StatefulWidget {
 class _EditPlantState extends State<EditPlant> {
   final _formKey = GlobalKey<FormState>();
   // TextField Controllers
-  //TextEditingController DateController = TextEditingController();
   TextEditingController plantController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
   TextEditingController notesController = TextEditingController();
@@ -31,13 +34,11 @@ class _EditPlantState extends State<EditPlant> {
   String living = 'Alive';
 
   void addRow() async {
-    
-
     var data = {
       'plantId': widget.plant['plant_id'],
       'quantity': quantityController.text,
       'notes': notesController.text,
-      'living' : isDead ? 'N' : 'Y',
+      'living': isDead ? 'N' : 'Y',
     };
 
     var response = await http.post(
@@ -71,10 +72,8 @@ class _EditPlantState extends State<EditPlant> {
     //     columnKey: 'Quantity', rowKey: index);
     //     await sheet.values.insertValueByKeys(notesController.text,
     //     columnKey: 'Notes', rowKey: index);
-        
   }
 
-  // Method to Submit Feedback and save it in Google Sheets
   void _submitForm() {
     addRow();
 
@@ -103,67 +102,56 @@ class _EditPlantState extends State<EditPlant> {
 
     return Scaffold(
         appBar: AppBar(
-              backgroundColor: primaryColor,
-
+          backgroundColor: primaryColor,
           title: Image.asset('assets/images/logo.png'),
         ),
         body: Center(
-         
-              
-          
-            child: ListView(
-             
-                  
-                children: <Widget>[
-                  Padding(
-                        padding: const EdgeInsets.only(top: 10.0, left: 20),
-                  child: Text('''Edit the ${widget.plant['plant_name']} from ${widget.plant['nursery']}''',
-              style: Theme.of(context).textTheme.titleLarge!
-              ),
-                  ),
-
-              Form(
-                  key: _formKey,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        TextFormField(
-                          controller: quantityController,
-                          decoration: const InputDecoration(
-                            labelText: 'Quantity',
-                          ),
-                        ),
-                        TextFormField(
-                          controller: notesController,
-                          // initialValue: widget.plant['notes'] ?? '',
-                          decoration: const InputDecoration(
-                            labelText: 'Notes',
-                          ),
-                        ),
-                        FormField<bool>(builder: (state) {
-                          return CheckboxListTile(
-                              value: isDead,
-                              title: const Text('Plant is Dead'),
-                              onChanged: (value) {
-                                 setState(() {
-                                   //save checkbox value to variable that store terms and notify form that state changed
-                                   isDead = !isDead;
-                                   widget.plant['living'] = isDead ? 'N' : 'Y';
-                                   state.didChange(value);
-                                 });
-                              });
-                        }),
-                      ],
+            child: ListView(children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top: 10.0, left: 20),
+            //TODO: Check for empty nursery before displaying in title
+            child: Text(
+                '''Edit the ${widget.plant['plant_name']} from ${widget.plant['nursery']}''',
+                style: Theme.of(context).textTheme.titleLarge!),
+          ),
+          Form(
+              key: _formKey,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    TextFormField(
+                      controller: quantityController,
+                      decoration: const InputDecoration(
+                        labelText: 'Quantity',
+                      ),
                     ),
-                  )),
-              ElevatedButton(
-                  onPressed: _submitForm, child: const Text('Save Changes')),
-            ]
-            )
-          
-            )
-            );
+                    TextFormField(
+                      controller: notesController,
+                      // initialValue: widget.plant['notes'] ?? '',
+                      decoration: const InputDecoration(
+                        labelText: 'Notes',
+                      ),
+                    ),
+                    FormField<bool>(builder: (state) {
+                      return CheckboxListTile(
+                          value: isDead,
+                          title: const Text('Plant is Dead'),
+                          onChanged: (value) {
+                            setState(() {
+                              //save checkbox value to variable that store terms and notify form that state changed
+                              isDead = !isDead;
+                              widget.plant['living'] = isDead ? 'N' : 'Y';
+                              state.didChange(value);
+                            });
+                          });
+                    }),
+                  ],
+                ),
+              )),
+          ElevatedButton(
+              onPressed: _submitForm, child: const Text('Save Changes')),
+        ])));
   }
 }
