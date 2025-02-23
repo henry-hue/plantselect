@@ -40,8 +40,7 @@ class AddPlant extends StatefulWidget
     required this.picPath,
     required this.username,
     required this.userId,
-  ,
-      required this.wishList});
+    required this.wishList});
   final List<Plant> plants;
   final Directory? picPath;
   final String username;

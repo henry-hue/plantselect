@@ -93,19 +93,19 @@ class _MyPlantsState extends State<MyPlants> {
   }
   
 
-  void gotoEditPlant(plant) {
-    Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    EditPlant(plant: plant, username: widget.username, userId: widget.userId)))
-        .then((value) async {
-          await sheetsPlants();
-      // setState(() async {
-      //   await sheetsPlants();
-      // });
-    });
-  }
+  // void gotoEditPlant(plant) {
+  //   Navigator.push(
+  //           context,
+  //           MaterialPageRoute(
+  //               builder: (context) =>
+  //                   EditPlant(plant: plant, username: widget.username, userId: widget.userId)))
+  //       .then((value) async {
+  //         await sheetsPlants();
+  //     // setState(() async {
+  //     //   await sheetsPlants();
+  //     // });
+  //   });
+  // }
 
   void goToAddPlant() {
     Navigator.push(
@@ -149,44 +149,44 @@ class _MyPlantsState extends State<MyPlants> {
             padding: EdgeInsets.zero,
             children: <Widget>[
               Padding(padding: EdgeInsets.only(top: 20)),
-              ExpansionTile(title: Text('Sort By:'), children: [
-                ListTile(
-                  title: Text('Date'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    setState(() {
-                      sortOrder = SortOrder.date;
-                    });
-                  },
-                ),
-                ListTile(
-                  title: Text('Common Name'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    setState(() {
-                      sortOrder = SortOrder.common;
-                    });
-                  },
-                ),
-                ListTile(
-                  title: Text('Scientific Name'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    setState(() {
-                      sortOrder = SortOrder.scientific;
-                    });
-                  },
-                ),
-                ListTile(
-                  title: Text('Dead Plants'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    setState(() {
-                      sortOrder = SortOrder.deadPlants;
-                    });
-                  },
-                ),
-              ]),
+              // ExpansionTile(title: Text('Sort By:'), children: [
+              //   ListTile(
+              //     title: Text('Date'),
+              //     onTap: () {
+              //       Navigator.pop(context);
+              //       setState(() {
+              //         sortOrder = SortOrder.date;
+              //       });
+              //     },
+              //   ),
+              //   ListTile(
+              //     title: Text('Common Name'),
+              //     onTap: () {
+              //       Navigator.pop(context);
+              //       setState(() {
+              //         sortOrder = SortOrder.common;
+              //       });
+              //     },
+              //   ),
+              //   ListTile(
+              //     title: Text('Scientific Name'),
+              //     onTap: () {
+              //       Navigator.pop(context);
+              //       setState(() {
+              //         sortOrder = SortOrder.scientific;
+              //       });
+              //     },
+              //   ),
+              //   ListTile(
+              //     title: Text('Dead Plants'),
+              //     onTap: () {
+              //       Navigator.pop(context);
+              //       setState(() {
+              //         sortOrder = SortOrder.deadPlants;
+              //       });
+              //     },
+              //   ),
+              // ]),
               ListTile(
                 title: Text('Logout'),
                 onTap: () {
@@ -392,11 +392,12 @@ class SelectedPlants extends StatefulWidget {
       required this.plant,
       required this.picPath,
       required this.username,
-      //required this.userId
+      required this.userId
       });
   final String username;
   final Map<String,dynamic> plant;
   final Directory? picPath;
+  final int userId;
 
   @override
   State<SelectedPlants> createState() => _SelectedPlantsState();
@@ -410,7 +411,7 @@ class _SelectedPlantsState extends State<SelectedPlants> {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    EditPlant(plant: plant, username: widget.username)))
+                    EditPlant(plant: plant, username: widget.username, userId: widget.userId)))
         .then((value) {
       setState(() {});
     });
@@ -431,13 +432,13 @@ class _SelectedPlantsState extends State<SelectedPlants> {
     }
 
     plantInfo = [
-      'Common Name : ${plant['plant_name']}',
-      'Living : ${plant['living']}',
-      'Quantity : ${plant['quantity']}',
-      'Nursery : ${plant['nursery']}',
-      'Origin : ${plant['origin']}',
-      'Notes : ${plant['notes']}',
-      'North American Natve : ${plant['north_american_native']}',
+      'Common Name : ${widget.plant['plant_name']}',
+      'Living : ${widget.plant['living']}',
+      'Quantity : ${widget.plant['quantity']}',
+      'Nursery : ${widget.plant['nursery']}',
+      'Origin : ${widget.plant['origin']}',
+      'Notes : ${widget.plant['notes']}',
+      'North American Natve : ${widget.plant['north_american_native']}',
       // 'Date : $date',
       // 'Sun : ${widget.plant[12]}',
       // 'Water : ${widget.plant[14]}',
@@ -453,7 +454,7 @@ class _SelectedPlantsState extends State<SelectedPlants> {
       // 'North American Native : ${widget.plant[9]}',
     ];
 
-    String plantName = plant['plant_name'];
+    String plantName = widget.plant['plant_name'];
     String name = '''$plantName.png''';
 
     var attributeCount = plantInfo.length + 1;
