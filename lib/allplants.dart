@@ -357,7 +357,7 @@ class _AddPlantState extends State<AddPlant>
                           });
                         });
                   }),
-                ],
+                ], 
               ),
             )
           ),
