@@ -120,6 +120,7 @@ class _AddPlantState extends State<AddPlant>
       'longitude': longitude,
       'notes': notesController.text,
       'northAmericanNative': northAmericanNative,
+      'wishlist': widget.wishList ? 'Y' : 'N',
     };
     //TODO: Add wishlist to object
   
