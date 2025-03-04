@@ -79,35 +79,35 @@ class _MyHomePageState extends State<MyHomePage> {
 
   getUsername() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    setUsername(prefs.getString('username'));
+    setUsername(prefs.getString('username'), prefs.getString('password'));
   }
 
-  setUsername(String? name) async {
-    if(name != null) {
+  setUsername(String? enteredUsername, String? password) async {
+    if(enteredUsername != null) {
       //Look up name from DB
-      var resp = await http.get(
-        Uri.parse('${Constants.apiUrl}/api/user/name?name=$name'),
-        headers: {HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}'},
-      );
-      
-      var data = jsonDecode(resp.body);
+      var body = {
+        'username': enteredUsername,
+        'password': password,
+      };
 
-      if(data['user_id'] == null) {
-        //user does not exist - Add to DB
-        var resp = await http.post(
-          Uri.parse('${Constants.apiUrl}/api/user/name'),
-          headers: {
-            HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}',
-            'content-type': 'application/json',  
-          },
-          body: jsonEncode({'name': name}),
-        );
-        data = jsonDecode(resp.body); 
+      var resp = await http.post(
+        Uri.parse('${Constants.apiUrl}/api/user/log-in'),
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}',
+          'content-type': 'application/json',
+        },
+        body: jsonEncode(body),
+      );
+      var data = jsonDecode(resp.body);
+      if(data['success'] == true) {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('username', enteredUsername!);
+        await prefs.setString('password', password!);
+        setState(() {
+          username = data['name'];
+          userId = data['user_id'];
+        });
       }
-      setState(() {
-        username = data['name'];
-        userId = data['user_id'];
-      });
     }
   }
 
@@ -146,8 +146,8 @@ class _MyHomePageState extends State<MyHomePage> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('username');
     setState(() {
-      //Todo: setUserid = null;
       username = null;
+      userId = null;
     });
   }
 
