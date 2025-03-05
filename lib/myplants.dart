@@ -84,14 +84,16 @@ class _MyPlantsState extends State<MyPlants> {
 
     var response = await http.get(
       Uri.parse(
-          '${Constants.apiUrl}/api/plants/user-list?userId=${widget.userId}'),
+          '${Constants.apiUrl}/api/plants/user-list?userId=${widget.userId}&wishlist=${currentPageIndex == 2 ? 'Y' : 'N'}'),
       headers: {
         HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}'
       },
     );
     List<dynamic> plants = json.decode(response.body);
     setState(() {
-      myPlants = plants.map((plant) => plant as Map<String, dynamic>).toList();
+      myPlants = plants
+        .map((plant) => plant as Map<String, dynamic>)
+        .toList();
     });
   }
 
@@ -290,7 +292,7 @@ class _MyPlantsState extends State<MyPlants> {
                   ),
                 ),
               ],
-              rows: myPlants.map((plant) {
+              rows: myPlants.where((plant) => plant['wishlist'] == (currentPageIndex == 2 ? 'Y' : 'N')).map((plant) {
                 return DataRow(
                   cells: <DataCell>[
                     DataCell(
