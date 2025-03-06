@@ -1,0 +1,2 @@
+/home/jwilch/html/ps_app/android/app/.cxx/Debug/2h5x1n37/armeabi-v7a/CMakeFiles/edit_cache.dir
+/home/jwilch/html/ps_app/android/app/.cxx/Debug/2h5x1n37/armeabi-v7a/CMakeFiles/rebuild_cache.dir
