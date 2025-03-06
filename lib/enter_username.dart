@@ -55,20 +55,26 @@ class _EnterUsername extends State<EnterUsername> {
                       labelText:
                           'Enter your password:')
                 ),
-                ElevatedButton(
-                  onPressed: saveUsername,
-                  //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
-                  // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
+                Center( 
+                  child:Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: saveUsername,
+                        //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+                        // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
 
-                  child: const Text('Log In'),
+                        child: const Text('Log In'),
+                      ),
+                      ElevatedButton(
+                        onPressed: createAccount,
+                        //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+                        // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
+
+                        child: const Text('Create Account'),
+                      )
+                    ],
+                  ),
                 ),
-                ElevatedButton(
-                  onPressed: createAccount,
-                  //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
-                  // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
-
-                  child: const Text('Create Account'),
-                )
               ]
             )
           )
