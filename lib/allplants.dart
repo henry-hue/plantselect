@@ -32,15 +32,14 @@ Future<File> copyFile(File src, File dest) async {
   return src.copySync(dest.path);
 }
 
-class AddPlant extends StatefulWidget 
-{
-  const AddPlant({
-    super.key,
-    required this.plants,
-    required this.picPath,
-    required this.username,
-    required this.userId,
-    required this.wishList});
+class AddPlant extends StatefulWidget {
+  const AddPlant(
+      {super.key,
+      required this.plants,
+      required this.picPath,
+      required this.username,
+      required this.userId,
+      required this.wishList});
   final List<Plant> plants;
   final Directory? picPath;
   final String username;
@@ -51,8 +50,7 @@ class AddPlant extends StatefulWidget
   State<AddPlant> createState() => _AddPlantState();
 }
 
-class _AddPlantState extends State<AddPlant> 
-{
+class _AddPlantState extends State<AddPlant> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController plantController = TextEditingController();
@@ -60,79 +58,49 @@ class _AddPlantState extends State<AddPlant>
   TextEditingController nurseryController = TextEditingController();
   TextEditingController notesController = TextEditingController();
 
-  TextEditingController nativeController =
-      TextEditingController(text: "Unknown");
-  TextEditingController sunController = TextEditingController(text: "Unknown");
-    TextEditingController soilController = TextEditingController(text: "Unknown");
-  TextEditingController waterController = TextEditingController(text: "Unknown");
-    TextEditingController typeController = TextEditingController(text: "Unknown");
-  TextEditingController floweringSeasonController = TextEditingController(text: "Unknown");
-  TextEditingController maintenanceController = TextEditingController(text: "Unknown");
-
-
-
-
-
+  
 
   bool isSeed = false;
   bool isAlive = true;
-  String northAmericanNative = 'Unkown';
+  String northAmericanNative = 'Unknown';
+  String sun = 'Unknown';
+  String soil = 'Unknown';
+  String water = 'Unknown';
+  String type = 'Unknown';
+  String flowering = 'Unknown';
+  String maintenance = 'Unknown';
 
   Future<void> addRow() async {
-    // // init GSheets
-    // final gsheets = GSheets(credentials);
-    // // fetch spreadsheet by its id
-    // final ss = await gsheets.spreadsheet(spreadsheetId);
-
-    // // get worksheet by its title
-    // var sheet = ss.worksheetByTitle(widget.username);
-    // // create worksheet if it does not exist yet
-    // sheet ??= await ss.addWorksheet(widget.username);
-
-    // if (isSeed) {
-    //   plantedAs = 'Planted as Seed';
-    // }
-
-    // final newRow = {
-    //   '1': '=IF(B1<>"", ROW(),)',
-    //   'Plant': plantController.text,
-    //   'Living': living,
-    //   'Quantity': quantityController.text,
-    //   'Nursery': nurseryController.text,
-    //   'Planted As': plantedAs,
-    //   'latitude': latitude,
-    //   'longitude': longitude,
-    //   'Notes': notesController.text,
-    //   'North American Native': nativeController.text,
-    //   'Date': DateTime.now().toIso8601String(),
-    // };
-
-    // await sheet.values.map.appendRow(newRow);
+    
 
     var data = {
       'userId': widget.userId,
-      'plantName': plantController.text, 
+      'plantName': plantController.text,
       'living': isAlive ? 'Y' : 'N',
       'quantity': quantityController.text,
       'nursery': nurseryController.text,
-      'plantedAs': isSeed ? 'Seed' : 'Alive',
+      'plantedAs': isSeed ? 'Seed' : 'Sapling',
       'latitude': latitude,
       'longitude': longitude,
       'notes': notesController.text,
       'northAmericanNative': northAmericanNative,
       'wishlist': widget.wishList ? 'Y' : 'N',
+      'Sun': sun,
+      'Soil': soil,
+      'Water': water,
+      'Plant Type': type,
+      'Flowering Season': flowering,
+      'Annual Maintenance': maintenance,
     };
-    //TODO: Add wishlist to object
-  
+
     var response = await http.post(
       Uri.parse('${Constants.apiUrl}/api/plants/save-user-plant'),
       headers: {
         HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}',
-        'content-type': 'application/json',  
+        'content-type': 'application/json',
       },
       body: jsonEncode(data),
     );
-
   }
 
   // Method to Submit Feedback and save it in Google Sheets
@@ -158,7 +126,7 @@ class _AddPlantState extends State<AddPlant>
 
   selectFile() async {
     XFile? file = await ImagePicker()
-      .pickImage(source: ImageSource.camera, maxHeight: 1800, maxWidth: 1800);
+        .pickImage(source: ImageSource.camera, maxHeight: 1800, maxWidth: 1800);
 
     if (file != null) {
       final File image = File(file.path);
@@ -184,8 +152,7 @@ class _AddPlantState extends State<AddPlant>
   }
 
   // Function to get the current location
-  Future<void> _getCurrentLocation() async 
-  {
+  Future<void> _getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -233,159 +200,140 @@ class _AddPlantState extends State<AddPlant>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-      backgroundColor: primaryColor,
-      title: Image.asset('assets/images/logo.png'),
-    ),
-      body: Center(
-      child: ListView(
-      //mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        SearchAnchor(
-          builder: (BuildContext context, SearchController controller) {
-            return SearchBar(
-              controller: controller,
-              padding: const WidgetStatePropertyAll<EdgeInsets>(EdgeInsets.symmetric(horizontal: 16.0)),
-                onTap: () {
-                  controller.openView();
-                },
-                onChanged: (_) {
-                  controller.openView();
-                },
-                leading: const Icon(Icons.search),
-              );
-            }, 
-            suggestionsBuilder: (BuildContext context, SearchController controller) {
-              String searchText = controller.text;
-              List<Plant> filteredPlants = widget.plants
-                .where((plant) => plant.botanicName
-                .toLowerCase()
-                .contains(searchText.toLowerCase()))
-                .toList();
-              return List<ListTile>.generate(
-                //TODO: Alter api to return plant attributes
-                filteredPlants.length,
-                (int index) {
-                  final String botanicName = filteredPlants[index].botanicName;
-                  final String nativeStatus = filteredPlants[index].native == 1 ? 'Yes' : 'No';
-
-                    //TODO: 
-                    // final String sun = filteredPlants[index].values[7];
-                    //                           final String soil = filteredPlants[index].values[10];
-                    //    final String water = filteredPlants[index].values[8];
-                    //                           final String type = filteredPlants[index].values[2];
-                    //    final String season= filteredPlants[index].values[5];
-                    //    final String maintenance = filteredPlants[index].values[16];
-
-
-                  return ListTile(
-                    title: Text(botanicName),
-                    onTap: () {
-                      plantController.text = botanicName;
-                      northAmericanNative = nativeStatus;
-
-                        //TODO: 
-                      // sunController.text = sun;
-                      //     soilController.text = soil;
-                      //     waterController.text = water;
-                      //     typeController.text = type;
-                      //     floweringSeasonController.text = season;
-                      //     maintenanceController.text = maintenance; 
-
-
-                      controller.closeView(plantController.text);
-                    }
-                  );
-                },
-              );
-            }
-          ),
-          Form(
-            key: _formKey,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        appBar: AppBar(
+          backgroundColor: primaryColor,
+          title: Image.asset('assets/images/logo.png'),
+        ),
+        body: Center(
+            child: ListView(
+                //mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  TextFormField(
-                    controller: plantController,
-                    decoration: const InputDecoration(labelText: 'Plant Name'),
-                  ),
-                  TextFormField(
-                    controller: quantityController,
-                    decoration: const InputDecoration(
-                      labelText: 'Quantity',
-                    ),
-                  ),
-                  TextFormField(
-                    controller: nurseryController,
-                    decoration: const InputDecoration(
-                      labelText: 'Nursery',
-                    ),
-                  ),
-                  TextFormField(
-                    controller: notesController,
-                    decoration: const InputDecoration(
-                      labelText: 'Notes',
-                    ),
-                  ),
-                  DropdownButtonFormField(
-                    decoration: InputDecoration( 
-                      labelText: 'North American Native',
-                    ),
-                    icon: const Icon(Icons.keyboard_arrow_down),
-                    items: ['Yes', 'No', 'Unknown'].map((String value) {
-                      return DropdownMenuItem<String> (
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        northAmericanNative = newValue ?? 'Unknown';
-                      });
-                    }
-                  ),
-                  FormField<bool>(builder: (state) {
-                    return CheckboxListTile(
-                        value: isSeed,
-                        title: const Text('Planted as Seed'),
-                        onChanged: (value) {
-                          setState(() {
-                          //save checkbox value to variable that store terms and notify form that state changed
-                            isSeed = !isSeed;
-                            state.didChange(value);
-                          });
+              SearchAnchor(
+                  builder: (BuildContext context, SearchController controller) {
+                return SearchBar(
+                  controller: controller,
+                  padding: const WidgetStatePropertyAll<EdgeInsets>(
+                      EdgeInsets.symmetric(horizontal: 16.0)),
+                  onTap: () {
+                    controller.openView();
+                  },
+                  onChanged: (_) {
+                    controller.openView();
+                  },
+                  leading: const Icon(Icons.search),
+                );
+              }, suggestionsBuilder:
+                      (BuildContext context, SearchController controller) {
+                String searchText = controller.text;
+                List<Plant> filteredPlants = widget.plants
+                    .where((plant) => plant.botanicName
+                        .toLowerCase()
+                        .contains(searchText.toLowerCase()))
+                    .toList();
+                return List<ListTile>.generate(
+                  //TODO: Alter api to return plant attributes
+                  filteredPlants.length,
+                  (int index) {
+                    final String botanicName =
+                        filteredPlants[index].botanicName;
+                    final String nativeStatus =
+                        filteredPlants[index].native == 1 ? 'Yes' : 'No';
+                    //final String sunPref = filteredPlants[index].sun;
+                    // final String soilPref = filteredPlants[index].soil;
+                    // final String waterPref = filteredPlants[index].water;
+                    // final String plantType = filteredPlants[index].type;
+                    // final String floweringSeason =
+                    //     filteredPlants[index].flowering;
+                    // final String annualMaintenance =
+                    //     filteredPlants[index].maintenance;
+
+                  
+
+                    return ListTile(
+                        title: Text(botanicName),
+                        onTap: () {
+                          plantController.text = botanicName;
+                          northAmericanNative = nativeStatus;
+                          //sun = sunPref;
+                          // soil = soilPref;
+                          // water = waterPref;
+                          // type = plantType;
+                          // flowering = floweringSeason;
+                          // maintenance = annualMaintenance;
+
+                         
+
+                          controller.closeView(plantController.text);
                         });
-                  }),
-                ], 
-              ),
-            )
-          ),
-          if (!kIsWeb && !widget.wishList && imageFile == null)
-            ElevatedButton(
-              onPressed: selectFile,
-              child: const Text('Next: take picture'),
-            ),
-            if (imageFile != null) Image.file(File(imageFile!.path)),
-            ElevatedButton(
-              onPressed: () {
-                if (!widget.wishList) {
-                  _getCurrentLocation();
-                }
-                _submitForm();
-                //TODO: Is AddRow necessary after submitForm()
-                // addRow().then((result) {
-                //     if (context.mounted) {
-                //       Navigator.of(context).pop();
-                //     }
-                //   });
-              },
-              child: const Text('Submit Plant'),
-            )
-         ]
-       )
-     )
-    );
+                  },
+                );
+              }),
+              Form(
+                  key: _formKey,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        TextFormField(
+                          controller: plantController,
+                          decoration:
+                              const InputDecoration(labelText: 'Plant Name'),
+                        ),
+                        TextFormField(
+                          controller: quantityController,
+                          decoration: const InputDecoration(
+                            labelText: 'Quantity',
+                          ),
+                        ),
+                        TextFormField(
+                          controller: nurseryController,
+                          decoration: const InputDecoration(
+                            labelText: 'Nursery',
+                          ),
+                        ),
+                        TextFormField(
+                          controller: notesController,
+                          decoration: const InputDecoration(
+                            labelText: 'Notes',
+                          ),
+                        ),
+                        FormField<bool>(builder: (state) {
+                          return CheckboxListTile(
+                              value: isSeed,
+                              title: const Text('Planted as Seed'),
+                              onChanged: (value) {
+                                setState(() {
+                                  //save checkbox value to variable that store terms and notify form that state changed
+                                  isSeed = !isSeed;
+                                  state.didChange(value);
+                                });
+                              });
+                        }),
+                      ],
+                    ),
+                  )),
+              if (!kIsWeb && !widget.wishList && imageFile == null)
+                ElevatedButton(
+                  onPressed: selectFile,
+                  child: const Text('Next: take picture'),
+                ),
+              if (imageFile != null) Image.file(File(imageFile!.path)),
+              ElevatedButton(
+                onPressed: () {
+                  if (!widget.wishList) {
+                    _getCurrentLocation();
+                  }
+                  _submitForm();
+                  //TODO: Is AddRow necessary after submitForm()
+                  // addRow().then((result) {
+                  //     if (context.mounted) {
+                  //       Navigator.of(context).pop();
+                  //     }
+                  //   });
+                },
+                child: const Text('Submit Plant'),
+              )
+            ])));
   }
 }
