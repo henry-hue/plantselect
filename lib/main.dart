@@ -82,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setUsername(prefs.getString('username'), prefs.getString('password'));
   }
 
-  setUsername(String? enteredUsername, String? password) async {
+  Future<bool> setUsername(String? enteredUsername, String? password) async {
     if(enteredUsername != null) {
       //Look up name from DB
       var body = {
@@ -107,7 +107,12 @@ class _MyHomePageState extends State<MyHomePage> {
           username = data['name'];
           userId = data['user_id'];
         });
+        return true;
+      } else {
+        return false;
       }
+    } else {
+      return false;
     }
   }
 

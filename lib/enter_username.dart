@@ -14,9 +14,14 @@ class EnterUsername extends StatefulWidget {
 class _EnterUsername extends State<EnterUsername> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  String? errorMessage;
 
   void saveUsername() async {
-    widget.setUsername(usernameController.text, passwordController.text);
+    if(! await widget.setUsername(usernameController.text, passwordController.text)) {
+      setState(() {
+        errorMessage = 'Incorrect Username or Password';
+      });
+    }
   }
 
   void createAccount() {
@@ -55,20 +60,34 @@ class _EnterUsername extends State<EnterUsername> {
                       labelText:
                           'Enter your password:')
                 ),
-                ElevatedButton(
-                  onPressed: saveUsername,
-                  //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
-                  // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
+                if((errorMessage ?? '') != '')
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      errorMessage ?? '',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                Center( 
+                  child:Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: saveUsername,
+                        //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+                        // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
 
-                  child: const Text('Log In'),
+                        child: const Text('Log In'),
+                      ),
+                      ElevatedButton(
+                        onPressed: createAccount,
+                        //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+                        // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
+
+                        child: const Text('Create Account'),
+                      )
+                    ],
+                  ),
                 ),
-                ElevatedButton(
-                  onPressed: createAccount,
-                  //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
-                  // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
-
-                  child: const Text('Create Account'),
-                )
               ]
             )
           )

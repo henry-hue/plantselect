@@ -19,6 +19,7 @@ class _CreateAccount extends State<CreateAccount> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController passwordController2 = TextEditingController();
+  String? errorMessage;
 
   void createAccount() async {
     // widget.createAccount(usernameController.text, passwordController.text);
@@ -42,6 +43,10 @@ class _CreateAccount extends State<CreateAccount> {
     var data = jsonDecode(resp.body);
     if(data['success'] == true) {
       Navigator.pop(context);
+    } else {
+      setState(() {
+        errorMessage = data['errors'].join('\n');
+      });
     }
   }
 
@@ -92,13 +97,36 @@ class _CreateAccount extends State<CreateAccount> {
                       labelText:
                           'Confirm your password:')
                 ),
-                ElevatedButton(
-                  onPressed: createAccount,
-                  //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
-                  // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
+                if((errorMessage ?? '') != '') 
+                  Icon(Icons.error_outline, color: Colors.red),
+                if((errorMessage ?? '') != '')
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      errorMessage ?? '',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                Center(
+                  child: Row(
+                    children:[
+                      ElevatedButton(
+                        onPressed: createAccount,
+                        //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+                        // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
 
-                  child: const Text('Create Account'),
-                )
+                        child: const Text('Create Account'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {Navigator.pop(context);},
+                        //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+                        // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
+
+                        child: const Text('Return to Login'),
+                      )
+                    ],
+                  ),
+                ),
               ]
             )
           )
