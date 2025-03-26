@@ -1,17 +1,16 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'plant.dart';
 import 'myplants.dart';
 import 'enter_username.dart';
-
+import 'constants.dart';
 
 const primaryColor = Color(0xFF046a38);
 
@@ -73,19 +72,48 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int currentPageIndex = 0;
   List<Plant> plants = [];
-  Map<String, Plant> plantByBotanicName = {};
+  Map<String, dynamic> plantByBotanicName = {};
   Directory? picPath;
   String? username;
+  int? userId;
 
   getUsername() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    setUsername(prefs.getString('username'));
+    setUsername(prefs.getString('username'), prefs.getString('password'));
   }
 
-  setUsername(String? name) {
-    setState(() {
-      username = name;
-    });
+  Future<bool> setUsername(String? enteredUsername, String? password) async {
+    if(enteredUsername != null) {
+      //Look up name from DB
+      var body = {
+        'username': enteredUsername,
+        'password': password,
+      };
+
+      var resp = await http.post(
+        Uri.parse('${Constants.apiUrl}/api/user/log-in'),
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}',
+          'content-type': 'application/json',
+        },
+        body: jsonEncode(body),
+      );
+      var data = jsonDecode(resp.body);
+      if(data['success'] == true) {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('username', enteredUsername!);
+        await prefs.setString('password', password!);
+        setState(() {
+          username = data['name'];
+          userId = data['user_id'];
+        });
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 
   Future directory() async {
@@ -102,21 +130,21 @@ class _MyHomePageState extends State<MyHomePage> {
     directory();
   }
 
-  Future<void> fetchPlants() async {
-    const String url =
-        'https://script.googleusercontent.com/macros/echo?user_content_key=_B-W-AHmjR26KU5dTCw1S-B2DHZEuws01wTIWfteAhh1hJmlRPaKDGo9Y28yztqfS4hpvU0auyjWeXE6R04QW4DiUHEKgbgXm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnO2U0Bl7BUAklHHeNRDrUcIoEcGPmrrlK_ulnafppH3w7o8FAM3ee_EkorPOGtTMgbRERG-Fn53JVefYCVkuXGQB2G7xa3afN9z9Jw9Md8uu&lib=MxnqXoKCpdNq7DADJrJEvDBtmPjijWW5o';
-    final response = await http.get(Uri.parse(url));
 
-    if (response.statusCode == 200) {
-      List<dynamic> data = jsonDecode(response.body);
-      List<dynamic> values = data.sublist(1);
-      setState(() {
-        plants = values.map((json) => Plant.fromJson(json)).toList();
-        plants.map((plant) => plantByBotanicName[plant.values[1]] = plant);
-      });
-    } else {
-      throw Exception('Failed to load plants');
-    }
+  Future <void> fetchPlants() async {
+    final  resp = await http.get(
+      Uri.parse('${Constants.apiUrl}/api/plants/list'),
+      headers: {HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}'},
+    );  
+    
+    List<dynamic> data = jsonDecode(resp.body);
+
+    setState(() {
+       for (var plantData in data) {
+         plants.add(Plant.fromJson(plantData));
+         plantByBotanicName[plantData['botanic_name']] = plantData;
+       }
+    });
   }
 
   void logout() async {
@@ -124,8 +152,10 @@ class _MyHomePageState extends State<MyHomePage> {
     await prefs.remove('username');
     setState(() {
       username = null;
+      userId = null;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -145,7 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return EnterUsername(setUsername: setUsername);
     } else {
       return MaterialApp(
-        home: MyPlants(plants: plants, picPath: picPath, username: username!, logout: logout),
+        home: MyPlants(plants: plants, picPath: picPath, username: username!, userId: userId!, logout: logout),
       );
     }
   }

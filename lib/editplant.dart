@@ -1,13 +1,21 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:gsheets/gsheets.dart';
 import 'package:image_picker/image_picker.dart';
-import 'credentials.dart';
 import 'main.dart';
+import 'constants.dart';
+import 'package:http/http.dart' as http;
 
 class EditPlant extends StatefulWidget {
-  const EditPlant({super.key, required this.plant, required this.username});
-  final List plant;
+  const EditPlant(
+      {super.key,
+      required this.plant,
+      required this.username,
+      required this.userId});
+  final Map<String, dynamic> plant;
   final String username;
+  final int userId;
 
   @override
   State<EditPlant> createState() => _EditPlantState();
@@ -15,42 +23,59 @@ class EditPlant extends StatefulWidget {
 
 class _EditPlantState extends State<EditPlant> {
   final _formKey = GlobalKey<FormState>();
-
   // TextField Controllers
   TextEditingController plantController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
   TextEditingController notesController = TextEditingController();
 
   bool isDead = false;
-  @override
-  void initState() {
-    super.initState();
-    quantityController.text = widget.plant[3];
-    notesController.text = widget.plant[8];
-    isDead = widget.plant[2] == 'Dead';
+  String living = 'Alive';
+
+  void addRow() async {
+    var data = {
+      'plantId': widget.plant['plant_id'],
+      'quantity': quantityController.text,
+      'notes': notesController.text,
+      'living': isDead ? 'N' : 'Y',
+    };
+
+    var response = await http.post(
+      Uri.parse('${Constants.apiUrl}/api/plants/update-user-plant'),
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}',
+        'content-type': 'application/json',
+      },
+      body: jsonEncode(data),
+    );
+
+    // // init GSheets
+    // final gsheets = GSheets(credentials);
+    // // fetch spreadsheet by its id
+    // final ss = await gsheets.spreadsheet(spreadsheetId);
+
+    // // get worksheet by its title
+    // var sheet = ss.worksheetByTitle(widget.username);
+    // // create worksheet if it does not exist yet
+    // sheet ??= await ss.addWorksheet(widget.username);
+
+    // if (isDead) {
+    //   living = 'Dead';
+    // }
+
+    // var index = widget.plant['plant_id'];
+    // //await sheet.values.map.appendRow(newRow);
+    // await sheet.values
+    //     .insertValueByKeys(living, columnKey: 'Living', rowKey: index);
+    // await sheet.values.insertValueByKeys(quantityController.text,
+    //     columnKey: 'Quantity', rowKey: index);
+    //     await sheet.values.insertValueByKeys(notesController.text,
+    //     columnKey: 'Notes', rowKey: index);
   }
 
-  Future<dynamic> updateRow() async {
-    // init GSheets
-    final gsheets = GSheets(credentials);
-    // fetch spreadsheet by its id
-    final ss = await gsheets.spreadsheet(spreadsheetId);
+  void _submitForm() {
+    addRow();
 
-    // get worksheet by its title
-    var sheet = ss.worksheetByTitle(widget.username);
-    // create worksheet if it does not exist yet
-    sheet ??= await ss.addWorksheet(widget.username);
-
-    String living = (isDead) ? "Dead" : "Alive";
-
-    var index = widget.plant[0];
-    //await sheet.values.map.appendRow(newRow);
-    await sheet.values
-        .insertValueByKeys(living, columnKey: 'Living', rowKey: index);
-    await sheet.values.insertValueByKeys(quantityController.text,
-        columnKey: 'Quantity', rowKey: index);
-    return await sheet.values.insertValueByKeys(notesController.text,
-        columnKey: 'Notes', rowKey: index);
+    Navigator.pop(context);
   }
 
   XFile? imageFile;
@@ -68,6 +93,11 @@ class _EditPlantState extends State<EditPlant> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.plant);
+    quantityController.text = widget.plant['quantity'].toString();
+    notesController.text = widget.plant['notes'] ?? '';
+    isDead = widget.plant['living'] == 'N';
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: primaryColor,
@@ -77,7 +107,9 @@ class _EditPlantState extends State<EditPlant> {
             child: ListView(children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 10.0, left: 20),
-            child: Text('''Edit plant ${widget.plant[1]}''',
+            //TODO: Check for empty nursery before displaying in title
+            child: Text(
+                '''Edit the ${widget.plant['plant_name']} from ${widget.plant['nursery']}''',
                 style: Theme.of(context).textTheme.titleLarge!),
           ),
           Form(
@@ -95,30 +127,29 @@ class _EditPlantState extends State<EditPlant> {
                     ),
                     TextFormField(
                       controller: notesController,
+                      // initialValue: widget.plant['notes'] ?? '',
                       decoration: const InputDecoration(
                         labelText: 'Notes',
                       ),
                     ),
-                    CheckboxListTile(
-                        value: isDead,
-                        title: const Text('Mark Plant as Dead'),
-                        onChanged: (value) {
-                          setState(() {
-                            isDead = !isDead;
+                    FormField<bool>(builder: (state) {
+                      return CheckboxListTile(
+                          value: isDead,
+                          title: const Text('Plant is Dead'),
+                          onChanged: (value) {
+                            setState(() {
+                              //save checkbox value to variable that store terms and notify form that state changed
+                              isDead = !isDead;
+                              widget.plant['living'] = isDead ? 'N' : 'Y';
+                              state.didChange(value);
+                            });
                           });
-                        }),
+                    }),
                   ],
                 ),
               )),
           ElevatedButton(
-              onPressed: () {
-                updateRow().then((result) {
-                  if (context.mounted) {
-                    Navigator.of(context).pop();
-                  }
-                });
-              },
-              child: const Text('Save Changes')),
+              onPressed: _submitForm, child: const Text('Save Changes')),
         ])));
   }
 }

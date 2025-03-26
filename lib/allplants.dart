@@ -1,15 +1,17 @@
 // ignore_for_file: must_be_immutable
-
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 import 'plant.dart';
 import 'credentials.dart';
 import 'package:gsheets/gsheets.dart';
 import 'dart:io';
 import 'main.dart';
 import 'package:geolocator/geolocator.dart';
+import 'constants.dart';
 
 Future<String> get _photoLibrary async {
   final base = await getApplicationDocumentsDirectory();
@@ -36,10 +38,12 @@ class AddPlant extends StatefulWidget {
       required this.plants,
       required this.picPath,
       required this.username,
+      required this.userId,
       required this.wishList});
   final List<Plant> plants;
   final Directory? picPath;
   final String username;
+  final int userId;
   final bool wishList;
 
   @override
@@ -54,66 +58,55 @@ class _AddPlantState extends State<AddPlant> {
   TextEditingController nurseryController = TextEditingController();
   TextEditingController notesController = TextEditingController();
 
-  TextEditingController nativeController =
-      TextEditingController(text: "Unknown");
-  TextEditingController sunController = TextEditingController(text: "Unknown");
-    TextEditingController soilController = TextEditingController(text: "Unknown");
-  TextEditingController waterController = TextEditingController(text: "Unknown");
-    TextEditingController typeController = TextEditingController(text: "Unknown");
-  TextEditingController floweringSeasonController = TextEditingController(text: "Unknown");
-  TextEditingController maintenanceController = TextEditingController(text: "Unknown");
-
-
-
-
-
+  
 
   bool isSeed = false;
-  String plantedAs = 'not planted as seed';
-
   bool isAlive = true;
-  String living = 'Alive';
+  String northAmericanNative = 'Unknown';
+  String sun = 'Unknown';
+  String soil = 'Unknown';
+  String water = 'Unknown';
+  String type = 'Unknown';
+  String flowering = 'Unknown';
+  String maintenance = 'Unknown';
 
-  Future<dynamic> addRow() async {
-    // init GSheets
-    final gsheets = GSheets(credentials);
-    // fetch spreadsheet by its id
-    final ss = await gsheets.spreadsheet(spreadsheetId);
+  Future<void> addRow() async {
+    
 
-    // get worksheet by its title
-    var sheet = ss.worksheetByTitle(widget.username);
-    // create worksheet if it does not exist yet
-    sheet ??= await ss.addWorksheet(widget.username);
-
-    if (isSeed) {
-      plantedAs = 'planted as seed';
-    }
-
-    final newRow = {
-      '1': '=IF(B1<>"", ROW(),)',
-      'Plant': plantController.text,
-      'Living': living,
-      'Quantity': quantityController.text,
-      'Nursery': nurseryController.text,
-      'Origin': plantedAs,
+    var data = {
+      'userId': widget.userId,
+      'plantName': plantController.text,
+      'living': isAlive ? 'Y' : 'N',
+      'quantity': quantityController.text,
+      'nursery': nurseryController.text,
+      'plantedAs': isSeed ? 'Seed' : 'Sapling',
       'latitude': latitude,
       'longitude': longitude,
-      'Notes': notesController.text,
-      'North American Native': nativeController.text,
-      'Date': DateTime.now().toIso8601String(),
-      'WishList': widget.wishList,
-      'Sun' : sunController.text,
-            'Soil' : soilController.text,
-      'Water' : waterController.text,
-            'Plant Type' : typeController.text,
-      'Flowering Season' : floweringSeasonController.text,
-
-      'Annual Maintenance' : maintenanceController.text,
-
-
+      'notes': notesController.text,
+      'northAmericanNative': northAmericanNative,
+      'wishlist': widget.wishList ? 'Y' : 'N',
+      'Sun': sun,
+      'Soil': soil,
+      'Water': water,
+      'Plant Type': type,
+      'Flowering Season': flowering,
+      'Annual Maintenance': maintenance,
     };
 
-    return await sheet.values.map.appendRow(newRow);
+    var response = await http.post(
+      Uri.parse('${Constants.apiUrl}/api/plants/save-user-plant'),
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}',
+        'content-type': 'application/json',
+      },
+      body: jsonEncode(data),
+    );
+  }
+
+  // Method to Submit Feedback and save it in Google Sheets
+  void _submitForm() async {
+    await addRow();
+    Navigator.pop(context);
   }
 
   getRowCount() async {
@@ -233,37 +226,43 @@ class _AddPlantState extends State<AddPlant> {
                       (BuildContext context, SearchController controller) {
                 String searchText = controller.text;
                 List<Plant> filteredPlants = widget.plants
-                    .where((plant) => plant.values[0]
+                    .where((plant) => plant.botanicName
                         .toLowerCase()
                         .contains(searchText.toLowerCase()))
                     .toList();
                 return List<ListTile>.generate(
+                  //TODO: Alter api to return plant attributes
                   filteredPlants.length,
                   (int index) {
-                    final String item = filteredPlants[index].values[0];
-                    final String botanicName = filteredPlants[index].values[1];
+                    final String botanicName =
+                        filteredPlants[index].botanicName;
                     final String nativeStatus =
-                        filteredPlants[index].values[14];
-                       final String sun = filteredPlants[index].values[7];
-                                              final String soil = filteredPlants[index].values[10];
-                       final String water = filteredPlants[index].values[8];
-                                              final String type = filteredPlants[index].values[2];
-                       final String season= filteredPlants[index].values[5];
-                       final String maintenance = filteredPlants[index].values[16];
+                        filteredPlants[index].native == 1 ? 'Yes' : 'No';
+                    //final String sunPref = filteredPlants[index].sun;
+                    // final String soilPref = filteredPlants[index].soil;
+                    // final String waterPref = filteredPlants[index].water;
+                    // final String plantType = filteredPlants[index].type;
+                    // final String floweringSeason =
+                    //     filteredPlants[index].flowering;
+                    // final String annualMaintenance =
+                    //     filteredPlants[index].maintenance;
 
+                  
 
- 
                     return ListTile(
-                        title: Text(item),
+                        title: Text(botanicName),
                         onTap: () {
-                          plantController.text = '$item ($botanicName)';
-                          nativeController.text = nativeStatus;
-                          sunController.text = sun;
-                          soilController.text = soil;
-                          waterController.text = water;
-                          typeController.text = type;
-                          floweringSeasonController.text = season;
-                          maintenanceController.text = maintenance; 
+                          plantController.text = botanicName;
+                          northAmericanNative = nativeStatus;
+                          //sun = sunPref;
+                          // soil = soilPref;
+                          // water = waterPref;
+                          // type = plantType;
+                          // flowering = floweringSeason;
+                          // maintenance = annualMaintenance;
+
+                         
+
                           controller.closeView(plantController.text);
                         });
                   },
@@ -287,7 +286,6 @@ class _AddPlantState extends State<AddPlant> {
                             labelText: 'Quantity',
                           ),
                         ),
-                        
                         TextFormField(
                           controller: nurseryController,
                           decoration: const InputDecoration(
@@ -298,13 +296,6 @@ class _AddPlantState extends State<AddPlant> {
                           controller: notesController,
                           decoration: const InputDecoration(
                             labelText: 'Notes',
-                          ),
-                        ),
-                        TextFormField(
-                          controller: nativeController,
-                          decoration: const InputDecoration(
-                            labelText:
-                                'North American Native (Yes, No, Unknown)',
                           ),
                         ),
                         FormField<bool>(builder: (state) {
@@ -333,11 +324,13 @@ class _AddPlantState extends State<AddPlant> {
                   if (!widget.wishList) {
                     _getCurrentLocation();
                   }
-                  addRow().then((result) {
-                    if (context.mounted) {
-                      Navigator.of(context).pop();
-                    }
-                  });
+                  _submitForm();
+                  //TODO: Is AddRow necessary after submitForm()
+                  // addRow().then((result) {
+                  //     if (context.mounted) {
+                  //       Navigator.of(context).pop();
+                  //     }
+                  //   });
                 },
                 child: const Text('Submit Plant'),
               )
