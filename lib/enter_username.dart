@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plantselect/create_account.dart';
+import 'package:plantselect/reset_password.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'main.dart';
 
@@ -29,6 +30,16 @@ class _EnterUsername extends State<EnterUsername> {
       context,
       MaterialPageRoute(
           builder: (context) => CreateAccount())).then((value) {
+            setState(() {});
+      }
+    );
+  }
+
+  void resetAccount() {
+    Navigator.push( 
+      context,
+      MaterialPageRoute(
+          builder: (context) => ResetPassword())).then((value) {
             setState(() {});
       }
     );
@@ -84,6 +95,13 @@ class _EnterUsername extends State<EnterUsername> {
                         // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
 
                         child: const Text('Create Account'),
+                      ),
+                      ElevatedButton(
+                        onPressed: resetAccount,
+                        //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+                        // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
+
+                        child: const Text('Reset Password'),
                       )
                     ],
                   ),
