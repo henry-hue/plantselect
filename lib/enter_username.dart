@@ -18,7 +18,8 @@ class _EnterUsername extends State<EnterUsername> {
   String? errorMessage;
 
   void saveUsername() async {
-    if(! await widget.setUsername(usernameController.text, passwordController.text)) {
+    if (!await widget.setUsername(
+        usernameController.text, passwordController.text)) {
       setState(() {
         errorMessage = 'Incorrect Username or Password';
       });
@@ -27,90 +28,80 @@ class _EnterUsername extends State<EnterUsername> {
 
   void createAccount() {
     Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => CreateAccount())).then((value) {
-            setState(() {});
-      }
-    );
+            context, MaterialPageRoute(builder: (context) => CreateAccount()))
+        .then((value) {
+      setState(() {});
+    });
   }
 
   void resetAccount() {
-    Navigator.push( 
-      context,
-      MaterialPageRoute(
-          builder: (context) => ResetPassword())).then((value) {
-            setState(() {});
-      }
-    );
+    Navigator.push(
+            context, MaterialPageRoute(builder: (context) => ResetPassword()))
+        .then((value) {
+      setState(() {});
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-          appBar: AppBar(
-            backgroundColor: primaryColor,
-            title: Image.asset('assets/images/logo.png'),
-          ),
-          body: Center(
-            child: Padding( padding: const  EdgeInsets.all(24),
-              child: ListView(children: <Widget> [
-                TextFormField(
-                  controller: usernameController,
-                  decoration: const InputDecoration(
-                      labelText:
-                          'Enter your username:')
-                ),
-                TextFormField(
-                  controller: passwordController,
-                  obscureText: true,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                  decoration: const InputDecoration(
-                      labelText:
-                          'Enter your password:')
-                ),
-                if((errorMessage ?? '') != '')
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      errorMessage ?? '',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ),
-                Center( 
-                  child:Row(
-                    children: [
-                      ElevatedButton(
-                        onPressed: saveUsername,
-                        //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
-                        // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
+        home: Scaffold(
+            appBar: AppBar(
+              backgroundColor: primaryColor,
+              title: Image.asset('assets/images/logo.png'),
+            ),
+            body: Center(
+                child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: ListView(children: <Widget>[
+                      TextFormField(
+                          controller: usernameController,
+                          decoration: const InputDecoration(
+                              labelText: 'Enter your username:')),
+                      TextFormField(
+                          controller: passwordController,
+                          obscureText: true,
+                          enableSuggestions: false,
+                          autocorrect: false,
+                          decoration: const InputDecoration(
+                              labelText: 'Enter your password:')),
+                      if (errorMessage != null)
+                        Column(children: [
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              errorMessage!,
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ]),
+                      Center(
+                        child: Row(
+                          children: [
+                            ElevatedButton(
+                              onPressed: saveUsername,
+                              //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+                              // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
 
-                        child: const Text('Log In'),
+                              child: const Text('Log In'),
+                            ),
+                            ElevatedButton(
+                              onPressed: createAccount,
+                              //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+                              // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
+
+                              child: const Text('Create Account'),
+                            ),
+                            ElevatedButton(
+                              onPressed: resetAccount,
+                              //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+                              // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
+
+                              child: const Text('Reset Password'),
+                            )
+                          ],
+                        ),
                       ),
-                      ElevatedButton(
-                        onPressed: createAccount,
-                        //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
-                        // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
-
-                        child: const Text('Create Account'),
-                      ),
-                      ElevatedButton(
-                        onPressed: resetAccount,
-                        //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
-                        // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
-
-                        child: const Text('Reset Password'),
-                      )
-                    ],
-                  ),
-                ),
-              ]
-            )
-          )
-        )
-      )
-    );
+                    ])))));
   }
 }
