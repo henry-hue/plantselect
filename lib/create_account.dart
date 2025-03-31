@@ -28,8 +28,8 @@ class _CreateAccount extends State<CreateAccount> {
       'username': usernameController.text,
       'password': passwordController.text,
       'password2': passwordController2.text,
-      'name' : nameController.text,
-      'email' : emailController.text,
+      'name': nameController.text,
+      'email': emailController.text,
     };
 
     var resp = await http.post(
@@ -41,7 +41,7 @@ class _CreateAccount extends State<CreateAccount> {
       body: jsonEncode(body),
     );
     var data = jsonDecode(resp.body);
-    if(data['success'] == true) {
+    if (data['success'] == true) {
       Navigator.pop(context);
     } else {
       setState(() {
@@ -53,85 +53,75 @@ class _CreateAccount extends State<CreateAccount> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-          appBar: AppBar(
-            backgroundColor: primaryColor,
-            title: Image.asset('assets/images/logo.png'),
-          ),
-          body: Center(
-            child: Padding( padding: const  EdgeInsets.all(24),
-              child: ListView(children: <Widget> [
-                TextFormField(
-                  controller: emailController,
-                  decoration: const InputDecoration(
-                      labelText:
-                          'Enter your email:')
-                ),
-                TextFormField(
-                  controller: nameController,
-                  decoration: const InputDecoration(
-                      labelText:
-                          'Enter your name:')
-                ),
-                TextFormField(
-                  controller: usernameController,
-                  decoration: const InputDecoration(
-                      labelText:
-                          'Enter desired username:')
-                ),
-                TextFormField(
-                  controller: passwordController,
-                  obscureText: true,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                  decoration: const InputDecoration(
-                      labelText:
-                          'Enter your password:')
-                ),
-                TextFormField(
-                  controller: passwordController2,
-                  obscureText: true,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                  decoration: const InputDecoration(
-                      labelText:
-                          'Confirm your password:')
-                ),
-                if((errorMessage ?? '') != '') 
-                  Icon(Icons.error_outline, color: Colors.red),
-                if((errorMessage ?? '') != '')
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      errorMessage ?? '',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ),
-                Center(
-                  child: Row(
-                    children:[
-                      ElevatedButton(
-                        onPressed: createAccount,
-                        //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
-                        // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
+        home: Scaffold(
+            appBar: AppBar(
+              backgroundColor: primaryColor,
+              title: Image.asset('assets/images/logo.png'),
+            ),
+            body: Center(
+                child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: ListView(children: <Widget>[
+                      TextFormField(
+                          controller: emailController,
+                          decoration: const InputDecoration(
+                              labelText: 'Enter your email:')),
+                      TextFormField(
+                          controller: nameController,
+                          decoration: const InputDecoration(
+                              labelText: 'Enter your name:')),
+                      TextFormField(
+                          controller: usernameController,
+                          decoration: const InputDecoration(
+                              labelText: 'Enter desired username:')),
+                      TextFormField(
+                          controller: passwordController,
+                          obscureText: true,
+                          enableSuggestions: false,
+                          autocorrect: false,
+                          decoration: const InputDecoration(
+                              labelText: 'Enter your password:')),
+                      TextFormField(
+                          controller: passwordController2,
+                          obscureText: true,
+                          enableSuggestions: false,
+                          autocorrect: false,
+                          decoration: const InputDecoration(
+                              labelText: 'Confirm your password:')),
+                      if ((errorMessage ?? '') != '')
+                        Icon(Icons.error_outline, color: Colors.red),
+                      if (errorMessage != null)
+                        Column(children: [
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              errorMessage!,
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ]),
+                      Center(
+                        child: Row(
+                          children: [
+                            ElevatedButton(
+                              onPressed: createAccount,
+                              //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+                              // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
 
-                        child: const Text('Create Account'),
+                              child: const Text('Create Account'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+                              // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
+
+                              child: const Text('Return to Login'),
+                            )
+                          ],
+                        ),
                       ),
-                      ElevatedButton(
-                        onPressed: () {Navigator.pop(context);},
-                        //Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
-                        // AddPlant(plants: widget.plants, picPath: widget.picPath, username: usernameController.text)));
-
-                        child: const Text('Return to Login'),
-                      )
-                    ],
-                  ),
-                ),
-              ]
-            )
-          )
-        )
-      )
-    );
+                    ])))));
   }
 }
