@@ -93,6 +93,7 @@ class _AddPlantState extends State<AddPlant> {
       'Annual Maintenance': maintenance,
     };
 
+print(data);
     var response = await http.post(
       Uri.parse('${Constants.apiUrl}/api/plants/save-user-plant'),
       headers: {
@@ -142,8 +143,8 @@ class _AddPlantState extends State<AddPlant> {
   }
 
   String _location = 'Getting location...';
-  String latitude = 'Unknown location';
-  String longitude = 'Unknown location';
+  String? latitude;
+  String? longitude;
 
   @override
   void initState() {
