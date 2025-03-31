@@ -7,7 +7,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'plant.dart';
 import 'credentials.dart';
-import 'package:gsheets/gsheets.dart';
 import 'dart:io';
 import 'main.dart';
 import 'package:geolocator/geolocator.dart';
@@ -57,8 +56,7 @@ class _AddPlantState extends State<AddPlant> {
   TextEditingController quantityController = TextEditingController();
   TextEditingController nurseryController = TextEditingController();
   TextEditingController notesController = TextEditingController();
-
-  
+  TextEditingController gardenLocationNameController = TextEditingController();
 
   bool isSeed = false;
   bool isAlive = true;
@@ -71,8 +69,6 @@ class _AddPlantState extends State<AddPlant> {
   String maintenance = 'Unknown';
 
   Future<void> addRow() async {
-    
-
     var data = {
       'userId': widget.userId,
       'plantName': plantController.text,
@@ -83,6 +79,7 @@ class _AddPlantState extends State<AddPlant> {
       'latitude': latitude,
       'longitude': longitude,
       'notes': notesController.text,
+      'gardenLocationName' : gardenLocationNameController.text,
       'northAmericanNative': northAmericanNative,
       'wishlist': widget.wishList ? 'Y' : 'N',
       'Sun': sun,
@@ -103,24 +100,12 @@ class _AddPlantState extends State<AddPlant> {
     );
   }
 
-  // Method to Submit Feedback and save it in Google Sheets
   void _submitForm() async {
     await addRow();
     Navigator.pop(context);
   }
 
-  getRowCount() async {
-    // init GSheets
-    final gsheets = GSheets(credentials);
-    // fetch spreadsheet by its id
-    final ss = await gsheets.spreadsheet(spreadsheetId);
-    // get worksheet by its title
-    var sheet = ss.worksheetByTitle('henry-hue');
-    // create worksheet if it does not exist yet
-    sheet ??= await ss.addWorksheet('henry-hue');
-    var row = await sheet.values.lastRow(length: 1);
-    return int.parse(row![0]) + 1;
-  }
+
 
   XFile? imageFile;
 
@@ -247,8 +232,6 @@ class _AddPlantState extends State<AddPlant> {
                     // final String annualMaintenance =
                     //     filteredPlants[index].maintenance;
 
-                  
-
                     return ListTile(
                         title: Text(botanicName),
                         onTap: () {
@@ -260,8 +243,6 @@ class _AddPlantState extends State<AddPlant> {
                           // type = plantType;
                           // flowering = floweringSeason;
                           // maintenance = annualMaintenance;
-
-                         
 
                           controller.closeView(plantController.text);
                         });
@@ -296,6 +277,12 @@ class _AddPlantState extends State<AddPlant> {
                           controller: notesController,
                           decoration: const InputDecoration(
                             labelText: 'Notes',
+                          ),
+                        ),
+                        TextFormField(
+                          controller: gardenLocationNameController,
+                          decoration: const InputDecoration(
+                            labelText: 'Name of Location in Garden',
                           ),
                         ),
                         FormField<bool>(builder: (state) {

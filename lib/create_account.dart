@@ -66,28 +66,28 @@ class _CreateAccount extends State<CreateAccount> {
                           controller: emailController,
                           decoration: const InputDecoration(
                               labelText: 'Enter your email:')),
-                      TextFormField(
-                          controller: nameController,
-                          decoration: const InputDecoration(
-                              labelText: 'Enter your name:')),
-                      TextFormField(
-                          controller: usernameController,
-                          decoration: const InputDecoration(
-                              labelText: 'Enter desired username:')),
-                      TextFormField(
-                          controller: passwordController,
-                          obscureText: true,
-                          enableSuggestions: false,
-                          autocorrect: false,
-                          decoration: const InputDecoration(
-                              labelText: 'Enter your password:')),
-                      TextFormField(
-                          controller: passwordController2,
-                          obscureText: true,
-                          enableSuggestions: false,
-                          autocorrect: false,
-                          decoration: const InputDecoration(
-                              labelText: 'Confirm your password:')),
+                      // TextFormField(
+                      //     controller: nameController,
+                      //     decoration: const InputDecoration(
+                      //         labelText: 'Enter your name:')),
+                      // TextFormField(
+                      //     controller: usernameController,
+                      //     decoration: const InputDecoration(
+                      //         labelText: 'Enter desired username:')),
+                      // TextFormField(
+                      //     controller: passwordController,
+                      //     obscureText: true,
+                      //     enableSuggestions: false,
+                      //     autocorrect: false,
+                      //     decoration: const InputDecoration(
+                      //         labelText: 'Enter your password:')),
+                      // TextFormField(
+                      //     controller: passwordController2,
+                      //     obscureText: true,
+                      //     enableSuggestions: false,
+                      //     autocorrect: false,
+                      //     decoration: const InputDecoration(
+                      //         labelText: 'Confirm your password:')),
                       if ((errorMessage ?? '') != '')
                         Icon(Icons.error_outline, color: Colors.red),
                       if (errorMessage != null)
