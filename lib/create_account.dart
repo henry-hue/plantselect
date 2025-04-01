@@ -93,13 +93,13 @@ class _CreateAccount extends State<CreateAccount> {
                       if (errorMessage != null)
                         Column(
                           children: [
-                         // SizedBox(width: 10),
-                          //Expanded(
-                          //child: 
+                         SizedBox(width: 10),
+                          Expanded(
+                          child: 
                           Text(
                               errorMessage!,
                               style: TextStyle(color: Colors.red),
-                           // ),
+                           ),
                           ),
                         ]
                         ),
