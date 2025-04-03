@@ -11,6 +11,7 @@ import 'selectedplants.dart';
 class MyPlants extends StatefulWidget {
   MyPlants(
       {super.key,
+      
       required this.plants,
       required this.picPath,
       required this.username,
@@ -68,25 +69,14 @@ class _MyPlantsState extends State<MyPlants> {
     });
   }
 
-  // void gotoEditPlant(plant) {
-  //   Navigator.push(
-  //           context,
-  //           MaterialPageRoute(
-  //               builder: (context) =>
-  //                   EditPlant(plant: plant, username: widget.username, userId: widget.userId)))
-  //       .then((value) async {
-  //         await sheetsPlants();
-  //     // setState(() async {
-  //     //   await sheetsPlants();
-  //     // });
-  //   });
-  // }
+  
 
   void goToAddPlant() {
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => AddPlant(
+                  //myPlants: widget.myPlants,
                   plants: widget.plants,
                   picPath: widget.picPath,
                   username: widget.username,

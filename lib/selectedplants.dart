@@ -78,6 +78,7 @@ class _SelectedPlantsState extends State<SelectedPlants> {
       'Origin : ${widget.plant['planted_as']}',
       'Notes : ${widget.plant['notes']}',
       'North American Natve : ${widget.plant['north_american_native']}',
+      'Name of Location in Garden : ${widget.plant['garden_location_name']}',
 
       //   // 'Date : $date',
       //   // 'Sun : ${widget.plant[12]}',
@@ -97,7 +98,7 @@ class _SelectedPlantsState extends State<SelectedPlants> {
     String plantName = widget.plant['plant_name'];
     String name = '''$plantName.png''';
 
-    var attributeCount = plantInfo.length + 1;
+    var attributeCount = plantInfo.length;
 
     return Scaffold(
         appBar: AppBar(
@@ -124,20 +125,27 @@ class _SelectedPlantsState extends State<SelectedPlants> {
                         child: ListView.builder(
                             itemCount: attributeCount,
                             itemBuilder: (BuildContext context, int index) {
-                              if (index < 4) {
-                                return Text(plantInfo[index]);
-                              } else if (index == 7) {
-                                return Container(child: picture);
-                              } else if (index < plantInfo.length) {
-                                return Text(plantInfo[index]);
-                              } else {
-                                return ElevatedButton(
-                                    //iconAlignment: IconAlignment.end,
-                                    onPressed: () {
-                                      gotoEditPlant(widget.plant);
-                                    },
-                                    child: const Text('Edit'));
-                              }
+
+
+                              return Text(plantInfo[index]);
+
+                              // if (index < 4) {
+                              //   return Text(plantInfo[index]);
+                              // } else if (index == 7) {
+                              //   return Container(child: picture);
+                              // } else if (index < plantInfo.length) {
+                              //   return Text(plantInfo[index]);
+                              // } else {
+                              //   return ElevatedButton(
+                              //       //iconAlignment: IconAlignment.end,
+                              //       onPressed: () {
+                              //         gotoEditPlant(widget.plant);
+                              //       },
+                              //       child: const Text('Edit'));
+                              // }
+
+
+
                             })))
               ]));
             }));

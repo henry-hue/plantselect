@@ -34,11 +34,13 @@ Future<File> copyFile(File src, File dest) async {
 class AddPlant extends StatefulWidget {
   const AddPlant(
       {super.key,
+      //required this.myPlants,
       required this.plants,
       required this.picPath,
       required this.username,
       required this.userId,
       required this.wishList});
+  //final List<Map<String, dynamic>> myPlants;
   final List<Plant> plants;
   final Directory? picPath;
   final String username;
@@ -57,6 +59,8 @@ class _AddPlantState extends State<AddPlant> {
   TextEditingController nurseryController = TextEditingController();
   TextEditingController notesController = TextEditingController();
   TextEditingController gardenLocationNameController = TextEditingController();
+
+  List<Map<String, dynamic>> myPlants = [];
 
   bool isSeed = false;
   bool isAlive = true;
@@ -79,7 +83,7 @@ class _AddPlantState extends State<AddPlant> {
       'latitude': latitude,
       'longitude': longitude,
       'notes': notesController.text,
-      'gardenLocationName' : gardenLocationNameController.text,
+      'garden_location_name': gardenLocationNameController.text,
       'northAmericanNative': northAmericanNative,
       'wishlist': widget.wishList ? 'Y' : 'N',
       'Sun': sun,
@@ -104,8 +108,6 @@ class _AddPlantState extends State<AddPlant> {
     await addRow();
     Navigator.pop(context);
   }
-
-
 
   XFile? imageFile;
 
@@ -134,6 +136,7 @@ class _AddPlantState extends State<AddPlant> {
   void initState() {
     super.initState();
     _getCurrentLocation();
+    sheetsPlants();
   }
 
   // Function to get the current location
@@ -180,6 +183,22 @@ class _AddPlantState extends State<AddPlant> {
         longitude = '${position.longitude}';
       });
     }
+  }
+
+  Future<void> sheetsPlants() async {
+    var response = await http.get(
+      Uri.parse(
+          '${Constants.apiUrl}/api/plants/user-list?userId=${widget.userId}&wishlist=${'N'}'),
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}'
+      },
+    );
+    List<dynamic> plants = json.decode(response.body);
+    myPlants = plants.map((plant) => plant as Map<String, dynamic>).toList();
+    
+    setState(() {
+      myPlants.removeWhere((item) => item['garden_location_name'] == null);
+    });
   }
 
   @override
@@ -254,7 +273,7 @@ class _AddPlantState extends State<AddPlant> {
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      //crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         TextFormField(
                           controller: plantController,
@@ -279,12 +298,46 @@ class _AddPlantState extends State<AddPlant> {
                             labelText: 'Notes',
                           ),
                         ),
-                        TextFormField(
-                          controller: gardenLocationNameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Name of Location in Garden',
+                        Row(
+                          //crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: gardenLocationNameController,
+                              decoration: const InputDecoration(
+                                labelText: 'Name of Location in Garden',
+                              ),
+                            ),
                           ),
-                        ),
+                          Expanded(
+                            child:
+                          Container(
+                            height: 64,
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              hint: Text('Previous Garden Locations'),
+                              items: myPlants
+                                  .map((e) =>
+                                      e['garden_location_name'].toString()).toSet()
+                                  .toList()
+                                  .map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              underline: Container(
+                                height: 1,
+                                color: const Color.fromARGB(255, 66, 64, 64)),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  gardenLocationNameController.text = value!;
+                                });
+                              },
+                            ),
+                          ),
+                          ),
+                        ]),
                         FormField<bool>(builder: (state) {
                           return CheckboxListTile(
                               value: isSeed,
@@ -308,6 +361,9 @@ class _AddPlantState extends State<AddPlant> {
               if (imageFile != null) Image.file(File(imageFile!.path)),
               ElevatedButton(
                 onPressed: () {
+                  print(myPlants
+                      .map((e) => e['garden_location_name'].toString())
+                      .toList());
                   if (!widget.wishList) {
                     _getCurrentLocation();
                   }
