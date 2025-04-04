@@ -5,8 +5,6 @@ import 'package:path_provider/path_provider.dart';
 import 'editplant.dart';
 import 'main.dart';
 
-
-
 Future<String> get _photoLibrary async {
   final base = await getApplicationDocumentsDirectory();
   final directory =
@@ -69,7 +67,6 @@ class _SelectedPlantsState extends State<SelectedPlants> {
     //       .toIso8601String()
     //       .split('T')[0];
     // }
-
     plantInfo = [
       'Common Name : ${widget.plant['plant_name']}',
       'Living : ${widget.plant['living']}',
@@ -79,20 +76,12 @@ class _SelectedPlantsState extends State<SelectedPlants> {
       'Notes : ${widget.plant['notes']}',
       'North American Natve : ${widget.plant['north_american_native']}',
       'Name of Location in Garden : ${widget.plant['garden_location_name']}',
-
-      //   // 'Date : $date',
-      //   // 'Sun : ${widget.plant[12]}',
-      //   // 'Water : ${widget.plant[14]}',
-      //   // 'Soil : ${widget.plant[13]}',
-      //   // 'Plant Type : ${widget.plant[16]}',
-      //   // 'Flowering Season : ${widget.plant[15]}',
-      //   // 'Commercial Maintenance : ${widget.plant[17]}',
-      //   // 'Living : ${widget.plant[2]}',
-      //   // 'Quantity : ${widget.plant[3]}',
-      //   // 'Nursery : ${widget.plant[4]}',
-      //   // 'Origin : ${widget.plant[5]}',
-      //   // 'Notes : ${widget.plant[8]}',
-      //   // 'North American Native : ${widget.plant[9]}',
+      'Planted As : ${widget.plant['planted_as']}',
+      'Plant Type : ${widget.plant['plant_type']}',
+      'Sun : ${widget.plant['sun']}',
+      'Wet : ${widget.plant['wet']}',
+      'Flowering Season : ${widget.plant['flower_season']}',
+      'Maintenance : ${widget.plant['commercial_maintenance']}',
     ];
 
     String plantName = widget.plant['plant_name'];
@@ -113,41 +102,40 @@ class _SelectedPlantsState extends State<SelectedPlants> {
                 File file = File(snapshot.data!);
                 if (file.existsSync()) {
                   picture = Image.file(file);
-                  attributeCount += 1; // add room for picture at end
                 }
               }
 
-              return Center(
-                  child: Column(children: <Widget>[
+              return Column(children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: ListTile(
+                        title: Text(
+                          '${widget.plant['plant_name']}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 23,
+                          ),
+                        ),
+                        subtitle: ElevatedButton(
+                          onPressed: () {
+                            gotoEditPlant(widget.plant);
+                          },
+                          child: Text('Edit'),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 Expanded(
-                    child: SizedBox(
-                        height: 400.0,
-                        child: ListView.builder(
-                            itemCount: attributeCount,
-                            itemBuilder: (BuildContext context, int index) {
-
-
-                              return Text(plantInfo[index]);
-
-                              // if (index < 4) {
-                              //   return Text(plantInfo[index]);
-                              // } else if (index == 7) {
-                              //   return Container(child: picture);
-                              // } else if (index < plantInfo.length) {
-                              //   return Text(plantInfo[index]);
-                              // } else {
-                              //   return ElevatedButton(
-                              //       //iconAlignment: IconAlignment.end,
-                              //       onPressed: () {
-                              //         gotoEditPlant(widget.plant);
-                              //       },
-                              //       child: const Text('Edit'));
-                              // }
-
-
-
-                            })))
-              ]));
+                    child: ListView.builder(
+                        itemCount: attributeCount,
+                        itemBuilder: (BuildContext context, int index) {
+                          return ListTile(
+                            title: Text(plantInfo[index]),
+                          );
+                        }))
+              ]);
             }));
   }
 }

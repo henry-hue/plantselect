@@ -235,21 +235,13 @@ class _AddPlantState extends State<AddPlant> {
                         .contains(searchText.toLowerCase()))
                     .toList();
                 return List<ListTile>.generate(
-                  //TODO: Alter api to return plant attributes
                   filteredPlants.length,
                   (int index) {
                     final String botanicName =
                         filteredPlants[index].botanicName;
                     final String nativeStatus =
                         filteredPlants[index].native == 1 ? 'Yes' : 'No';
-                    //final String sunPref = filteredPlants[index].sun;
-                    // final String soilPref = filteredPlants[index].soil;
-                    // final String waterPref = filteredPlants[index].water;
-                    // final String plantType = filteredPlants[index].type;
-                    // final String floweringSeason =
-                    //     filteredPlants[index].flowering;
-                    // final String annualMaintenance =
-                    //     filteredPlants[index].maintenance;
+                    
 
                     return ListTile(
                         title: Text(botanicName),
@@ -361,9 +353,7 @@ class _AddPlantState extends State<AddPlant> {
               if (imageFile != null) Image.file(File(imageFile!.path)),
               ElevatedButton(
                 onPressed: () {
-                  print(myPlants
-                      .map((e) => e['garden_location_name'].toString())
-                      .toList());
+                  
                   if (!widget.wishList) {
                     _getCurrentLocation();
                   }
