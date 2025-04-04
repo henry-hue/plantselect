@@ -248,12 +248,7 @@ class _AddPlantState extends State<AddPlant> {
                         onTap: () {
                           plantController.text = botanicName;
                           northAmericanNative = nativeStatus;
-                          //sun = sunPref;
-                          // soil = soilPref;
-                          // water = waterPref;
-                          // type = plantType;
-                          // flowering = floweringSeason;
-                          // maintenance = annualMaintenance;
+                          
 
                           controller.closeView(plantController.text);
                         });

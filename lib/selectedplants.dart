@@ -1,9 +1,13 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'editplant.dart';
 import 'main.dart';
+import 'package:http/http.dart' as http;
+import 'constants.dart';
+
 
 Future<String> get _photoLibrary async {
   final base = await getApplicationDocumentsDirectory();
@@ -19,6 +23,8 @@ Future<String> getFile(String name) async {
   final path = await _photoLibrary;
   return '$path/$name';
 }
+  
+  
 
 // ignore: must_be_immutable
 class SelectedPlants extends StatefulWidget {
@@ -52,6 +58,25 @@ class _SelectedPlantsState extends State<SelectedPlants> {
     });
   }
 
+  Future<void> deleteRow() async {
+var data = {
+  'plantId': widget.plant['plant_id'],
+};
+var response = await http.post(
+      Uri.parse('${Constants.apiUrl}/api/plants/delete-user-plant'),
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}',
+        'content-type': 'application/json',
+      },
+      body: jsonEncode(data),
+    );
+  }
+
+  void _submitForm() async {
+    await deleteRow();
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     // gsheets returns date fields as a fractional number of days since 1/1/1900. Unix Epoch is 1/1/1970
@@ -69,7 +94,7 @@ class _SelectedPlantsState extends State<SelectedPlants> {
     // }
     plantInfo = [
       'Common Name : ${widget.plant['plant_name']}',
-      'Living : ${widget.plant['living']}',
+      'Living : ${widget.plant['living'] == 'Y' ? 'Yes' : 'No'}',
       'Quantity : ${widget.plant['quantity']}',
       'Nursery : ${widget.plant['nursery']}',
       'Origin : ${widget.plant['planted_as']}',
@@ -117,12 +142,25 @@ class _SelectedPlantsState extends State<SelectedPlants> {
                             fontSize: 23,
                           ),
                         ),
-                        subtitle: ElevatedButton(
+                        subtitle: Row(
+                        children: <Widget> [
+                        
+                        ElevatedButton(
+                          onPressed: () {
+                            _submitForm();
+                          },
+                          child: Text('Delete'),
+                        ),
+                        
+                        
+                        ElevatedButton(
                           onPressed: () {
                             gotoEditPlant(widget.plant);
                           },
                           child: Text('Edit'),
                         ),
+                        ]
+                        )
                       ),
                     ),
                   ],

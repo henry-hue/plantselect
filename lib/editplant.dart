@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'main.dart';
 import 'constants.dart';
 import 'package:http/http.dart' as http;
@@ -48,28 +47,7 @@ class _EditPlantState extends State<EditPlant> {
       body: jsonEncode(data),
     );
 
-    // // init GSheets
-    // final gsheets = GSheets(credentials);
-    // // fetch spreadsheet by its id
-    // final ss = await gsheets.spreadsheet(spreadsheetId);
-
-    // // get worksheet by its title
-    // var sheet = ss.worksheetByTitle(widget.username);
-    // // create worksheet if it does not exist yet
-    // sheet ??= await ss.addWorksheet(widget.username);
-
-    // if (isDead) {
-    //   living = 'Dead';
-    // }
-
-    // var index = widget.plant['plant_id'];
-    // //await sheet.values.map.appendRow(newRow);
-    // await sheet.values
-    //     .insertValueByKeys(living, columnKey: 'Living', rowKey: index);
-    // await sheet.values.insertValueByKeys(quantityController.text,
-    //     columnKey: 'Quantity', rowKey: index);
-    //     await sheet.values.insertValueByKeys(notesController.text,
-    //     columnKey: 'Notes', rowKey: index);
+    
   }
 
   void _submitForm() {
@@ -78,23 +56,11 @@ class _EditPlantState extends State<EditPlant> {
     Navigator.pop(context);
   }
 
-  XFile? imageFile;
-
-  selectFile() async {
-    XFile? file = await ImagePicker()
-        .pickImage(source: ImageSource.camera, maxHeight: 1800, maxWidth: 1800);
-
-    if (file != null) {
-      setState(() {
-        imageFile = XFile(file.path);
-      });
-    }
-  }
+  
 
   @override
   Widget build(BuildContext context) {
-    print(widget.plant);
-    quantityController.text = widget.plant['quantity'].toString();
+    quantityController.text = widget.plant['quantity'];
     notesController.text = widget.plant['notes'] ?? '';
     isDead = widget.plant['living'] == 'N';
 
@@ -107,9 +73,8 @@ class _EditPlantState extends State<EditPlant> {
             child: ListView(children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 10.0, left: 20),
-            //TODO: Check for empty nursery before displaying in title
             child: Text(
-                '''Edit the ${widget.plant['plant_name']} from ${widget.plant['nursery']}''',
+                '''Edit the ${widget.plant['plant_name']}''',
                 style: Theme.of(context).textTheme.titleLarge!),
           ),
           Form(
