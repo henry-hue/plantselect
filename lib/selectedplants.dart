@@ -8,7 +8,6 @@ import 'main.dart';
 import 'package:http/http.dart' as http;
 import 'constants.dart';
 
-
 Future<String> get _photoLibrary async {
   final base = await getApplicationDocumentsDirectory();
   final directory =
@@ -23,8 +22,6 @@ Future<String> getFile(String name) async {
   final path = await _photoLibrary;
   return '$path/$name';
 }
-  
-  
 
 // ignore: must_be_immutable
 class SelectedPlants extends StatefulWidget {
@@ -45,6 +42,23 @@ class SelectedPlants extends StatefulWidget {
 
 class _SelectedPlantsState extends State<SelectedPlants> {
   List<String> plantInfo = [];
+  List<Map<String, dynamic>> myPlants = [];
+
+  Future<void> sheetsPlants() async {
+    var response = await http.get(
+      Uri.parse(
+          '${Constants.apiUrl}/api/plants/user-list?userId=${widget.userId}&wishlist=${'N'}'),
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}'
+      },
+    );
+    List<dynamic> plants = json.decode(response.body);
+    myPlants = plants.map((plant) => plant as Map<String, dynamic>).toList();
+
+    setState(() {
+      myPlants.removeWhere((item) => item['garden_location_name'] == null);
+    });
+  }
 
   void gotoEditPlant(plant) {
     Navigator.push(
@@ -59,10 +73,10 @@ class _SelectedPlantsState extends State<SelectedPlants> {
   }
 
   Future<void> deleteRow() async {
-var data = {
-  'plantId': widget.plant['plant_id'],
-};
-var response = await http.post(
+    var data = {
+      'plantId': widget.plant['plant_id'],
+    };
+    var response = await http.post(
       Uri.parse('${Constants.apiUrl}/api/plants/delete-user-plant'),
       headers: {
         HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}',
@@ -135,33 +149,27 @@ var response = await http.post(
                   children: <Widget>[
                     Expanded(
                       child: ListTile(
-                        title: Text(
-                          '${widget.plant['plant_name']}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 23,
+                          title: Text(
+                            '${widget.plant['plant_name']}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 23,
+                            ),
                           ),
-                        ),
-                        subtitle: Row(
-                        children: <Widget> [
-                        
-                        ElevatedButton(
-                          onPressed: () {
-                            _submitForm();
-                          },
-                          child: Text('Delete'),
-                        ),
-                        
-                        
-                        ElevatedButton(
-                          onPressed: () {
-                            gotoEditPlant(widget.plant);
-                          },
-                          child: Text('Edit'),
-                        ),
-                        ]
-                        )
-                      ),
+                          subtitle: Row(children: <Widget>[
+                            ElevatedButton(
+                              onPressed: () {
+                                _submitForm();
+                              },
+                              child: Text('Delete'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                gotoEditPlant(widget.plant);
+                              },
+                              child: Text('Edit'),
+                            ),
+                          ])),
                     ),
                   ],
                 ),

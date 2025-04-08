@@ -34,13 +34,11 @@ Future<File> copyFile(File src, File dest) async {
 class AddPlant extends StatefulWidget {
   const AddPlant(
       {super.key,
-      //required this.myPlants,
       required this.plants,
       required this.picPath,
       required this.username,
       required this.userId,
       required this.wishList});
-  //final List<Map<String, dynamic>> myPlants;
   final List<Plant> plants;
   final Directory? picPath;
   final String username;

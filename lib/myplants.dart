@@ -11,7 +11,6 @@ import 'selectedplants.dart';
 class MyPlants extends StatefulWidget {
   MyPlants(
       {super.key,
-      
       required this.plants,
       required this.picPath,
       required this.username,
@@ -68,8 +67,6 @@ class _MyPlantsState extends State<MyPlants> {
       myPlants = plants.map((plant) => plant as Map<String, dynamic>).toList();
     });
   }
-
-  
 
   void goToAddPlant() {
     Navigator.push(
@@ -278,7 +275,11 @@ class _MyPlantsState extends State<MyPlants> {
                                     username: widget.username,
                                     userId: widget.userId,
                                     plant: plant,
-                                    picPath: widget.picPath)));
+                                    picPath: widget.picPath))).then((value) {
+                          setState(() {
+                            sheetsPlants();
+                          });
+                        });
                       },
                       label: const Text('Plant Info'),
                     ))
@@ -292,4 +293,3 @@ class _MyPlantsState extends State<MyPlants> {
     );
   }
 }
-
