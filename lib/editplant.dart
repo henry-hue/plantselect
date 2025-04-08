@@ -24,15 +24,12 @@ class _EditPlantState extends State<EditPlant> {
   final _formKey = GlobalKey<FormState>();
   // TextField Controllers
   TextEditingController plantController = TextEditingController();
-  
-
- 
 
   bool isDead = false;
-  
 
   void addRow() async {
     var data = {
+      'plant_name': widget.plant['plant_name'],
       'plantId': widget.plant['plant_id'],
       'quantity': widget.plant['quantity'],
       'notes': widget.plant['notes'],
@@ -47,8 +44,6 @@ class _EditPlantState extends State<EditPlant> {
       },
       body: jsonEncode(data),
     );
-
-    
   }
 
   void _submitForm() {
@@ -57,12 +52,8 @@ class _EditPlantState extends State<EditPlant> {
     Navigator.pop(context);
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
-    
-
     return Scaffold(
         appBar: AppBar(
           backgroundColor: primaryColor,
@@ -72,8 +63,7 @@ class _EditPlantState extends State<EditPlant> {
             child: ListView(children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 10.0, left: 20),
-            child: Text(
-                '''Edit the ${widget.plant['plant_name']}''',
+            child: Text('''Edit the ${widget.plant['plant_name']}''',
                 style: Theme.of(context).textTheme.titleLarge!),
           ),
           Form(

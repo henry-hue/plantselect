@@ -68,7 +68,7 @@ class _SelectedPlantsState extends State<SelectedPlants> {
                 plant: plant,
                 username: widget.username,
                 userId: widget.userId))).then((value) {
-      setState(() {});
+      setState(() {sheetsPlants();});
     });
   }
 
