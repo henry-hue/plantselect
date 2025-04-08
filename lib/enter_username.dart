@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plantselect/create_account.dart';
 import 'package:plantselect/reset_password.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'main.dart';
 
 class EnterUsername extends StatefulWidget {

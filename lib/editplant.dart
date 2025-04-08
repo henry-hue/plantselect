@@ -24,17 +24,18 @@ class _EditPlantState extends State<EditPlant> {
   final _formKey = GlobalKey<FormState>();
   // TextField Controllers
   TextEditingController plantController = TextEditingController();
-  TextEditingController quantityController = TextEditingController();
-  TextEditingController notesController = TextEditingController();
+  
+
+ 
 
   bool isDead = false;
-  String living = 'Alive';
+  
 
   void addRow() async {
     var data = {
       'plantId': widget.plant['plant_id'],
-      'quantity': quantityController.text,
-      'notes': notesController.text,
+      'quantity': widget.plant['quantity'],
+      'notes': widget.plant['notes'],
       'living': isDead ? 'N' : 'Y',
     };
 
@@ -60,9 +61,7 @@ class _EditPlantState extends State<EditPlant> {
 
   @override
   Widget build(BuildContext context) {
-    quantityController.text = widget.plant['quantity'];
-    notesController.text = widget.plant['notes'] ?? '';
-    isDead = widget.plant['living'] == 'N';
+    
 
     return Scaffold(
         appBar: AppBar(
@@ -85,17 +84,22 @@ class _EditPlantState extends State<EditPlant> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     TextFormField(
-                      controller: quantityController,
+                      initialValue: widget.plant['quantity'].toString(),
                       decoration: const InputDecoration(
                         labelText: 'Quantity',
                       ),
+                      onChanged: (value) {
+                        widget.plant['quantity'] = int.parse(value);
+                      },
                     ),
                     TextFormField(
-                      controller: notesController,
-                      // initialValue: widget.plant['notes'] ?? '',
+                      initialValue: widget.plant['notes'],
                       decoration: const InputDecoration(
                         labelText: 'Notes',
                       ),
+                      onChanged: (value) {
+                        widget.plant['notes'] = value;
+                      },
                     ),
                     FormField<bool>(builder: (state) {
                       return CheckboxListTile(

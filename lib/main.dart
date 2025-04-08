@@ -101,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
       var data = jsonDecode(resp.body);
       if(data['success'] == true) {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('username', enteredUsername!);
+        await prefs.setString('username', enteredUsername);
         await prefs.setString('password', password!);
         setState(() {
           username = data['name'];

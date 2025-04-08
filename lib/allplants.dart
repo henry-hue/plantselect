@@ -73,6 +73,10 @@ class _AddPlantState extends State<AddPlant> {
   String maintenance = 'Unknown';
 
   Future<void> addRow() async {
+    // if (quantityController.text == Text('0').toString()) {
+    //   quantityController.text = 'N/A';
+    // }
+
     var data = {
       'userId': widget.userId,
       'plantName': plantController.text,
@@ -298,7 +302,7 @@ class _AddPlantState extends State<AddPlant> {
                           ),
                           Expanded(
                             child:
-                          Container(
+                          SizedBox(
                             height: 64,
                             child: DropdownButton<String>(
                               isExpanded: true,
