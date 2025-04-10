@@ -74,6 +74,15 @@ class _EditPlantState extends State<EditPlant> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     TextFormField(
+                      initialValue: widget.plant['plant_name'].toString(),
+                      decoration: const InputDecoration(
+                        labelText: 'Plant Name',
+                      ),
+                      onChanged: (value) {
+                        widget.plant['plant_name'] = value;
+                      },
+                    ),
+                    TextFormField(
                       initialValue: widget.plant['quantity'].toString(),
                       decoration: const InputDecoration(
                         labelText: 'Quantity',
