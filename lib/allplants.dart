@@ -6,7 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'plant.dart';
-import 'credentials.dart';
 import 'dart:io';
 import 'main.dart';
 import 'package:geolocator/geolocator.dart';
@@ -53,6 +52,8 @@ class _AddPlantState extends State<AddPlant> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController plantController = TextEditingController();
+  TextEditingController botanicNameController = TextEditingController();
+
   TextEditingController quantityController = TextEditingController();
   TextEditingController nurseryController = TextEditingController();
   TextEditingController notesController = TextEditingController();
@@ -78,6 +79,7 @@ class _AddPlantState extends State<AddPlant> {
     var data = {
       'userId': widget.userId,
       'plantName': plantController.text,
+      'botanicName' : botanicNameController.text,
       'living': isAlive ? 'Y' : 'N',
       'quantity': quantityController.text,
       'nursery': nurseryController.text,
@@ -197,7 +199,7 @@ class _AddPlantState extends State<AddPlant> {
     );
     List<dynamic> plants = json.decode(response.body);
     myPlants = plants.map((plant) => plant as Map<String, dynamic>).toList();
-    
+
     setState(() {
       myPlants.removeWhere((item) => item['garden_location_name'] == null);
     });
@@ -231,31 +233,32 @@ class _AddPlantState extends State<AddPlant> {
               }, suggestionsBuilder:
                       (BuildContext context, SearchController controller) {
                 String searchText = controller.text;
+
                 List<Plant> filteredPlants = widget.plants
-                    .where((plant) => plant.botanicName
-                        .toLowerCase()
-                        .contains(searchText.toLowerCase()))
+                    .where((plant) =>
+                        plant.botanicName
+                            .toLowerCase()
+                            .contains(searchText.toLowerCase()) ||
+                        plant.commonName
+                            .toLowerCase()
+                            .contains(searchText.toLowerCase()))
                     .toList();
-                return List<ListTile>.generate(
-                  filteredPlants.length,
-                  (int index) {
-                    final String botanicName =
-                        filteredPlants[index].botanicName;
-                    final String nativeStatus =
-                        filteredPlants[index].native == 1 ? 'Yes' : 'No';
-                    
+                return List<ListTile>.generate(filteredPlants.length,
+                    (int index) {
+                  final String botanicName = filteredPlants[index].botanicName;
+                  final String commonName = filteredPlants[index].commonName;
 
-                    return ListTile(
-                        title: Text(botanicName),
-                        onTap: () {
-                          plantController.text = botanicName;
-                          northAmericanNative = nativeStatus;
-                          
+                  final String fullName = '$commonName ($botanicName)';
 
-                          controller.closeView(plantController.text);
-                        });
-                  },
-                );
+                  return ListTile(
+                      title: Text(fullName),
+                      onTap: () {
+                        plantController.text = commonName;
+                        botanicNameController.text = botanicName;
+
+                        controller.closeView(fullName);
+                      });
+                });
               }),
               Form(
                   key: _formKey,
@@ -268,6 +271,11 @@ class _AddPlantState extends State<AddPlant> {
                           controller: plantController,
                           decoration:
                               const InputDecoration(labelText: 'Plant Name'),
+                        ),
+                        TextFormField(
+                          controller: botanicNameController,
+                          decoration:
+                              const InputDecoration(labelText: 'Botanic Name'),
                         ),
                         TextFormField(
                           controller: quantityController,
@@ -288,45 +296,47 @@ class _AddPlantState extends State<AddPlant> {
                           ),
                         ),
                         Row(
-                          //crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                          Expanded(
-                            child: TextFormField(
-                              controller: gardenLocationNameController,
-                              decoration: const InputDecoration(
-                                labelText: 'Name of Location in Garden',
+                            //crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  controller: gardenLocationNameController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Name of Location in Garden',
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                          Expanded(
-                            child:
-                          SizedBox(
-                            height: 64,
-                            child: DropdownButton<String>(
-                              isExpanded: true,
-                              hint: Text('Previous Garden Locations'),
-                              items: myPlants
-                                  .map((e) =>
-                                      e['garden_location_name'].toString()).toSet()
-                                  .toList()
-                                  .map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                              underline: Container(
-                                height: 1,
-                                color: const Color.fromARGB(255, 66, 64, 64)),
-                              onChanged: (String? value) {
-                                setState(() {
-                                  gardenLocationNameController.text = value!;
-                                });
-                              },
-                            ),
-                          ),
-                          ),
-                        ]),
+                              Expanded(
+                                child: SizedBox(
+                                  height: 64,
+                                  child: DropdownButton<String>(
+                                    isExpanded: true,
+                                    hint: Text('Previous Garden Locations'),
+                                    items: myPlants
+                                        .map((e) => e['garden_location_name']
+                                            .toString())
+                                        .toSet()
+                                        .toList()
+                                        .map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                    underline: Container(
+                                        height: 1,
+                                        color: const Color.fromARGB(
+                                            255, 66, 64, 64)),
+                                    onChanged: (String? value) {
+                                      setState(() {
+                                        gardenLocationNameController.text =
+                                            value!;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ]),
                         FormField<bool>(builder: (state) {
                           return CheckboxListTile(
                               value: isSeed,
@@ -350,7 +360,6 @@ class _AddPlantState extends State<AddPlant> {
               if (imageFile != null) Image.file(File(imageFile!.path)),
               ElevatedButton(
                 onPressed: () {
-                  
                   if (!widget.wishList) {
                     _getCurrentLocation();
                   }

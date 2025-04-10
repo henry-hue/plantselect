@@ -215,8 +215,10 @@ class _MyPlantsState extends State<MyPlants> {
                 ),
                 DataColumn(
                   label: const Expanded(
-                    child: Text('Quantity',
-                        style: TextStyle(fontStyle: FontStyle.italic)),
+                    child: Text(
+                      'Botanic Name',
+                      style: TextStyle(fontStyle: FontStyle.italic),
+                    ),
                   ),
                   onSort: (columnIndex, ascending) {
                     setState(() {
@@ -230,7 +232,7 @@ class _MyPlantsState extends State<MyPlants> {
                 ),
                 DataColumn(
                   label: const Expanded(
-                    child: Text('Living',
+                    child: Text('Quantity',
                         style: TextStyle(fontStyle: FontStyle.italic)),
                   ),
                   onSort: (columnIndex, ascending) {
@@ -262,8 +264,13 @@ class _MyPlantsState extends State<MyPlants> {
                         child: Text(plant['plant_name'].toString()),
                       ),
                     ),
+                    DataCell(
+                      ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 250),
+                        child: Text(plant['botanic_name'].toString()),
+                      ),
+                    ),
                     DataCell(Text(plant['quantity'].toString())),
-                    DataCell(Text(plant['living'] == 'Y' ? 'Yes' : 'No')),
                     DataCell(ElevatedButton.icon(
                       iconAlignment: IconAlignment.end,
                       icon: const Icon(Icons.description),

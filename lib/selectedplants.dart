@@ -108,6 +108,7 @@ class _SelectedPlantsState extends State<SelectedPlants> {
     // }
     plantInfo = [
       'Common Name : ${widget.plant['plant_name']}',
+      'Botanic Name : ${widget.plant['botanic_name']}',
       'Living : ${widget.plant['living'] == 'Y' ? 'Yes' : 'No'}',
       'Quantity : ${widget.plant['quantity']}',
       'Nursery : ${widget.plant['nursery']}',
