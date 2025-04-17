@@ -52,7 +52,7 @@ class _AddPlantState extends State<AddPlant> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController plantController = TextEditingController();
-  TextEditingController botanicNameController = TextEditingController();
+  TextEditingController commonNameController = TextEditingController();
 
   TextEditingController quantityController = TextEditingController();
   TextEditingController nurseryController = TextEditingController();
@@ -79,7 +79,7 @@ class _AddPlantState extends State<AddPlant> {
     var data = {
       'userId': widget.userId,
       'plantName': plantController.text,
-      'botanicName' : botanicNameController.text,
+      'commonName' : commonNameController.text,
       'living': isAlive ? 'Y' : 'N',
       'quantity': quantityController.text,
       'nursery': nurseryController.text,
@@ -236,7 +236,7 @@ class _AddPlantState extends State<AddPlant> {
 
                 List<Plant> filteredPlants = widget.plants
                     .where((plant) =>
-                        plant.botanicName
+                        plant.plantName
                             .toLowerCase()
                             .contains(searchText.toLowerCase()) ||
                         plant.commonName
@@ -245,16 +245,16 @@ class _AddPlantState extends State<AddPlant> {
                     .toList();
                 return List<ListTile>.generate(filteredPlants.length,
                     (int index) {
-                  final String botanicName = filteredPlants[index].botanicName;
+                  final String plantName = filteredPlants[index].plantName;
                   final String commonName = filteredPlants[index].commonName;
 
-                  final String fullName = '$commonName ($botanicName)';
+                  final String fullName = '$commonName ($plantName)';
 
                   return ListTile(
                       title: Text(fullName),
                       onTap: () {
-                        plantController.text = commonName;
-                        botanicNameController.text = botanicName;
+                        commonNameController.text = commonName;
+                        plantController.text = plantName;
 
                         controller.closeView(fullName);
                       });
@@ -270,12 +270,12 @@ class _AddPlantState extends State<AddPlant> {
                         TextFormField(
                           controller: plantController,
                           decoration:
-                              const InputDecoration(labelText: 'Plant Name'),
+                              const InputDecoration(labelText: 'Scientific Plant Name'),
                         ),
                         TextFormField(
-                          controller: botanicNameController,
+                          controller: commonNameController,
                           decoration:
-                              const InputDecoration(labelText: 'Botanic Name'),
+                              const InputDecoration(labelText: 'Common Name'),
                         ),
                         TextFormField(
                           controller: quantityController,

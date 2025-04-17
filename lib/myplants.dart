@@ -175,11 +175,11 @@ class _MyPlantsState extends State<MyPlants> {
               icon: Icon(Icons.home_outlined),
               label: 'My Plants',
             ),
-            NavigationDestination(
-              selectedIcon: Icon(Icons.map),
-              icon: Icon(Icons.map_outlined),
-              label: 'Map',
-            ),
+            // NavigationDestination(
+            //   selectedIcon: Icon(Icons.map),
+            //   icon: Icon(Icons.map_outlined),
+            //   label: 'Map',
+            // ),
             NavigationDestination(
               selectedIcon: Icon(Icons.card_giftcard),
               icon: Icon(Icons.card_giftcard_outlined),

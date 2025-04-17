@@ -1,6 +1,6 @@
 class Plant {
   int plantId;
-  String botanicName;
+  String plantName;
   String commonName;
   //String sun;
   int native;
@@ -12,7 +12,7 @@ class Plant {
 
   Plant({
     required this.plantId,
-    required this.botanicName,
+    required this.plantName,
     required this.commonName,
     required this.native,
     //required this.sun,
@@ -26,7 +26,7 @@ class Plant {
   factory Plant.fromJson(Map<String, dynamic> json) {
     return Plant(
       plantId: json['plant_id'],
-      botanicName: json['botanic_name'],
+      plantName: json['botanic_name'],
       commonName: json['common_name'],
       native: json['na_native'],
       //sun: json['sun'],
