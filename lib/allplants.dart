@@ -78,7 +78,7 @@ class _AddPlantState extends State<AddPlant> {
 
     var data = {
       'userId': widget.userId,
-      'plantName': plantController.text,
+      'botanicName': plantController.text,
       'commonName' : commonNameController.text,
       'living': isAlive ? 'Y' : 'N',
       'quantity': quantityController.text,
@@ -122,8 +122,8 @@ class _AddPlantState extends State<AddPlant> {
     if (file != null) {
       final File image = File(file.path);
 
-      String plantName = plantController.text;
-      File dest = await getFile('''$plantName.png''');
+      String botanicName = plantController.text;
+      File dest = await getFile('''$botanicName.png''');
       copyFile(image, dest);
 
       setState(() {
@@ -236,7 +236,7 @@ class _AddPlantState extends State<AddPlant> {
 
                 List<Plant> filteredPlants = widget.plants
                     .where((plant) =>
-                        plant.plantName
+                        plant.botanicName
                             .toLowerCase()
                             .contains(searchText.toLowerCase()) ||
                         plant.commonName
@@ -245,16 +245,16 @@ class _AddPlantState extends State<AddPlant> {
                     .toList();
                 return List<ListTile>.generate(filteredPlants.length,
                     (int index) {
-                  final String plantName = filteredPlants[index].plantName;
+                  final String botanicName = filteredPlants[index].botanicName;
                   final String commonName = filteredPlants[index].commonName;
 
-                  final String fullName = '$commonName ($plantName)';
+                  final String fullName = '$commonName ($botanicName)';
 
                   return ListTile(
                       title: Text(fullName),
                       onTap: () {
                         commonNameController.text = commonName;
-                        plantController.text = plantName;
+                        plantController.text = botanicName;
 
                         controller.closeView(fullName);
                       });

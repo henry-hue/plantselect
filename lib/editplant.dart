@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'main.dart';
 import 'constants.dart';
@@ -29,7 +28,8 @@ class _EditPlantState extends State<EditPlant> {
 
   void addRow() async {
     var data = {
-      'plant_name': widget.plant['plant_name'],
+      'botanic_name': widget.plant['botanic_name'],
+      'common_name': widget.plant['common_name'],
       'plantId': widget.plant['plant_id'],
       'quantity': widget.plant['quantity'],
       'notes': widget.plant['notes'],
@@ -63,7 +63,7 @@ class _EditPlantState extends State<EditPlant> {
             child: ListView(children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 10.0, left: 20),
-            child: Text('''Edit the ${widget.plant['plant_name']}''',
+            child: Text('''Edit the ${widget.plant['botanic_name']}''',
                 style: Theme.of(context).textTheme.titleLarge!),
           ),
           Form(
@@ -74,12 +74,21 @@ class _EditPlantState extends State<EditPlant> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     TextFormField(
-                      initialValue: widget.plant['plant_name'].toString(),
+                      initialValue: widget.plant['botanic_name'].toString(),
                       decoration: const InputDecoration(
-                        labelText: 'Plant Name',
+                        labelText: 'Botanic Name',
                       ),
                       onChanged: (value) {
-                        widget.plant['plant_name'] = value;
+                        widget.plant['botanic_name'] = value;
+                      },
+                    ),
+                    TextFormField(
+                      initialValue: widget.plant['common_name'].toString(),
+                      decoration: const InputDecoration(
+                        labelText: 'Common Name',
+                      ),
+                      onChanged: (value) {
+                        widget.plant['commmon_name'] = value;
                       },
                     ),
                     TextFormField(

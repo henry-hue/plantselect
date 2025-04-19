@@ -107,7 +107,7 @@ class _SelectedPlantsState extends State<SelectedPlants> {
     //       .split('T')[0];
     // }
     plantInfo = [
-      'Botanic Name : ${widget.plant['plant_name']}',
+      'Botanic Name : ${widget.plant['botanic_name']}',
       'Common Name : ${widget.plant['common_name']}',
       'Living : ${widget.plant['living'] == 'Y' ? 'Yes' : 'No'}',
       'Quantity : ${widget.plant['quantity']}',
@@ -124,7 +124,7 @@ class _SelectedPlantsState extends State<SelectedPlants> {
       'Maintenance : ${widget.plant['commercial_maintenance']}',
     ];
 
-    String plantName = widget.plant['plant_name'];
+    String plantName = widget.plant['botanic_name'];
     String name = '''$plantName.png''';
 
     var attributeCount = plantInfo.length;
@@ -151,7 +151,7 @@ class _SelectedPlantsState extends State<SelectedPlants> {
                     Expanded(
                       child: ListTile(
                           title: Text(
-                            '${widget.plant['plant_name']}',
+                            '${widget.plant['botanic_name']}',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 23,

@@ -199,7 +199,7 @@ class _MyPlantsState extends State<MyPlants> {
                 DataColumn(
                   label: const Expanded(
                     child: Text(
-                      'Plant Name',
+                      'Common Name',
                       style: TextStyle(fontStyle: FontStyle.italic),
                     ),
                   ),
@@ -261,7 +261,7 @@ class _MyPlantsState extends State<MyPlants> {
                     DataCell(
                       ConstrainedBox(
                         constraints: BoxConstraints(maxWidth: 250),
-                        child: Text(plant['plant_name'].toString()),
+                        child: Text(plant['common_name'].toString()),
                       ),
                     ),
                     DataCell(
