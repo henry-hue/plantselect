@@ -7,6 +7,7 @@ import 'allplants.dart';
 import 'main.dart';
 import 'constants.dart';
 import 'selectedplants.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class MyPlants extends StatefulWidget {
   MyPlants(
@@ -41,17 +42,13 @@ class _MyPlantsState extends State<MyPlants> {
   }
 
   onSortColumn(int columnIndex, bool ascending) {
-    print('in sort');
-    print(myPlants);
-    const columns = ['plant_name', 'quantity', 'nursery', 'planted_as'];
+    const columns = ['common_name', 'botanic_name'];
     var columnName = columns[columnIndex];
     if (ascending) {
       myPlants.sort((a, b) => a[columnName].compareTo(b[columnName]));
     } else {
       myPlants.sort((a, b) => b[columnName].compareTo(a[columnName]));
     }
-    print('after sort');
-    print(myPlants);
   }
 
   Future<void> sheetsPlants() async {
@@ -232,21 +229,6 @@ class _MyPlantsState extends State<MyPlants> {
                 ),
                 DataColumn(
                   label: const Expanded(
-                    child: Text('Quantity',
-                        style: TextStyle(fontStyle: FontStyle.italic)),
-                  ),
-                  onSort: (columnIndex, ascending) {
-                    setState(() {
-                      widget.sort = columnIndex == widget.columnIndex
-                          ? !widget.sort
-                          : true;
-                      widget.columnIndex = columnIndex;
-                    });
-                    onSortColumn(columnIndex, ascending);
-                  },
-                ),
-                DataColumn(
-                  label: const Expanded(
                     child: Text('More Info',
                         style: TextStyle(fontStyle: FontStyle.italic)),
                   ),
@@ -261,7 +243,7 @@ class _MyPlantsState extends State<MyPlants> {
                     DataCell(
                       ConstrainedBox(
                         constraints: BoxConstraints(maxWidth: 250),
-                        child: Text(plant['common_name'].toString()),
+                        child: Html(data:plant['common_name'].toString()),
                       ),
                     ),
                     DataCell(
@@ -270,7 +252,6 @@ class _MyPlantsState extends State<MyPlants> {
                         child: Text(plant['botanic_name'].toString()),
                       ),
                     ),
-                    DataCell(Text(plant['quantity'].toString())),
                     DataCell(ElevatedButton.icon(
                       iconAlignment: IconAlignment.end,
                       icon: const Icon(Icons.description),
