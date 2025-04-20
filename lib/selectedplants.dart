@@ -118,8 +118,8 @@ class _SelectedPlantsState extends State<SelectedPlants> {
       'Name of Location in Garden : ${widget.plant['garden_location_name']}',
       'Planted As : ${widget.plant['planted_as']}',
       'Plant Type : ${widget.plant['plant_type']}',
-      'Sun : ${widget.plant['sun']}',
-      'Wet : ${widget.plant['wet']}',
+      'Sun : ${widget.plant['sun'] == 1 ? "Full Sun": "Partial Sun"}',
+      'Wet : ${widget.plant['wet'] == 1 ? "Moist": "Semi Arid"}',   
       'Flowering Season : ${widget.plant['flower_season']}',
       'Maintenance : ${widget.plant['commercial_maintenance']}',
     ];
@@ -142,6 +142,7 @@ class _SelectedPlantsState extends State<SelectedPlants> {
                 File file = File(snapshot.data!);
                 if (file.existsSync()) {
                   picture = Image.file(file);
+                  attributeCount += 1;
                 }
               }
 
@@ -178,6 +179,10 @@ class _SelectedPlantsState extends State<SelectedPlants> {
                     child: ListView.builder(
                         itemCount: attributeCount,
                         itemBuilder: (BuildContext context, int index) {
+                          if (index == plantInfo.length) {
+                            return ListTile(
+                            title: picture);
+                          }
                           return ListTile(
                             title: Text(plantInfo[index]),
                           );
