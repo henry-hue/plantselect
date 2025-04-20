@@ -75,7 +75,7 @@ class _MyPlantsState extends State<MyPlants> {
                   picPath: widget.picPath,
                   username: widget.username,
                   userId: widget.userId,
-                  wishList: (currentPageIndex == 2),
+                  wishList: (currentPageIndex == 1),
                 ))).then((value) {
       setState(() {
         sheetsPlants();
@@ -236,7 +236,7 @@ class _MyPlantsState extends State<MyPlants> {
               ],
               rows: myPlants
                   .where((plant) =>
-                      plant['wishlist'] == (currentPageIndex == 2 ? 'Y' : 'N'))
+                      plant['wishlist'] == (currentPageIndex == 1 ? 'Y' : 'N'))
                   .map((plant) {
                 return DataRow(
                   cells: <DataCell>[
