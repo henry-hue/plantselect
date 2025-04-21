@@ -249,7 +249,7 @@ class _MyPlantsState extends State<MyPlants> {
                     DataCell(
                       ConstrainedBox(
                         constraints: BoxConstraints(maxWidth: 250),
-                        child: Text(plant['botanic_name'].toString()),
+                        child: Html(data:plant['botanic_name'].toString()),
                       ),
                     ),
                     DataCell(ElevatedButton.icon(

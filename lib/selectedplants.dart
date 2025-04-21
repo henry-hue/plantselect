@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'editplant.dart';
 import 'main.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:http/http.dart' as http;
 import 'constants.dart';
 
@@ -184,7 +185,7 @@ class _SelectedPlantsState extends State<SelectedPlants> {
                             title: picture);
                           }
                           return ListTile(
-                            title: Text(plantInfo[index]),
+                            title: Html(data:plantInfo[index]),
                           );
                         }))
               ]);
