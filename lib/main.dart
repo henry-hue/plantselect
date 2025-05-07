@@ -156,6 +156,30 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void deleteAccount() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('username');
+
+var data = {
+      'userId': prefs.get('username'),
+     
+    };
+
+    var response = await http.post(
+      Uri.parse('${Constants.apiUrl}/api/plants/delete-user'),
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}',
+        'content-type': 'application/json',
+      },
+      body: jsonEncode(data),
+    );
+
+    setState(() {
+      username = null;
+      userId = null;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +199,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return EnterUsername(setUsername: setUsername);
     } else {
       return MaterialApp(
-        home: MyPlants(plants: plants, picPath: picPath, username: username!, userId: userId!, logout: logout),
+        home: MyPlants(plants: plants, picPath: picPath, username: username!, userId: userId!, logout: logout, deleteAccount: deleteAccount),
       );
     }
   }

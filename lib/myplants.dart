@@ -15,12 +15,14 @@ class MyPlants extends StatefulWidget {
       required this.picPath,
       required this.username,
       required this.userId,
-      required this.logout});
+      required this.logout,
+      required this.deleteAccount});
   final List<Plant> plants;
   final Directory? picPath;
   final String username;
   final Function logout;
   final int userId;
+  final Function deleteAccount;
   bool sort = true;
   int columnIndex = 0;
 
@@ -53,6 +55,8 @@ class _MyPlantsState extends State<MyPlants> {
     print('after sort');
     print(myPlants);
   }
+
+  
 
   Future<void> sheetsPlants() async {
     var response = await http.get(
@@ -151,6 +155,13 @@ class _MyPlantsState extends State<MyPlants> {
               onTap: () {
                 Navigator.pop(context);
                 widget.logout();
+              },
+            ),
+            ListTile(
+              title: Text('Delete Account'),
+              onTap: () {
+                Navigator.pop(context);
+                widget.deleteAccount();
               },
             ),
           ],

@@ -50,6 +50,7 @@ class _EnterUsername extends State<EnterUsername> {
               title: Image.asset('assets/images/logo.png'),
             ),
             body: Center(
+                heightFactor: 10,
                 child: Padding(
                     padding: const EdgeInsets.all(24),
                     child: ListView(children: <Widget>[
@@ -65,9 +66,12 @@ class _EnterUsername extends State<EnterUsername> {
                           decoration: const InputDecoration(
                               labelText: 'Enter your password:')),
                       if (errorMessage != null)
-                        Column(children: [
-                          SizedBox(width: 10),
-                          Expanded(
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                          SizedBox(width: 10, height: 10,),
+                          Flexible(
+                            fit: FlexFit.loose,
                             child: Text(
                               errorMessage!,
                               style: TextStyle(color: Colors.red),

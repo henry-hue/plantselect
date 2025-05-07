@@ -21,8 +21,7 @@ class EditPlant extends StatefulWidget {
 
 class _EditPlantState extends State<EditPlant> {
   final _formKey = GlobalKey<FormState>();
-  // TextField Controllers
-  TextEditingController plantController = TextEditingController();
+ 
 
   bool isDead = false;
 
@@ -30,10 +29,10 @@ class _EditPlantState extends State<EditPlant> {
     var data = {
       'botanic_name': widget.plant['botanic_name'],
       'common_name': widget.plant['common_name'],
-      'plantId': widget.plant['plant_id'],
       'quantity': widget.plant['quantity'],
       'notes': widget.plant['notes'],
       'living': isDead ? 'N' : 'Y',
+      'plantId': widget.plant['plant_id'],
     };
 
     var response = await http.post(

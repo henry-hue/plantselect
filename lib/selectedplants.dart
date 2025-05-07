@@ -107,21 +107,21 @@ class _SelectedPlantsState extends State<SelectedPlants> {
     //       .split('T')[0];
     // }
     plantInfo = [
-      'Botanic Name : ${widget.plant['botanic_name']}',
-      'Common Name : ${widget.plant['common_name']}',
-      'Living : ${widget.plant['living'] == 'Y' ? 'Yes' : 'No'}',
-      'Quantity : ${widget.plant['quantity']}',
-      'Nursery : ${widget.plant['nursery']}',
-      'Origin : ${widget.plant['planted_as']}',
-      'Notes : ${widget.plant['notes']}',
-      'North American Natve : ${widget.plant['north_american_native']}',
-      'Name of Location in Garden : ${widget.plant['garden_location_name']}',
-      'Planted As : ${widget.plant['planted_as']}',
-      'Plant Type : ${widget.plant['plant_type']}',
-      'Sun : ${widget.plant['sun']}',
-      'Wet : ${widget.plant['wet']}',
-      'Flowering Season : ${widget.plant['flower_season']}',
-      'Maintenance : ${widget.plant['commercial_maintenance']}',
+      'Botanic Name: ${widget.plant['botanic_name']}',
+      'Common Name: ${widget.plant['common_name']}',
+      'Living: ${widget.plant['living'] == 'Y' ? 'Yes' : 'No'}',
+      'Quantity: ${widget.plant['quantity']}', 
+      'Notes: ${widget.plant['notes']}',
+      'Name of Location in Garden: ${widget.plant['garden_location_name']}',
+      'Planted As: ${widget.plant['planted_as']}',
+      'Plant Type: ${widget.plant['plant_type']}',
+      'Sun: ${widget.plant['sun']}',
+      'Wet: ${widget.plant['wet']}',
+      'Flowering Season: ${widget.plant['flower_season']}',
+      'Maintenance: ${widget.plant['commercial_maintenance']}',
+      'North American Native: ${widget.plant['north_american_native']}',
+      'Nursery: ${widget.plant['nursery']}',
+      
     ];
 
     String plantName = widget.plant['botanic_name'];
