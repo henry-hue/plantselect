@@ -10,6 +10,7 @@ import 'dart:io';
 import 'main.dart';
 import 'package:geolocator/geolocator.dart';
 import 'constants.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 Future<String> get _photoLibrary async {
   final base = await getApplicationDocumentsDirectory();
@@ -251,7 +252,7 @@ class _AddPlantState extends State<AddPlant> {
                   final String fullName = '$commonName ($botanicName)';
 
                   return ListTile(
-                      title: Text(fullName),
+                      title: Html(data:fullName),
                       onTap: () {
                         commonNameController.text = commonName;
                         plantController.text = botanicName;

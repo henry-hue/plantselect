@@ -34,7 +34,6 @@ class _EditPlantState extends State<EditPlant> {
       'living': isDead ? 'N' : 'Y',
       'plantId': widget.plant['plant_id'],
     };
-
     var response = await http.post(
       Uri.parse('${Constants.apiUrl}/api/plants/update-user-plant'),
       headers: {
@@ -87,7 +86,7 @@ class _EditPlantState extends State<EditPlant> {
                         labelText: 'Common Name',
                       ),
                       onChanged: (value) {
-                        widget.plant['commmon_name'] = value;
+                        widget.plant['common_name'] = value;
                       },
                     ),
                     TextFormField(
