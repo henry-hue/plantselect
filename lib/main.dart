@@ -158,14 +158,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void deleteAccount() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('username');
 
 var data = {
-      'userId': prefs.get('username'),
+      'username': prefs.get('username'),
      
     };
 
-    var response = await http.post(
+        //await prefs.remove('username');
+
+
+    var response = 
+    print('api call run');
+    await http.post(
       Uri.parse('${Constants.apiUrl}/api/plants/delete-user'),
       headers: {
         HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}',
@@ -173,7 +177,7 @@ var data = {
       },
       body: jsonEncode(data),
     );
-
+ 
     setState(() {
       username = null;
       userId = null;
