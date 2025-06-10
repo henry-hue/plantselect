@@ -69,7 +69,9 @@ class _SelectedPlantsState extends State<SelectedPlants> {
                 plant: plant,
                 username: widget.username,
                 userId: widget.userId))).then((value) {
-      setState(() {sheetsPlants();});
+      setState(() {
+        sheetsPlants();
+      });
     });
   }
 
@@ -111,18 +113,17 @@ class _SelectedPlantsState extends State<SelectedPlants> {
       'Botanic Name: ${widget.plant['botanic_name']}',
       'Common Name: ${widget.plant['common_name']}',
       'Living: ${widget.plant['living'] == 'Y' ? 'Yes' : 'No'}',
-      'Quantity: ${widget.plant['quantity']}', 
+      'Quantity: ${widget.plant['quantity']}',
       'Notes: ${widget.plant['notes']}',
       'Name of Location in Garden: ${widget.plant['garden_location_name']}',
       'Planted As: ${widget.plant['planted_as']}',
       'Plant Type: ${widget.plant['plant_type']}',
-      'Sun: ${widget.plant['sun'] == 1 ? "Full Sun": "Partial Sun"}',
-      'Wet: ${widget.plant['wet'] == 1 ? "Moist": "Semi Arid"}',   
+      'Sun: ${widget.plant['sun'] == 1 ? "Full Sun" : "Partial Sun"}',
+      'Wet: ${widget.plant['wet'] == 1 ? "Moist" : "Semi Arid"}',
       'Flowering Season: ${widget.plant['flower_season']}',
       'Maintenance: ${widget.plant['commercial_maintenance']}',
-      'North American Native: ${widget.plant['north_american_native']}',
+      'North American Native: ${widget.plant['na_native'] == 1 ? 'Yes' : 'No'}',
       'Nursery: ${widget.plant['nursery']}',
-      
     ];
 
     String plantName = widget.plant['botanic_name'];
@@ -147,19 +148,39 @@ class _SelectedPlantsState extends State<SelectedPlants> {
                 }
               }
 
-              return Column(children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: ListTile(
-                          title: Text(
-                            '${widget.plant['botanic_name']}',
+              return Column(
+                //crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+
+
+
+
+
+
+
+                ListTile(
+                  //titleAlignment: ListTileTitleAlignment.center,
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Expanded(
+                          child: Text('''
+                               ${widget.plant['botanic_name']}
+                               ${widget.plant['common_name']}''',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 23,
                             ),
+                            textAlign: TextAlign.center,
+                            
                           ),
-                          subtitle: Row(children: <Widget>[
+                              ),
+                            ],
+                          ),
+                          subtitle: 
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
                             ElevatedButton(
                               onPressed: () {
                                 _submitForm();
@@ -170,22 +191,27 @@ class _SelectedPlantsState extends State<SelectedPlants> {
                               onPressed: () {
                                 gotoEditPlant(widget.plant);
                               },
-                              child: Text('Edit'),
+                              child: Text('Edit',
+                              ),
                             ),
-                          ])),
-                    ),
-                  ],
+                          ]),
+                          
                 ),
+
+
+
+
+
+
                 Expanded(
                     child: ListView.builder(
                         itemCount: attributeCount,
                         itemBuilder: (BuildContext context, int index) {
                           if (index == plantInfo.length) {
-                            return ListTile(
-                            title: picture);
+                            return ListTile(title: picture);
                           }
                           return ListTile(
-                            title: Html(data:plantInfo[index]),
+                            title: Html(data: plantInfo[index]),
                           );
                         }))
               ]);

@@ -21,7 +21,6 @@ class EditPlant extends StatefulWidget {
 
 class _EditPlantState extends State<EditPlant> {
   final _formKey = GlobalKey<FormState>();
- 
 
   bool isDead = false;
 
@@ -32,6 +31,7 @@ class _EditPlantState extends State<EditPlant> {
       'quantity': widget.plant['quantity'],
       'notes': widget.plant['notes'],
       'living': isDead ? 'N' : 'Y',
+      'type': widget.plant['plant_type'],
       'plantId': widget.plant['plant_id'],
     };
     var response = await http.post(
@@ -57,13 +57,25 @@ class _EditPlantState extends State<EditPlant> {
           backgroundColor: primaryColor,
           title: Image.asset('assets/images/logo.png'),
         ),
-        body: Center(
+        body: Align(
             child: ListView(children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 10.0, left: 20),
-            child: Text('''Edit the ${widget.plant['botanic_name']}''',
-                style: Theme.of(context).textTheme.titleLarge!),
-          ),
+
+
+
+
+          Text('''
+            Editing:
+            ${widget.plant['botanic_name']}
+            ${widget.plant['common_name']}''', style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 23,
+                            ), 
+            textAlign: TextAlign.center,
+            ),
+
+
+
+
           Form(
               key: _formKey,
               child: Padding(
@@ -120,6 +132,15 @@ class _EditPlantState extends State<EditPlant> {
                             });
                           });
                     }),
+                    TextFormField(
+                      initialValue: widget.plant['plant_type'],
+                      decoration: const InputDecoration(
+                        labelText: 'Type',
+                      ),
+                      onChanged: (value) {
+                        widget.plant['plant_type'] = value;
+                      },
+                    ),
                   ],
                 ),
               )),

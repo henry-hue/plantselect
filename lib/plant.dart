@@ -4,6 +4,7 @@ class Plant {
   String commonName;
   //String sun;
   int native;
+  String? plantType;
   // String soil;
   // String water;
   // String type;
@@ -15,6 +16,7 @@ class Plant {
     required this.botanicName,
     required this.commonName,
     required this.native,
+    required this.plantType,
     //required this.sun,
     // required this.soil,
     // required this.water,
@@ -29,6 +31,7 @@ class Plant {
       botanicName: json['botanic_name'],
       commonName: json['common_name'],
       native: json['na_native'],
+      plantType : json['type'],
       //sun: json['sun'],
       // soil: json['soil'],
       // water: json['wet'],

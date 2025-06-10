@@ -60,6 +60,9 @@ class _AddPlantState extends State<AddPlant> {
   TextEditingController notesController = TextEditingController();
   TextEditingController gardenLocationNameController = TextEditingController();
 
+    TextEditingController plantTypeController = TextEditingController();
+
+
   List<Map<String, dynamic>> myPlants = [];
 
   bool isSeed = false;
@@ -94,7 +97,7 @@ class _AddPlantState extends State<AddPlant> {
       'Sun': sun,
       'Soil': soil,
       'Water': water,
-      'Plant Type': type,
+      'Plant Type': plantTypeController.text,
       'Flowering Season': flowering,
       'Annual Maintenance': maintenance,
     };
@@ -249,6 +252,9 @@ class _AddPlantState extends State<AddPlant> {
                   final String botanicName = filteredPlants[index].botanicName;
                   final String commonName = filteredPlants[index].commonName;
 
+                                    final String? plantType = filteredPlants[index].plantType;
+
+
                   final String fullName = '$commonName ($botanicName)';
 
                   return ListTile(
@@ -256,6 +262,9 @@ class _AddPlantState extends State<AddPlant> {
                       onTap: () {
                         commonNameController.text = commonName;
                         plantController.text = botanicName;
+
+
+plantTypeController.text = plantType ?? "Unknown";
 
                         controller.closeView(fullName);
                       });
@@ -350,6 +359,13 @@ class _AddPlantState extends State<AddPlant> {
                                 });
                               });
                         }),
+                        Text('Autofilled Fields for Plant Select Plants'),
+                        TextFormField(
+                          controller: plantTypeController,
+                          decoration: const InputDecoration(
+                            labelText: 'Plant Type',
+                          ),
+                        ),
                       ],
                     ),
                   )),
