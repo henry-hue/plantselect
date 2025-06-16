@@ -143,54 +143,7 @@ class _AddPlantState extends State<AddPlant> {
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
     sheetsPlants();
-  }
-
-  // Function to get the current location
-  Future<void> _getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // Check if location services are enabled
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      setState(() {
-        _location = 'Location services are disabled.';
-      });
-      return;
-    }
-
-    // Check for permissions
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        setState(() {
-          _location = 'Location permissions are denied.';
-        });
-        return;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      setState(() {
-        _location = 'Location permissions are permanently denied.';
-      });
-      return;
-    }
-
-    // Get the current position
-    Position position = await Geolocator.getCurrentPosition();
-
-    if (mounted) {
-      setState(() {
-        _location =
-            'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
-        latitude = '${position.latitude}';
-        longitude = '${position.longitude}';
-      });
-    }
   }
 
   Future<void> sheetsPlants() async {
@@ -251,11 +204,15 @@ class _AddPlantState extends State<AddPlant> {
                     (int index) {
                   final String botanicName = filteredPlants[index].botanicName;
                   final String commonName = filteredPlants[index].commonName;
-                  final String naNative = filteredPlants[index].naNative == 1 ? 'Yes' : 'No';
+                  final String naNative =
+                      filteredPlants[index].naNative == 1 ? 'Yes' : 'No';
                   final String? plantType = filteredPlants[index].plantType;
                   final String? flowering = filteredPlants[index].flowering;
-                  final String? sun = filteredPlants[index].sun == 1 ? 'Full Sun' : 'Partial Sun';
-                  final String? water = filteredPlants[index].water == 1 ? 'Wet' : 'Damp';
+                  final String? sun = filteredPlants[index].sun == 1
+                      ? 'Full Sun'
+                      : 'Partial Sun';
+                  final String? water =
+                      filteredPlants[index].water == 1 ? 'Wet' : 'Damp';
                   final String? maintenance = filteredPlants[index].maintenance;
 
                   final String fullName = '$commonName ($botanicName)';
@@ -314,47 +271,44 @@ class _AddPlantState extends State<AddPlant> {
                           ),
                         ),
                         TextFormField(
-                                  controller: gardenLocationNameController,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Name of Location in Garden',
-                                  ),
-                                ),
-                              
-                              Flexible(
-                                fit: FlexFit.loose,
-                                child: SizedBox(
-                                  height: 64,
-                                  child: DropdownButton<String>(
-                                    isExpanded: true,
-                                    hint: Text('Previously Created Garden Locations',
-                                        style: Theme.of(context).inputDecorationTheme.hintStyle
-    ?? Theme.of(context).textTheme.titleMedium),
-
-                                    items: myPlants
-                                        .map((e) => e['garden_location_name']
-                                            .toString())
-                                        .toSet()
-                                        .toList()
-                                        .map((String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    }).toList(),
-                                    underline: Container(
-                                        height: 1,
-                                        color: const Color.fromARGB(
-                                            255, 66, 64, 64)),
-                                    onChanged: (String? value) {
-                                      setState(() {
-                                        gardenLocationNameController.text =
-                                            value!;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ),
-                           
+                          controller: gardenLocationNameController,
+                          decoration: const InputDecoration(
+                            labelText: 'Name of Location in Garden',
+                          ),
+                        ),
+                        Flexible(
+                          fit: FlexFit.loose,
+                          child: SizedBox(
+                            height: 64,
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              hint: Text('Previously Created Garden Locations',
+                                  style: Theme.of(context)
+                                          .inputDecorationTheme
+                                          .hintStyle ??
+                                      Theme.of(context).textTheme.titleMedium),
+                              items: myPlants
+                                  .map((e) =>
+                                      e['garden_location_name'].toString())
+                                  .toSet()
+                                  .toList()
+                                  .map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              underline: Container(
+                                  height: 1,
+                                  color: const Color.fromARGB(255, 66, 64, 64)),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  gardenLocationNameController.text = value!;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
                         FormField<bool>(builder: (state) {
                           return CheckboxListTile(
                               value: isSeed,
@@ -392,7 +346,6 @@ class _AddPlantState extends State<AddPlant> {
                             labelText: 'Sun',
                           ),
                         ),
-                        
                         TextFormField(
                           controller: waterController,
                           decoration: const InputDecoration(
@@ -422,16 +375,7 @@ class _AddPlantState extends State<AddPlant> {
               if (imageFile != null) Image.file(File(imageFile!.path)),
               ElevatedButton(
                 onPressed: () {
-                  if (!widget.wishList) {
-                    _getCurrentLocation();
-                  }
                   _submitForm();
-                  //TODO: Is AddRow necessary after submitForm()
-                  // addRow().then((result) {
-                  //     if (context.mounted) {
-                  //       Navigator.of(context).pop();
-                  //     }
-                  //   });
                 },
                 child: const Text('Submit Plant'),
               )
