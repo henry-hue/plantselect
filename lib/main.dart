@@ -136,16 +136,31 @@ class _MyHomePageState extends State<MyHomePage> {
       Uri.parse('${Constants.apiUrl}/api/plants/list'),
       headers: {HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}'},
     );  
-    
+
+
     List<dynamic> data = jsonDecode(resp.body);
+          //print(resp.body);
+
+//chat gpt says above line is wrong causing this error
+//DartError: TypeError: Instance of '_JsonMap': type '_JsonMap' is not a subtype of type 'List<dynamic>'
+
+//fix????
+//     final Map<String, dynamic> json = jsonDecode(resp.body);
+// final List<dynamic> data = json['plants'];
+
+//result: diff error
+//DartError: TypeError: null: type 'Null' is not a subtype of type 'List<dynamic>'
 
     setState(() {
        for (var plantData in data) {
          plants.add(Plant.fromJson(plantData));
+         
          //plantByBotanicName[plantData['botanic_name']] = plantData;
        }
     });
   }
+
+
 
   void logout() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

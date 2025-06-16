@@ -33,6 +33,13 @@ class _EditPlantState extends State<EditPlant> {
       'living': isDead ? 'N' : 'Y',
       'type': widget.plant['plant_type'],
       'plantId': widget.plant['plant_id'],
+      'planted_as': widget.plant['planted_as'],
+      'sun': widget.plant['sun'],
+      'wet': widget.plant['wet'],
+      'blooms': widget.plant['blooms'],
+      'maintenance_schedule': widget.plant['maintenance_schedule'],
+      'north_american_native': widget.plant['naNative'],
+      'nursery': widget.plant['nursery'],
     };
     var response = await http.post(
       Uri.parse('${Constants.apiUrl}/api/plants/update-user-plant'),
@@ -59,23 +66,17 @@ class _EditPlantState extends State<EditPlant> {
         ),
         body: Align(
             child: ListView(children: <Widget>[
-
-
-
-
-          Text('''
+          Text(
+            '''
             Editing:
             ${widget.plant['botanic_name']}
-            ${widget.plant['common_name']}''', style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 23,
-                            ), 
-            textAlign: TextAlign.center,
+            ${widget.plant['common_name']}''',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 17,
             ),
-
-
-
-
+            textAlign: TextAlign.center,
+          ),
           Form(
               key: _formKey,
               child: Padding(
@@ -139,6 +140,63 @@ class _EditPlantState extends State<EditPlant> {
                       ),
                       onChanged: (value) {
                         widget.plant['plant_type'] = value;
+                      },
+                    ),
+                    TextFormField(
+                      initialValue: widget.plant['planted_as'],
+                      decoration: const InputDecoration(
+                        labelText: 'Planted As',
+                      ),
+                      onChanged: (value) {
+                        widget.plant['plant_as'] = value;
+                      },
+                    ),TextFormField(
+                      initialValue: widget.plant['sun'].toString(),
+                      decoration: const InputDecoration(
+                        labelText: 'Sun',
+                      ),
+                      onChanged: (value) {
+                        widget.plant['sun'] = value;
+                      },
+                    ),TextFormField(
+                      initialValue: widget.plant['wet'].toString(),
+                      decoration: const InputDecoration(
+                        labelText: 'Wet',
+                      ),
+                      onChanged: (value) {
+                        widget.plant['wet'] = value;
+                      },
+                    ),TextFormField(
+                      initialValue: widget.plant['blooms'],
+                      decoration: const InputDecoration(
+                        labelText: 'Blooms',
+                      ),
+                      onChanged: (value) {
+                        widget.plant['blooms'] = value;
+                      },
+                    ),TextFormField(
+                      initialValue: widget.plant['maintenance_schedule'],
+                      decoration: const InputDecoration(
+                        labelText: 'Maintenance',
+                      ),
+                      onChanged: (value) {
+                        widget.plant['maintenance_schedule'] = value;
+                      },
+                    ),TextFormField(
+                      initialValue: widget.plant['north_american_native'].toString(),
+                      decoration: const InputDecoration(
+                        labelText: 'North American Native',
+                      ),
+                      onChanged: (value) {
+                        widget.plant['north_american_native'] = value;
+                      },
+                    ),TextFormField(
+                      initialValue: widget.plant['nursery'],
+                      decoration: const InputDecoration(
+                        labelText: 'Nursery',
+                      ),
+                      onChanged: (value) {
+                        widget.plant['nursery'] = value;
                       },
                     ),
                   ],

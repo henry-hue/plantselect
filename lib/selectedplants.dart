@@ -96,19 +96,8 @@ class _SelectedPlantsState extends State<SelectedPlants> {
 
   @override
   Widget build(BuildContext context) {
-    // gsheets returns date fields as a fractional number of days since 1/1/1900. Unix Epoch is 1/1/1970
-    // See https://stackoverflow.com/questions/66582839/flutter-get-form-google-sheet-but-date-time-can-not-convert/70747943
+//print(widget.plant);
 
-    //THE FOLLOWING CODE CHUNK NEEDS DATE IN PLANTINFO
-    // var date = "";
-    // if (widget.plant.length > 10) {
-    //   date = DateTime.fromMillisecondsSinceEpoch(
-    //           ((double.parse('${widget.plant[10]}') - 25569) * 86400000)
-    //               .toInt(),
-    //           isUtc: true)
-    //       .toIso8601String()
-    //       .split('T')[0];
-    // }
     plantInfo = [
       'Botanic Name: ${widget.plant['botanic_name']}',
       'Common Name: ${widget.plant['common_name']}',
@@ -117,12 +106,12 @@ class _SelectedPlantsState extends State<SelectedPlants> {
       'Notes: ${widget.plant['notes']}',
       'Name of Location in Garden: ${widget.plant['garden_location_name']}',
       'Planted As: ${widget.plant['planted_as']}',
-      'Plant Type: ${widget.plant['plant_type']}',
+      'Plant Type: ${widget.plant['type']}',
       'Sun: ${widget.plant['sun'] == 1 ? "Full Sun" : "Partial Sun"}',
       'Wet: ${widget.plant['wet'] == 1 ? "Moist" : "Semi Arid"}',
-      'Flowering Season: ${widget.plant['flower_season']}',
-      'Maintenance: ${widget.plant['commercial_maintenance']}',
-      'North American Native: ${widget.plant['na_native'] == 1 ? 'Yes' : 'No'}',
+      'Blooms: ${widget.plant['blooms']}',
+      'Maintenance: ${widget.plant['maintenance_schedule']}',
+      'North American Native: ${widget.plant['naNative'] == 1 ? 'Yes' : 'No'}',
       'Nursery: ${widget.plant['nursery']}',
     ];
 
@@ -149,72 +138,62 @@ class _SelectedPlantsState extends State<SelectedPlants> {
               }
 
               return Column(
-                //crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-
-
-
-
-
-
-
-                ListTile(
-                  //titleAlignment: ListTileTitleAlignment.center,
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Expanded(
-                          child: Text('''
+                  //crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    ListTile(
+                      //titleAlignment: ListTileTitleAlignment.center,
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(
+                            child: Text(
+                              '''
                                ${widget.plant['botanic_name']}
                                ${widget.plant['common_name']}''',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 23,
-                            ),
-                            textAlign: TextAlign.center,
-                            
-                          ),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17,
                               ),
-                            ],
+                              textAlign: TextAlign.center,
+                            ),
                           ),
-                          subtitle: 
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
+                        ],
+                      ),
+                      subtitle: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
                             ElevatedButton(
                               onPressed: () {
                                 _submitForm();
                               },
-                              child: Text('Delete'),
+                              child: Text(
+                                'Delete',
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                             ElevatedButton(
                               onPressed: () {
                                 gotoEditPlant(widget.plant);
                               },
-                              child: Text('Edit',
+                              child: Text(
+                                'Edit',
+                                textAlign: TextAlign.center,
                               ),
                             ),
                           ]),
-                          
-                ),
-
-
-
-
-
-
-                Expanded(
-                    child: ListView.builder(
-                        itemCount: attributeCount,
-                        itemBuilder: (BuildContext context, int index) {
-                          if (index == plantInfo.length) {
-                            return ListTile(title: picture);
-                          }
-                          return ListTile(
-                            title: Html(data: plantInfo[index]),
-                          );
-                        }))
-              ]);
+                    ),
+                    Expanded(
+                        child: ListView.builder(
+                            itemCount: attributeCount,
+                            itemBuilder: (BuildContext context, int index) {
+                              if (index == plantInfo.length) {
+                                return ListTile(title: picture);
+                              }
+                              return ListTile(
+                                title: Html(data: plantInfo[index]),
+                              );
+                            }))
+                  ]);
             }));
   }
 }

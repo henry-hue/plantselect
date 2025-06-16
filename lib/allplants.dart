@@ -54,22 +54,23 @@ class _AddPlantState extends State<AddPlant> {
 
   TextEditingController plantController = TextEditingController();
   TextEditingController commonNameController = TextEditingController();
-
+  TextEditingController naNativeController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
   TextEditingController nurseryController = TextEditingController();
   TextEditingController notesController = TextEditingController();
   TextEditingController gardenLocationNameController = TextEditingController();
-
-    TextEditingController plantTypeController = TextEditingController();
-
+  TextEditingController plantTypeController = TextEditingController();
+  TextEditingController sunController = TextEditingController();
+  TextEditingController waterController = TextEditingController();
+  TextEditingController floweringController = TextEditingController();
+  TextEditingController maintenanceController = TextEditingController();
 
   List<Map<String, dynamic>> myPlants = [];
 
   bool isSeed = false;
   bool isAlive = true;
-  String northAmericanNative = 'Unknown';
+  String naNative = 'Unknown';
   String sun = 'Unknown';
-  String soil = 'Unknown';
   String water = 'Unknown';
   String type = 'Unknown';
   String flowering = 'Unknown';
@@ -83,7 +84,7 @@ class _AddPlantState extends State<AddPlant> {
     var data = {
       'userId': widget.userId,
       'botanicName': plantController.text,
-      'commonName' : commonNameController.text,
+      'commonName': commonNameController.text,
       'living': isAlive ? 'Y' : 'N',
       'quantity': quantityController.text,
       'nursery': nurseryController.text,
@@ -92,14 +93,13 @@ class _AddPlantState extends State<AddPlant> {
       'longitude': longitude,
       'notes': notesController.text,
       'garden_location_name': gardenLocationNameController.text,
-      'northAmericanNative': northAmericanNative,
+      'north_american_native': naNativeController.text,
       'wishlist': widget.wishList ? 'Y' : 'N',
-      'Sun': sun,
-      'Soil': soil,
-      'Water': water,
-      'Plant Type': plantTypeController.text,
-      'Flowering Season': flowering,
-      'Annual Maintenance': maintenance,
+      'sun': sunController.text,
+      'type': plantTypeController.text,
+      'wet': waterController.text,
+      'blooms': floweringController.text,
+      'maintenance_schedule': maintenanceController.text,
     };
 
     var response = await http.post(
@@ -251,20 +251,27 @@ class _AddPlantState extends State<AddPlant> {
                     (int index) {
                   final String botanicName = filteredPlants[index].botanicName;
                   final String commonName = filteredPlants[index].commonName;
-
-                                    final String? plantType = filteredPlants[index].plantType;
-
+                  final String naNative = filteredPlants[index].naNative == 1 ? 'Yes' : 'No';
+                  final String? plantType = filteredPlants[index].plantType;
+                  final String? flowering = filteredPlants[index].flowering;
+                  final String? sun = filteredPlants[index].sun == 1 ? 'Full Sun' : 'Partial Sun';
+                  final String? water = filteredPlants[index].water == 1 ? 'Wet' : 'Damp';
+                  final String? maintenance = filteredPlants[index].maintenance;
 
                   final String fullName = '$commonName ($botanicName)';
 
                   return ListTile(
-                      title: Html(data:fullName),
+                      title: Html(data: fullName),
                       onTap: () {
                         commonNameController.text = commonName;
                         plantController.text = botanicName;
+                        naNativeController.text = naNative;
 
-
-plantTypeController.text = plantType ?? "Unknown";
+                        plantTypeController.text = plantType ?? "Unknown";
+                        sunController.text = sun ?? "Unknown";
+                        waterController.text = water ?? "Unknown";
+                        floweringController.text = flowering ?? "Unknown";
+                        maintenanceController.text = maintenance ?? "Unknown";
 
                         controller.closeView(fullName);
                       });
@@ -276,11 +283,12 @@ plantTypeController.text = plantType ?? "Unknown";
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       //crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         TextFormField(
                           controller: plantController,
-                          decoration:
-                              const InputDecoration(labelText: 'Scientific Plant Name'),
+                          decoration: const InputDecoration(
+                              labelText: 'Scientific Plant Name'),
                         ),
                         TextFormField(
                           controller: commonNameController,
@@ -305,23 +313,23 @@ plantTypeController.text = plantType ?? "Unknown";
                             labelText: 'Notes',
                           ),
                         ),
-                        Row(
-                            //crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Expanded(
-                                child: TextFormField(
+                        TextFormField(
                                   controller: gardenLocationNameController,
                                   decoration: const InputDecoration(
                                     labelText: 'Name of Location in Garden',
                                   ),
                                 ),
-                              ),
-                              Expanded(
+                              
+                              Flexible(
+                                fit: FlexFit.loose,
                                 child: SizedBox(
                                   height: 64,
                                   child: DropdownButton<String>(
                                     isExpanded: true,
-                                    hint: Text('Previous Garden Locations'),
+                                    hint: Text('Previously Created Garden Locations',
+                                        style: Theme.of(context).inputDecorationTheme.hintStyle
+    ?? Theme.of(context).textTheme.titleMedium),
+
                                     items: myPlants
                                         .map((e) => e['garden_location_name']
                                             .toString())
@@ -346,7 +354,7 @@ plantTypeController.text = plantType ?? "Unknown";
                                   ),
                                 ),
                               ),
-                            ]),
+                           
                         FormField<bool>(builder: (state) {
                           return CheckboxListTile(
                               value: isSeed,
@@ -359,11 +367,48 @@ plantTypeController.text = plantType ?? "Unknown";
                                 });
                               });
                         }),
-                        Text('Autofilled Fields for Plant Select Plants'),
+                        Text(
+                          'Autofilled Fields for Plant Select Plants',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                          ),
+                        ),
+                        TextFormField(
+                          controller: naNativeController,
+                          decoration: const InputDecoration(
+                            labelText: 'North American Native',
+                          ),
+                        ),
                         TextFormField(
                           controller: plantTypeController,
                           decoration: const InputDecoration(
                             labelText: 'Plant Type',
+                          ),
+                        ),
+                        TextFormField(
+                          controller: sunController,
+                          decoration: const InputDecoration(
+                            labelText: 'Sun',
+                          ),
+                        ),
+                        
+                        TextFormField(
+                          controller: waterController,
+                          decoration: const InputDecoration(
+                            labelText: 'Water',
+                          ),
+                        ),
+                        TextFormField(
+                          controller: floweringController,
+                          decoration: const InputDecoration(
+                            labelText: 'Flowering Season',
+                          ),
+                        ),
+                        TextFormField(
+                          controller: maintenanceController,
+                          decoration: const InputDecoration(
+                            labelText: 'Maintenance',
                           ),
                         ),
                       ],

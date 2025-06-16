@@ -56,6 +56,7 @@ class _MyPlantsState extends State<MyPlants> {
   
 
   Future<void> sheetsPlants() async {
+
     var response = await http.get(
       Uri.parse(
           '${Constants.apiUrl}/api/plants/user-list?userId=${widget.userId}&wishlist=${currentPageIndex == 2 ? 'Y' : 'N'}'),
@@ -63,7 +64,10 @@ class _MyPlantsState extends State<MyPlants> {
         HttpHeaders.authorizationHeader: 'Bearer ${Constants.apiAuthToken}'
       },
     );
+    //print(json.decode(response.body));
+
     List<dynamic> plants = json.decode(response.body);
+
     setState(() {
       myPlants = plants.map((plant) => plant as Map<String, dynamic>).toList();
     });
