@@ -7,7 +7,6 @@ import 'allplants.dart';
 import 'main.dart';
 import 'constants.dart';
 import 'selectedplants.dart';
-import 'package:flutter_html/flutter_html.dart';
 
 class MyPlants extends StatefulWidget {
   MyPlants(
@@ -36,7 +35,6 @@ class _MyPlantsState extends State<MyPlants> {
   var sortColumnIndex = 0;
   int currentPageIndex = 0;
   List<Map<String, dynamic>> myPlants = [];
-  
 
   @override
   void initState() {
@@ -44,12 +42,7 @@ class _MyPlantsState extends State<MyPlants> {
     sheetsPlants();
   }
 
- 
-
-  
-
   Future<void> sheetsPlants() async {
-
     var response = await http.get(
       Uri.parse(
           '${Constants.apiUrl}/api/plants/user-list?userId=${widget.userId}&wishlist=${currentPageIndex == 2 ? 'Y' : 'N'}'),
@@ -87,6 +80,11 @@ class _MyPlantsState extends State<MyPlants> {
   @override
   Widget build(BuildContext context) {
     double myToolbarHeight = 120;
+
+    final filteredPlants = myPlants
+        .where(
+            (plant) => plant['wishlist'] == (currentPageIndex == 1 ? 'Y' : 'N'))
+        .toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -193,67 +191,40 @@ class _MyPlantsState extends State<MyPlants> {
           ]),
       body: Padding(
         padding: const EdgeInsets.all(0.0),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            
-            
-            
-            
-            child: ListView.builder(
-            //List<dynamic> plantsAsList = myPlants as List;
+        // child: SingleChildScrollView(
+        //   scrollDirection: Axis.vertical,
+        //   child: SingleChildScrollView(
+        //     scrollDirection: Axis.horizontal,
 
+        child: ListView.builder(
+            itemCount: filteredPlants.length,
+            itemBuilder: (context, index) {
+              Map<String, dynamic> plant = filteredPlants[index];
+              //List<dynamic> plantDisplay = filteredPlants[index] as List;
 
-
-                      itemCount: myPlants.length,
-                      itemBuilder: (context, index) {
-                      
-
-           
-
-
-
-                        List plantDisplay = myPlants[index] as List; //not accounting for wishlist plants
-                      
-                         myPlants
-                  .where((plant) =>
-                      plant['wishlist'] == (currentPageIndex == 1 ? 'Y' : 'N'))
-                  .map(plantDisplay as Function(Map<String, dynamic> e)); //accounting for wishlist
-
-                  Map<String, dynamic> plant = myPlants[index]; 
-
-
-                        return ListTile(
-                          title: 
-                          plantDisplay[3].isEmpty
-                                ? Text('''${plantDisplay[1]}''',
-                              textAlign: TextAlign.center,)
-                              : Text('''${plantDisplay[1]}, Quantity: ${plantDisplay[3]}''',
-                              textAlign: TextAlign.center,),
-                         
-                          onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SelectedPlants(
-                                    username: widget.username,
-                                    userId: widget.userId,
-                                    plant: plant,
-                                    picPath: widget.picPath))).then((value) {
-                          setState(() {
-                            sheetsPlants();
-                          });
-                        });
-                    },
-                        );
-                      }),
-                ),
-            
-              ),
-        ),
-      );
-    
+              return ListTile(
+                title: Text(
+                        '''${plant['botanic_name']}, Quantity: ${plant['quantity']}''',
+                        textAlign: TextAlign.center,
+                      ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SelectedPlants(
+                              username: widget.username,
+                              userId: widget.userId,
+                              plant: plant,
+                              picPath: widget.picPath))).then((value) {
+                    setState(() {
+                      sheetsPlants();
+                    });
+                  });
+                },
+              );
+            }),
+      ),
+    );
   }
 }
             
