@@ -202,11 +202,23 @@ class _MyPlantsState extends State<MyPlants> {
               Map<String, dynamic> plant = filteredPlants[index];
               //List<dynamic> plantDisplay = filteredPlants[index] as List;
 
-              return ListTile(
-                title: Text(
-                        '''${plant['botanic_name']}, Quantity: ${plant['quantity']}''',
-                        textAlign: TextAlign.center,
-                      ),
+               return Container(
+                            color: (index % 2 == 0)
+                                ? Colors.lightGreen[50]
+                                : Colors.lightGreen[100],
+                            child: ListTile(
+                              title: plant['botanic_name'] == ''
+                                  ? Text(
+                                      '''Common Name: ${plant['common_name']}, Quantity: ${plant['quantity']}''',
+                                      textAlign: TextAlign.center,
+                                    )
+                                  : Text(
+                                      '''${plant['botanic_name']}, Quantity: ${plant['quantity']}''',
+                                      textAlign: TextAlign.center,
+                                    ),
+               
+               
+               
                 onTap: () {
                   Navigator.push(
                       context,
@@ -221,8 +233,9 @@ class _MyPlantsState extends State<MyPlants> {
                     });
                   });
                 },
-              );
-            }),
+              ),
+               );
+            })
       ),
     );
   }

@@ -136,7 +136,7 @@ class _AddPlantState extends State<AddPlant> {
     }
   }
 
-  String _location = 'Getting location...';
+  final String _location = 'Getting location...';
   String latitude = 'Unknown location';
   String longitude = 'Unknown location';
 
@@ -207,13 +207,13 @@ class _AddPlantState extends State<AddPlant> {
                   final String naNative =
                       filteredPlants[index].naNative == 1 ? 'Yes' : 'No';
                   final String? plantType = filteredPlants[index].plantType;
-                  final String? flowering = filteredPlants[index].flowering;
-                  final String? sun = filteredPlants[index].sun == 1
+                  final String flowering = filteredPlants[index].flowering;
+                  final String sun = filteredPlants[index].sun == 1
                       ? 'Full Sun'
                       : 'Partial Sun';
-                  final String? water =
+                  final String water =
                       filteredPlants[index].water == 1 ? 'Wet' : 'Damp';
-                  final String? maintenance = filteredPlants[index].maintenance;
+                  final String maintenance = filteredPlants[index].maintenance;
 
                   final String fullName = '$commonName ($botanicName)';
 
