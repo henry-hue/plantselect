@@ -207,15 +207,27 @@ class _MyPlantsState extends State<MyPlants> {
                                 ? Colors.lightGreen[50]
                                 : Colors.lightGreen[100],
                             child: ListTile(
-                              title: plant['botanic_name'] == ''
-                                  ? Text(
-                                      '''Common Name: ${plant['common_name']}, Quantity: ${plant['quantity']}''',
-                                      textAlign: TextAlign.center,
-                                    )
-                                  : Text(
-                                      '''${plant['botanic_name']}, Quantity: ${plant['quantity']}''',
-                                      textAlign: TextAlign.center,
-                                    ),
+                              title:
+                              Text(
+  () {
+    final botanicName = plant['botanic_name']?.toString().trim();
+    final commonName = plant['common_name']?.toString().trim();
+    final quantity = plant['quantity'];
+
+    final showQuantity = quantity != null &&
+        quantity.toString().trim().isNotEmpty &&
+        quantity != 0;
+
+    final name = (botanicName != null && botanicName.isNotEmpty)
+        ? botanicName
+        : (commonName != null && commonName.isNotEmpty ? 'Common Name: $commonName' : 'Common Name: Unknown');
+
+    return showQuantity ? '$name, Quantity: $quantity' : name;
+  }(),
+  textAlign: TextAlign.center,
+),
+
+
                
                
                
