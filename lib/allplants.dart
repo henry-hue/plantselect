@@ -282,11 +282,16 @@ class _AddPlantState extends State<AddPlant> {
                             height: 64,
                             child: DropdownButton<String>(
                               isExpanded: true,
-                              hint: Text('Previously Created Garden Locations',
-                                  style: Theme.of(context)
-                                          .inputDecorationTheme
-                                          .hintStyle ??
-                                      Theme.of(context).textTheme.titleMedium),
+                              hint: Text(
+                                'Previously Created Garden Locations',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(
+                                      color: Colors.grey[
+                                          800], // Try 400 or 300 for lighter shades
+                                    ),
+                              ),
                               items: myPlants
                                   .map((e) =>
                                       e['garden_location_name'].toString())

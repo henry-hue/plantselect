@@ -154,7 +154,7 @@ class _SelectedPlantsState extends State<SelectedPlants> {
                                 fontWeight: FontWeight.bold,
                                 fontSize: 17,
                               ),
-                              textAlign: TextAlign.center,
+                              textAlign: TextAlign.left,
                             ),
                           ),
                         ],
