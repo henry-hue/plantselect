@@ -142,20 +142,23 @@ class _SelectedPlantsState extends State<SelectedPlants> {
                   children: <Widget>[
                     ListTile(
                       //titleAlignment: ListTileTitleAlignment.center,
-                      title: Row(
+                      title: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Expanded(
-                            child: Text(
-                              '''
-                               ${widget.plant['botanic_name']}
-                               ${widget.plant['common_name']}''',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 17,
-                              ),
-                              textAlign: TextAlign.left,
+                          Text(
+                            widget.plant['botanic_name'] ?? '',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17,
                             ),
+                            textAlign: TextAlign.left,
+                          ),
+                          Text(
+                            widget.plant['common_name'] ?? '',
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                            textAlign: TextAlign.left,
                           ),
                         ],
                       ),
