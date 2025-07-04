@@ -283,7 +283,7 @@ class _AddPlantState extends State<AddPlant> {
                             child: DropdownButton<String>(
                               isExpanded: true,
                               hint: Text(
-                                'Previously Created Garden Locations',
+                                'Garden Locations',
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleMedium
