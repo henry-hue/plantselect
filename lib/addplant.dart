@@ -246,77 +246,43 @@ class _AddPlantState extends State<AddPlant> {
                           controller: plantController,
                           decoration: const InputDecoration(
                               labelText: 'Scientific Plant Name'),
-                              style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      color: Colors.grey[
-                                          800], // Try 400 or 300 for lighter shades
-                                    ),
+                              
                         ),
                         TextFormField(
                           controller: commonNameController,
                           decoration:
                               const InputDecoration(labelText: 'Common Name'),
-                              style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      color: Colors.grey[
-                                          800], // Try 400 or 300 for lighter shades
-                                    ),
+                              
                         ),
                         TextFormField(
                           controller: quantityController,
                           decoration: const InputDecoration(
                             labelText: 'Quantity',
                           ),
-                          style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      color: Colors.grey[
-                                          800], // Try 400 or 300 for lighter shades
-                                    ),
+                          
+                                  
                         ),
                         TextFormField(
                           controller: nurseryController,
                           decoration: const InputDecoration(
                             labelText: 'Nursery',
                           ),
-                          style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      color: Colors.grey[
-                                          800], // Try 400 or 300 for lighter shades
-                                    ),
+                          
+                                 
                         ),
                         TextFormField(
                           controller: notesController,
                           decoration: const InputDecoration(
                             labelText: 'Notes',
                           ),
-                          style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      color: Colors.grey[
-                                          800], // Try 400 or 300 for lighter shades
-                                    ),
+                          
                         ),
                         TextFormField(
                           controller: gardenLocationNameController,
                           decoration: const InputDecoration(
                             labelText: 'Name of Location in Garden',
                           ),
-                          style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      color: Colors.grey[
-                                          800], // Try 400 or 300 for lighter shades
-                                    ),
+                         
                         ),
                         Flexible(
                           fit: FlexFit.loose,
@@ -326,13 +292,7 @@ class _AddPlantState extends State<AddPlant> {
                               isExpanded: true,
                               hint: Text(
                                 'Garden Locations',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      color: Colors.grey[
-                                          800], // Try 400 or 300 for lighter shades
-                                    ),
+                                
                               ),
                               items: myPlants
                                   .map((e) =>
